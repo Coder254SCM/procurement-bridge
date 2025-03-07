@@ -9,16 +9,229 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bids: {
+        Row: {
+          bid_amount: number
+          blockchain_hash: string | null
+          created_at: string | null
+          documents: Json | null
+          id: string
+          status: string | null
+          supplier_id: string
+          technical_details: Json | null
+          tender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          bid_amount: number
+          blockchain_hash?: string | null
+          created_at?: string | null
+          documents?: Json | null
+          id?: string
+          status?: string | null
+          supplier_id: string
+          technical_details?: Json | null
+          tender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          bid_amount?: number
+          blockchain_hash?: string | null
+          created_at?: string | null
+          documents?: Json | null
+          id?: string
+          status?: string | null
+          supplier_id?: string
+          technical_details?: Json | null
+          tender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evaluations: {
+        Row: {
+          bid_id: string
+          blockchain_hash: string | null
+          comments: string | null
+          created_at: string | null
+          evaluation_type: Database["public"]["Enums"]["user_role"]
+          evaluator_id: string
+          id: string
+          score: number
+          updated_at: string | null
+        }
+        Insert: {
+          bid_id: string
+          blockchain_hash?: string | null
+          comments?: string | null
+          created_at?: string | null
+          evaluation_type: Database["public"]["Enums"]["user_role"]
+          evaluator_id: string
+          id?: string
+          score: number
+          updated_at?: string | null
+        }
+        Update: {
+          bid_id?: string
+          blockchain_hash?: string | null
+          comments?: string | null
+          created_at?: string | null
+          evaluation_type?: Database["public"]["Enums"]["user_role"]
+          evaluator_id?: string
+          id?: string
+          score?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluations_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          industry: string | null
+          kyc_documents: Json | null
+          kyc_status: string | null
+          position: string | null
+          updated_at: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          industry?: string | null
+          kyc_documents?: Json | null
+          kyc_status?: string | null
+          position?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          industry?: string | null
+          kyc_documents?: Json | null
+          kyc_status?: string | null
+          position?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      tenders: {
+        Row: {
+          blockchain_hash: string | null
+          budget_amount: number | null
+          budget_currency: string | null
+          buyer_id: string
+          category: string
+          created_at: string | null
+          description: string
+          documents: Json | null
+          evaluation_criteria: Json | null
+          id: string
+          status: string | null
+          submission_deadline: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          blockchain_hash?: string | null
+          budget_amount?: number | null
+          budget_currency?: string | null
+          buyer_id: string
+          category: string
+          created_at?: string | null
+          description: string
+          documents?: Json | null
+          evaluation_criteria?: Json | null
+          id?: string
+          status?: string | null
+          submission_deadline: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          blockchain_hash?: string | null
+          budget_amount?: number | null
+          budget_currency?: string | null
+          buyer_id?: string
+          category?: string
+          created_at?: string | null
+          description?: string
+          documents?: Json | null
+          evaluation_criteria?: Json | null
+          id?: string
+          status?: string | null
+          submission_deadline?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          user_id: string
+          required_role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role:
+        | "buyer"
+        | "supplier"
+        | "admin"
+        | "evaluator_finance"
+        | "evaluator_technical"
+        | "evaluator_procurement"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -16,12 +16,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { UserRole } from "@/types/enums";
+import { UserRoleRecord } from "@/types/database.types";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [session, setSession] = useState(null);
-  const [userRoles, setUserRoles] = useState([]);
+  const [session, setSession] = useState<any>(null);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -53,11 +55,10 @@ const Dashboard = () => {
       
       setSession(data.session);
       
-      // Fetch user roles
+      // Fetch user roles from the user_roles table
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
-        .select('role')
-        .eq('user_id', data.session.user.id);
+        .select('role');
         
       if (rolesError) {
         console.error("Error fetching user roles:", rolesError);
@@ -67,7 +68,7 @@ const Dashboard = () => {
           description: "Could not load user roles",
         });
       } else if (rolesData) {
-        setUserRoles(rolesData.map(r => r.role));
+        setUserRoles(rolesData.map((r: { role: string }) => r.role));
       }
       
       setLoading(false);
@@ -304,12 +305,12 @@ const Dashboard = () => {
               </Link>
             </Button>
             <Button asChild>
-              {userRoles.includes('buyer') ? (
+              {userRoles.includes(UserRole.BUYER) ? (
                 <Link to="/create-tender">
                   <FileText className="mr-2 h-4 w-4" />
                   Create Tender
                 </Link>
-              ) : userRoles.includes('supplier') ? (
+              ) : userRoles.includes(UserRole.SUPPLIER) ? (
                 <Link to="/tenders">
                   <Briefcase className="mr-2 h-4 w-4" />
                   Browse Tenders
@@ -357,11 +358,11 @@ const Dashboard = () => {
                 <div className="rounded-md bg-secondary p-8 text-center">
                   <h3 className="text-xl font-semibold mb-2">No Tenders Available</h3>
                   <p className="text-muted-foreground mb-4">
-                    {userRoles.includes('buyer') 
+                    {userRoles.includes(UserRole.BUYER) 
                       ? "You haven't created any tenders yet." 
                       : "There are no tender opportunities available at the moment."}
                   </p>
-                  {userRoles.includes('buyer') && (
+                  {userRoles.includes(UserRole.BUYER) && (
                     <Button asChild>
                       <Link to="/create-tender">Create Your First Tender</Link>
                     </Button>
