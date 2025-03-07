@@ -19,6 +19,12 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          {/* New route paths for the tender system */}
+          <Route path="/profile" element={<NotFound />} />
+          <Route path="/create-tender" element={<NotFound />} />
+          <Route path="/tenders" element={<NotFound />} />
+          <Route path="/evaluations" element={<NotFound />} />
+          <Route path="/supplier-marketplace" element={<NotFound />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
