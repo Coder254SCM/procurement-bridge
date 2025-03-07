@@ -16,7 +16,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
-const OnboardingAnimation = () => {
+interface OnboardingAnimationProps {
+  onClose: () => void;
+}
+
+const OnboardingAnimation = ({ onClose }: OnboardingAnimationProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
 
@@ -78,6 +82,7 @@ const OnboardingAnimation = () => {
   }, [currentStep, steps.length]);
 
   const skipAnimation = () => {
+    onClose();
     navigate('/dashboard');
   };
 
@@ -85,6 +90,7 @@ const OnboardingAnimation = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
     } else {
+      onClose();
       navigate('/dashboard');
     }
   };
