@@ -138,12 +138,12 @@ const Profile = () => {
         return;
       }
       
-      // Add new role
+      // Add new role - convert enum to string for database
       const { error } = await supabase
         .from('user_roles')
         .insert({
           user_id: user.id,
-          role: selectedRole as unknown as string
+          role: selectedRole // The role value needs to match what's expected in the database
         });
         
       if (error) throw error;
