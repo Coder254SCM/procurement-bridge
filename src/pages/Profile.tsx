@@ -1,328 +1,433 @@
 
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Shield, CheckCircle, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { UserRole } from "@/types/enums";
-import { Profile as ProfileType } from "@/types/database.types";
-
-const INDUSTRIES = [
-  "Agriculture",
-  "Construction",
-  "Education",
-  "Energy",
-  "Finance",
-  "Food & Beverage",
-  "Government",
-  "Healthcare",
-  "Information Technology",
-  "Manufacturing",
-  "Mining",
-  "Professional Services",
-  "Real Estate",
-  "Telecommunications",
-  "Transportation",
-  "Other"
-];
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { UserRole } from '@/types/enums';
+import { Profile as ProfileType, UserRoleRecord } from '@/types/database.types';
 
 const Profile = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState<Partial<ProfileType>>({});
-  const [selectedRoles, setSelectedRoles] = useState<UserRole[]>([]);
-  const [availableRoles, setAvailableRoles] = useState([
-    { role: UserRole.BUYER, label: "Buyer/Procurement Entity" },
-    { role: UserRole.SUPPLIER, label: "Supplier/Vendor" },
-    { role: UserRole.EVALUATOR_FINANCE, label: "Financial Evaluator (Accountant)" },
-    { role: UserRole.EVALUATOR_TECHNICAL, label: "Technical Evaluator (Engineer)" },
-    { role: UserRole.EVALUATOR_PROCUREMENT, label: "Procurement Evaluator" }
-  ]);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<ProfileType | null>(null);
+  const [userRoles, setUserRoles] = useState<UserRoleRecord[]>([]);
+  const [formData, setFormData] = useState({
+    full_name: '',
+    company_name: '',
+    position: '',
+    industry: '',
+  });
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      setLoading(true);
-      
-      // Check if user is authenticated
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !sessionData.session) {
-        toast({
-          variant: "destructive",
-          title: "Authentication Error",
-          description: "Please log in to access your profile",
-        });
-        navigate('/');
-        return;
-      }
-      
-      // Fetch user profile
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .single();
+    const fetchUserData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
         
-      if (profileError && profileError.code !== 'PGRST116') { // Not found is OK for new users
-        console.error("Error fetching profile:", profileError);
+        if (user) {
+          setUser(user);
+          
+          // Fetch profile
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+            
+          if (profileError) throw profileError;
+          setProfile(profileData);
+          
+          // Initialize form data
+          setFormData({
+            full_name: profileData.full_name || '',
+            company_name: profileData.company_name || '',
+            position: profileData.position || '',
+            industry: profileData.industry || '',
+          });
+          
+          // Fetch user roles
+          const { data: rolesData, error: rolesError } = await supabase
+            .from('user_roles')
+            .select('*')
+            .eq('user_id', user.id);
+            
+          if (rolesError) throw rolesError;
+          setUserRoles(rolesData);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not load your profile",
+          title: 'Error',
+          description: 'Failed to load user profile data',
+          variant: 'destructive',
         });
-      } else if (profileData) {
-        setProfile(profileData);
+      } finally {
+        setLoading(false);
       }
-      
-      // Fetch user roles
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('role');
-        
-      if (rolesError) {
-        console.error("Error fetching user roles:", rolesError);
-      } else if (rolesData) {
-        setSelectedRoles(rolesData.map(r => r.role as UserRole));
-      }
-      
-      setLoading(false);
     };
     
-    fetchProfile();
-  }, [navigate, toast]);
+    fetchUserData();
+  }, []);
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleRoleChange = (value: string) => {
+    setSelectedRole(value as UserRole);
+  };
+
+  const handleProfileUpdate = async () => {
     try {
-      // Update profile
-      const { error: profileError } = await supabase
+      setLoading(true);
+      
+      const { error } = await supabase
         .from('profiles')
-        .update(profile)
-        .eq('id', profile.id);
+        .update(formData)
+        .eq('id', user.id);
         
-      if (profileError) throw profileError;
-      
-      // Get current user roles
-      const { data: currentRoles, error: fetchError } = await supabase
-        .from('user_roles')
-        .select('role');
-        
-      if (fetchError) throw fetchError;
-      
-      const currentRoleValues = currentRoles?.map(r => r.role) || [];
-      
-      // Add new roles
-      for (const role of selectedRoles) {
-        if (!currentRoleValues.includes(role)) {
-          const { error } = await supabase
-            .from('user_roles')
-            .insert({ role });
-            
-          if (error) throw error;
-        }
-      }
-      
-      // Remove unselected roles
-      for (const role of currentRoleValues) {
-        if (!selectedRoles.includes(role as UserRole)) {
-          const { error } = await supabase
-            .from('user_roles')
-            .delete()
-            .eq('role', role);
-            
-          if (error) throw error;
-        }
-      }
+      if (error) throw error;
       
       toast({
-        title: "Profile Updated",
-        description: "Your profile has been successfully updated",
+        title: 'Profile Updated',
+        description: 'Your profile information has been updated successfully.',
       });
       
-      navigate('/dashboard');
-    } catch (error: any) {
-      console.error("Error updating profile:", error);
+    } catch (error) {
+      console.error('Error updating profile:', error);
       toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description: error.message || "Could not update your profile",
+        title: 'Update Failed',
+        description: 'There was an error updating your profile.',
+        variant: 'destructive',
       });
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
-  const toggleRole = (role: UserRole) => {
-    setSelectedRoles(prev => 
-      prev.includes(role)
-        ? prev.filter(r => r !== role)
-        : [...prev, role]
-    );
+  const handleAddRole = async () => {
+    if (!selectedRole) return;
+    
+    try {
+      setLoading(true);
+      
+      // Check if role already exists
+      const roleExists = userRoles.some(r => r.role === selectedRole);
+      
+      if (roleExists) {
+        toast({
+          title: 'Role Already Exists',
+          description: 'You already have this role assigned to your account.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      // Add new role
+      const { error } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: user.id,
+          role: selectedRole
+        });
+        
+      if (error) throw error;
+      
+      // Refresh roles
+      const { data, error: fetchError } = await supabase
+        .from('user_roles')
+        .select('*')
+        .eq('user_id', user.id);
+        
+      if (fetchError) throw fetchError;
+      setUserRoles(data);
+      
+      toast({
+        title: 'Role Added',
+        description: `The role "${selectedRole}" has been added to your account.`,
+      });
+      
+    } catch (error) {
+      console.error('Error adding role:', error);
+      toast({
+        title: 'Error',
+        description: 'There was an error adding the role to your account.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen p-8 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+  const handleRemoveRole = async (roleId: string) => {
+    try {
+      setLoading(true);
+      
+      const { error } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('id', roleId);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setUserRoles(prev => prev.filter(role => role.id !== roleId));
+      
+      toast({
+        title: 'Role Removed',
+        description: 'The role has been removed from your account.',
+      });
+      
+    } catch (error) {
+      console.error('Error removing role:', error);
+      toast({
+        title: 'Error',
+        description: 'There was an error removing the role.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && !profile) {
+    return <div className="container py-10">Loading profile data...</div>;
   }
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="mb-8">
-        <Button variant="ghost" asChild>
-          <Link to="/dashboard">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Link>
-        </Button>
-      </div>
+    <div className="container py-10">
+      <h1 className="text-3xl font-bold mb-6">User Profile</h1>
       
-      <div className="container mx-auto max-w-3xl">
-        <h1 className="text-3xl font-bold tracking-tight mb-8">My Profile</h1>
+      <Tabs defaultValue="profile">
+        <TabsList className="mb-6">
+          <TabsTrigger value="profile">Profile Information</TabsTrigger>
+          <TabsTrigger value="roles">Roles & Permissions</TabsTrigger>
+          <TabsTrigger value="kyc">KYC Verification</TabsTrigger>
+        </TabsList>
         
-        <form onSubmit={handleProfileUpdate}>
-          <div className="grid gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Update your personal and company details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TabsContent value="profile">
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Information</CardTitle>
+              <CardDescription>
+                Update your personal and company information
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="full_name">Full Name</Label>
+                  <Input 
+                    id="full_name" 
+                    name="full_name" 
+                    value={formData.full_name || ''} 
+                    onChange={handleInputChange} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company_name">Company Name</Label>
+                  <Input 
+                    id="company_name" 
+                    name="company_name" 
+                    value={formData.company_name || ''} 
+                    onChange={handleInputChange} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="position">Position</Label>
+                  <Input 
+                    id="position" 
+                    name="position" 
+                    value={formData.position || ''} 
+                    onChange={handleInputChange} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="industry">Industry</Label>
+                  <Input 
+                    id="industry" 
+                    name="industry" 
+                    value={formData.industry || ''} 
+                    onChange={handleInputChange} 
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={handleProfileUpdate} disabled={loading}>
+                {loading ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="roles">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Roles</CardTitle>
+              <CardDescription>
+                Manage your roles in the procurement system
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Your Current Roles</h3>
+                {userRoles.length === 0 ? (
+                  <p className="text-muted-foreground">You don't have any roles assigned yet.</p>
+                ) : (
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input 
-                      id="fullName" 
-                      value={profile.full_name || ''} 
-                      onChange={e => setProfile({...profile, full_name: e.target.value})}
-                      placeholder="Enter your full name"
-                      required
-                    />
+                    {userRoles.map((role) => (
+                      <div key={role.id} className="flex items-center justify-between p-2 bg-secondary/30 rounded-md">
+                        <span className="font-medium">{role.role}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleRemoveRole(role.id)}
+                          disabled={loading}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">Company/Organization</Label>
-                    <Input 
-                      id="companyName" 
-                      value={profile.company_name || ''} 
-                      onChange={e => setProfile({...profile, company_name: e.target.value})}
-                      placeholder="Enter your company name"
-                    />
+                )}
+              </div>
+              
+              <Separator />
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Add New Role</h3>
+                <div className="flex gap-4">
+                  <Select onValueChange={handleRoleChange}>
+                    <SelectTrigger className="w-[250px]">
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={UserRole.BUYER}>Buyer</SelectItem>
+                      <SelectItem value={UserRole.SUPPLIER}>Supplier</SelectItem>
+                      <SelectItem value={UserRole.EVALUATOR_FINANCE}>Financial Evaluator</SelectItem>
+                      <SelectItem value={UserRole.EVALUATOR_TECHNICAL}>Technical Evaluator</SelectItem>
+                      <SelectItem value={UserRole.EVALUATOR_PROCUREMENT}>Procurement Evaluator</SelectItem>
+                      <SelectItem value={UserRole.EVALUATOR_ENGINEERING}>Engineering Evaluator</SelectItem>
+                      <SelectItem value={UserRole.EVALUATOR_LEGAL}>Legal Evaluator</SelectItem>
+                      <SelectItem value={UserRole.EVALUATOR_ACCOUNTING}>Accounting Evaluator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button onClick={handleAddRole} disabled={!selectedRole || loading}>
+                    Add Role
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="kyc">
+          <Card>
+            <CardHeader>
+              <CardTitle>KYC Verification</CardTitle>
+              <CardDescription>
+                Complete verification to access all features of the platform
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">Verification Status</h3>
+                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    profile?.verified 
+                      ? "bg-green-100 text-green-800" 
+                      : "bg-amber-100 text-amber-800"
+                  }`}>
+                    {profile?.verified ? "Verified" : "Pending Verification"}
+                  </div>
+                </div>
+                <p className="text-muted-foreground">
+                  {profile?.verified 
+                    ? "Your account has been fully verified." 
+                    : "Your account is pending verification. Complete the required steps below."}
+                </p>
+              </div>
+              
+              <Separator />
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Required Documents</h3>
+                
+                <div className="space-y-2">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="business_registration" />
+                    <div className="space-y-1">
+                      <Label htmlFor="business_registration" className="font-medium">
+                        Business Registration Certificate
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Upload an official business registration document
+                      </p>
+                      {!profile?.verified && (
+                        <Button variant="outline" size="sm" className="mt-1">
+                          Upload Document
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="position">Position/Title</Label>
-                    <Input 
-                      id="position" 
-                      value={profile.position || ''} 
-                      onChange={e => setProfile({...profile, position: e.target.value})}
-                      placeholder="Enter your job title"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="industry">Industry</Label>
-                    <Select 
-                      value={profile.industry || ''} 
-                      onValueChange={value => setProfile({...profile, industry: value})}
-                    >
-                      <SelectTrigger id="industry">
-                        <SelectValue placeholder="Select your industry" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {INDUSTRIES.map(industry => (
-                          <SelectItem key={industry} value={industry}>{industry}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                <div className="space-y-2">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="tax_compliance" />
+                    <div className="space-y-1">
+                      <Label htmlFor="tax_compliance" className="font-medium">
+                        Tax Compliance Certificate
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Upload a valid tax compliance certificate from KRA
+                      </p>
+                      {!profile?.verified && (
+                        <Button variant="outline" size="sm" className="mt-1">
+                          Upload Document
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Roles</CardTitle>
-                <CardDescription>Select the roles that apply to you in the procurement process</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {availableRoles.map(({ role, label }) => (
-                    <div key={role} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`role-${role}`}
-                        checked={selectedRoles.includes(role)}
-                        onCheckedChange={() => toggleRole(role)}
-                      />
-                      <Label htmlFor={`role-${role}`} className="cursor-pointer">{label}</Label>
+                
+                <div className="space-y-2">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="director_id" />
+                    <div className="space-y-1">
+                      <Label htmlFor="director_id" className="font-medium">
+                        Director ID/Passport
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Upload a valid identification document for the company director
+                      </p>
+                      {!profile?.verified && (
+                        <Button variant="outline" size="sm" className="mt-1">
+                          Upload Document
+                        </Button>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Verification Status</CardTitle>
-                    <CardDescription>Your account verification status</CardDescription>
                   </div>
-                  {profile.verified ? (
-                    <div className="flex items-center text-green-500">
-                      <CheckCircle className="h-5 w-5 mr-1" />
-                      <span>Verified</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center text-yellow-500">
-                      <AlertTriangle className="h-5 w-5 mr-1" />
-                      <span>Pending</span>
-                    </div>
-                  )}
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {profile.verified 
-                    ? "Your account is verified. You have full access to all features."
-                    : "Your account is pending verification. Some features may be limited until verification is complete."}
-                </p>
-                {!profile.verified && (
-                  <div className="mt-4 p-4 bg-muted rounded-md">
-                    <div className="flex items-center mb-2">
-                      <Shield className="h-5 w-5 mr-2 text-primary" />
-                      <span className="font-medium">Verification Documents</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Please upload the required documents for verification.
-                    </p>
-                    {/* Document upload functionality will be implemented later */}
-                    <Button variant="outline" disabled>Upload Documents (Coming Soon)</Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="mt-6 flex justify-end">
-            <Button type="submit" disabled={saving}>
-              {saving ? "Saving..." : "Save Profile"}
-            </Button>
-          </div>
-        </form>
-      </div>
+              </div>
+            </CardContent>
+            {!profile?.verified && (
+              <CardFooter>
+                <Button>Submit for Verification</Button>
+              </CardFooter>
+            )}
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

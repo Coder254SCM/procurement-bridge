@@ -62,3 +62,27 @@ export interface Evaluation {
   created_at: string;
   updated_at: string;
 }
+
+// Blockchain specific interfaces
+export interface BlockchainTransaction {
+  id: string;
+  transaction_type: 'tender_creation' | 'bid_submission' | 'evaluation' | 'award';
+  entity_id: string;
+  hash: string;
+  timestamp: string;
+  status: 'pending' | 'confirmed' | 'failed';
+  metadata: any;
+}
+
+export interface TenderAward {
+  id: string;
+  tender_id: string;
+  winning_bid_id: string;
+  awarded_by: string;
+  award_date: string;
+  contract_details: any;
+  blockchain_hash: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
