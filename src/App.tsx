@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import CreateTender from "./pages/CreateTender";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           {/* User profile and procurement system routes */}
           <Route path="/profile" element={<Profile />} />
-          <Route path="/create-tender" element={<NotFound />} />
+          <Route path="/create-tender" element={<CreateTender />} />
           <Route path="/tenders" element={<NotFound />} />
           <Route path="/evaluations" element={<NotFound />} />
           <Route path="/supplier-marketplace" element={<NotFound />} />
