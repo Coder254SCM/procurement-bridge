@@ -141,12 +141,16 @@ const Profile = () => {
         return;
       }
       
-      // Add new role - we need to convert enum to string for database
+      // Cast the selectedRole to string for database compatibility
+      // Check if the role is valid for the database
+      const dbRole = selectedRole.toLowerCase();
+      
+      // Add new role
       const { error } = await supabase
         .from('user_roles')
         .insert({
           user_id: user.id,
-          role: selectedRole as unknown as string // Cast to unknown then string to satisfy TypeScript
+          role: dbRole
         });
         
       if (error) throw error;
