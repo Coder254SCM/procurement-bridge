@@ -59,7 +59,14 @@ const Profile = () => {
             .eq('user_id', user.id);
             
           if (rolesError) throw rolesError;
-          setUserRoles(rolesData);
+          
+          // Convert the roles from the database to match our UserRole enum
+          const convertedRoles: UserRoleRecord[] = rolesData.map(role => ({
+            ...role,
+            role: role.role as UserRole
+          }));
+          
+          setUserRoles(convertedRoles);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -136,7 +143,7 @@ const Profile = () => {
         .from('user_roles')
         .insert({
           user_id: user.id,
-          role: selectedRole
+          role: selectedRole as unknown as string
         });
         
       if (error) throw error;
@@ -148,7 +155,14 @@ const Profile = () => {
         .eq('user_id', user.id);
         
       if (fetchError) throw fetchError;
-      setUserRoles(data);
+      
+      // Convert the roles from the database to match our UserRole enum
+      const convertedRoles: UserRoleRecord[] = data.map(role => ({
+        ...role,
+        role: role.role as UserRole
+      }));
+      
+      setUserRoles(convertedRoles);
       
       toast({
         title: 'Role Added',
