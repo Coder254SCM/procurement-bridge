@@ -95,16 +95,12 @@ const Evaluations = () => {
     try {
       setLoading(true);
       
-      // Update query to properly join with profiles table
+      // Get pending bids
       const { data: pendingData, error: pendingError } = await supabase
         .from('bids')
         .select(`
           *,
-          tender:tender_id(title, category),
-          supplier:supplier_id(profiles!supplier_id(
-            full_name,
-            company_name
-          ))
+          tender:tender_id(title, category)
         `)
         .eq('status', 'under_evaluation')
         .not('id', 'in', `(
@@ -113,28 +109,34 @@ const Evaluations = () => {
         )`);
       
       if (pendingError) throw pendingError;
+
+      // Fetch supplier profiles for pending bids
+      const pendingBidsWithSuppliers = await Promise.all(
+        pendingData.map(async (bid) => {
+          const { data: supplierData } = await supabase
+            .from('profiles')
+            .select('full_name, company_name')
+            .eq('id', bid.supplier_id)
+            .single();
+          
+          return {
+            ...bid,
+            supplier: {
+              full_name: supplierData?.full_name || 'Unknown',
+              company_name: supplierData?.company_name || 'Unknown Company'
+            }
+          };
+        })
+      );
       
-      // Process pending bids with safe type handling
-      const safePendingBids = pendingData.map((bid: any) => ({
-        ...bid,
-        supplier: {
-          full_name: bid.supplier?.profiles?.[0]?.full_name || 'Unknown',
-          company_name: bid.supplier?.profiles?.[0]?.company_name || 'Unknown Company'
-        }
-      }));
+      setPendingBids(pendingBidsWithSuppliers);
       
-      setPendingBids(safePendingBids);
-      
-      // Similar update for evaluated bids
+      // Get evaluated bids with similar supplier data fetching
       const { data: evaluatedData, error: evaluatedError } = await supabase
         .from('bids')
         .select(`
           *,
-          tender:tender_id(title, category),
-          supplier:supplier_id(profiles!supplier_id(
-            full_name,
-            company_name
-          ))
+          tender:tender_id(title, category)
         `)
         .in('id', `(
           select bid_id from evaluations 
@@ -143,15 +145,25 @@ const Evaluations = () => {
       
       if (evaluatedError) throw evaluatedError;
       
-      const safeEvaluatedBids = evaluatedData.map((bid: any) => ({
-        ...bid,
-        supplier: {
-          full_name: bid.supplier?.profiles?.[0]?.full_name || 'Unknown',
-          company_name: bid.supplier?.profiles?.[0]?.company_name || 'Unknown Company'
-        }
-      }));
+      const evaluatedBidsWithSuppliers = await Promise.all(
+        evaluatedData.map(async (bid) => {
+          const { data: supplierData } = await supabase
+            .from('profiles')
+            .select('full_name, company_name')
+            .eq('id', bid.supplier_id)
+            .single();
+          
+          return {
+            ...bid,
+            supplier: {
+              full_name: supplierData?.full_name || 'Unknown',
+              company_name: supplierData?.company_name || 'Unknown Company'
+            }
+          };
+        })
+      );
       
-      setEvaluatedBids(safeEvaluatedBids);
+      setEvaluatedBids(evaluatedBidsWithSuppliers);
       
     } catch (error) {
       console.error('Error fetching bids:', error);

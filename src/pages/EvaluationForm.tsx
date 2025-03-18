@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -119,7 +120,7 @@ const EvaluationForm = () => {
     try {
       setLoading(true);
       
-      // Update query to properly join with profiles table
+      // Simplified query to get bid and related data
       const { data: bidData, error: bidError } = await supabase
         .from('bids')
         .select(`
@@ -130,26 +131,31 @@ const EvaluationForm = () => {
             category,
             budget_amount,
             budget_currency
-          ),
-          supplier:supplier_id(profiles!supplier_id(
-            full_name,
-            company_name
-          ))
+          )
         `)
         .eq('id', bidId)
         .single();
         
       if (bidError) throw bidError;
+
+      // Separate query to get supplier profile
+      const { data: supplierData, error: supplierError } = await supabase
+        .from('profiles')
+        .select('full_name, company_name')
+        .eq('id', bidData.supplier_id)
+        .single();
+      
+      if (supplierError) {
+        console.error('Error fetching supplier data:', supplierError);
+      }
       
       // Create a safe bid object with proper type handling
-      const supplierData = {
-        full_name: bidData.supplier?.profiles?.[0]?.full_name || 'Unknown',
-        company_name: bidData.supplier?.profiles?.[0]?.company_name || 'Unknown Company'
-      };
-      
       const safeBid: Bid = {
         ...bidData,
-        supplier: supplierData
+        supplier: {
+          full_name: supplierData?.full_name || 'Unknown',
+          company_name: supplierData?.company_name || 'Unknown Company'
+        }
       };
       
       setBid(safeBid);
