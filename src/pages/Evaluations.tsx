@@ -1,19 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { SearchX, Clock, CheckCircle2, Filter } from 'lucide-react';
+import { Clock, CheckCircle2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarDateRangePicker } from '@/components/evaluations/DateRangePicker';
 import { DateRange } from 'react-day-picker';
+import FilterSection from '@/components/evaluations/FilterSection';
+import BidList from '@/components/evaluations/BidList';
 
 // Types
 interface Bid {
@@ -42,7 +38,7 @@ const Evaluations = () => {
   const [category, setCategory] = useState<string>('all');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [userRoles, setUserRoles] = useState<string[]>([]);
-  
+
   useEffect(() => {
     const fetchSession = async () => {
       const { data, error } = await supabase.auth.getSession();
@@ -115,7 +111,7 @@ const Evaluations = () => {
 
       // Fetch supplier profiles for pending bids
       const pendingBidsWithSuppliers = await Promise.all(
-        pendingData.map(async (bid) => {
+        (pendingData || []).map(async (bid) => {
           const { data: supplierData } = await supabase
             .from('profiles')
             .select('full_name, company_name')
@@ -124,9 +120,9 @@ const Evaluations = () => {
           
           return {
             ...bid,
-            supplier: {
-              full_name: supplierData?.full_name || 'Unknown',
-              company_name: supplierData?.company_name || 'Unknown Company'
+            supplier: supplierData || {
+              full_name: 'Unknown',
+              company_name: 'Unknown Company'
             }
           };
         })
@@ -134,7 +130,7 @@ const Evaluations = () => {
       
       setPendingBids(pendingBidsWithSuppliers);
       
-      // Get evaluated bids with similar supplier data fetching
+      // Get evaluated bids
       const { data: evaluatedData, error: evaluatedError } = await supabase
         .from('bids')
         .select(`
@@ -150,8 +146,9 @@ const Evaluations = () => {
       
       if (evaluatedError) throw evaluatedError;
       
+      // Fetch supplier profiles for evaluated bids
       const evaluatedBidsWithSuppliers = await Promise.all(
-        evaluatedData.map(async (bid) => {
+        (evaluatedData || []).map(async (bid) => {
           const { data: supplierData } = await supabase
             .from('profiles')
             .select('full_name, company_name')
@@ -160,9 +157,9 @@ const Evaluations = () => {
           
           return {
             ...bid,
-            supplier: {
-              full_name: supplierData?.full_name || 'Unknown',
-              company_name: supplierData?.company_name || 'Unknown Company'
+            supplier: supplierData || {
+              full_name: 'Unknown',
+              company_name: 'Unknown Company'
             }
           };
         })
@@ -186,12 +183,10 @@ const Evaluations = () => {
   const filterBids = (bids: Bid[]) => {
     let filtered = [...bids];
     
-    // Apply category filter if not 'all'
     if (category !== 'all') {
       filtered = filtered.filter(bid => bid.tender?.category === category);
     }
     
-    // Apply date range filter if selected
     if (dateRange?.from) {
       const fromDate = new Date(dateRange.from);
       filtered = filtered.filter(bid => {
@@ -201,7 +196,7 @@ const Evaluations = () => {
       
       if (dateRange.to) {
         const toDate = new Date(dateRange.to);
-        toDate.setHours(23, 59, 59, 999); // End of the day
+        toDate.setHours(23, 59, 59, 999);
         filtered = filtered.filter(bid => {
           const bidDate = new Date(bid.created_at);
           return bidDate <= toDate;
@@ -226,6 +221,7 @@ const Evaluations = () => {
   const filteredPendingBids = filterBids(pendingBids);
   const filteredEvaluatedBids = filterBids(evaluatedBids);
   const categories = getCategories();
+  const showClearFilters = category !== 'all' || dateRange?.from !== undefined;
   
   return (
     <div className="min-h-screen p-8">
@@ -237,38 +233,18 @@ const Evaluations = () => {
           </p>
         </div>
         
-        <div className="mb-8 flex flex-col sm:flex-row justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <CalendarDateRangePicker 
-              date={dateRange}
-              onDateChange={setDateRange}
-            />
-          </div>
-          
-          {category !== 'all' || dateRange?.from ? (
-            <Button 
-              variant="ghost" 
-              onClick={() => {
-                setCategory('all');
-                setDateRange(undefined);
-              }}
-            >
-              Clear Filters
-            </Button>
-          ) : null}
-        </div>
+        <FilterSection
+          category={category}
+          categories={categories}
+          dateRange={dateRange}
+          onCategoryChange={setCategory}
+          onDateChange={setDateRange}
+          onClearFilters={() => {
+            setCategory('all');
+            setDateRange(undefined);
+          }}
+          showClearButton={showClearFilters}
+        />
         
         <Tabs defaultValue="pending" className="mb-8">
           <TabsList>
@@ -297,60 +273,11 @@ const Evaluations = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {loading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex items-center gap-4">
-                        <Skeleton className="h-12 w-12 rounded-full" />
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[250px]" />
-                          <Skeleton className="h-4 w-[200px]" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : filteredPendingBids.length === 0 ? (
-                  <div className="text-center py-8">
-                    <SearchX className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium">No pending evaluations</h3>
-                    <p className="text-muted-foreground mt-1">
-                      {category !== 'all' || dateRange?.from 
-                        ? 'Try changing your filters' 
-                        : 'All bids have been evaluated'}
-                    </p>
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Tender</TableHead>
-                        <TableHead>Supplier</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Bid Amount</TableHead>
-                        <TableHead>Submission Date</TableHead>
-                        <TableHead></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredPendingBids.map((bid) => (
-                        <TableRow key={bid.id}>
-                          <TableCell className="font-medium">
-                            {bid.tender?.title || 'Unknown Tender'}
-                          </TableCell>
-                          <TableCell>{bid.supplier?.company_name || 'Unknown'}</TableCell>
-                          <TableCell>{bid.tender?.category || 'Uncategorized'}</TableCell>
-                          <TableCell>{bid.bid_amount.toLocaleString()} KES</TableCell>
-                          <TableCell>{new Date(bid.created_at).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <Button asChild>
-                              <Link to={`/evaluation/${bid.id}`}>Evaluate</Link>
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
+                <BidList
+                  bids={filteredPendingBids}
+                  loading={loading}
+                  showFilterMessage={showClearFilters}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -364,60 +291,12 @@ const Evaluations = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {loading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex items-center gap-4">
-                        <Skeleton className="h-12 w-12 rounded-full" />
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[250px]" />
-                          <Skeleton className="h-4 w-[200px]" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : filteredEvaluatedBids.length === 0 ? (
-                  <div className="text-center py-8">
-                    <SearchX className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium">No evaluated bids</h3>
-                    <p className="text-muted-foreground mt-1">
-                      {category !== 'all' || dateRange?.from 
-                        ? 'Try changing your filters' 
-                        : 'You have not evaluated any bids yet'}
-                    </p>
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Tender</TableHead>
-                        <TableHead>Supplier</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Bid Amount</TableHead>
-                        <TableHead>Evaluation Date</TableHead>
-                        <TableHead></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredEvaluatedBids.map((bid) => (
-                        <TableRow key={bid.id}>
-                          <TableCell className="font-medium">
-                            {bid.tender?.title || 'Unknown Tender'}
-                          </TableCell>
-                          <TableCell>{bid.supplier?.company_name || 'Unknown'}</TableCell>
-                          <TableCell>{bid.tender?.category || 'Uncategorized'}</TableCell>
-                          <TableCell>{bid.bid_amount.toLocaleString()} KES</TableCell>
-                          <TableCell>{new Date(bid.created_at).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <Button variant="outline" asChild>
-                              <Link to={`/evaluation/${bid.id}`}>View</Link>
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
+                <BidList
+                  bids={filteredEvaluatedBids}
+                  loading={loading}
+                  isEvaluated={true}
+                  showFilterMessage={showClearFilters}
+                />
               </CardContent>
             </Card>
           </TabsContent>
