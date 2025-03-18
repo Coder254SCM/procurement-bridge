@@ -65,6 +65,7 @@ export type Database = {
           evaluation_type: Database["public"]["Enums"]["user_role"]
           evaluator_id: string
           id: string
+          recommendation: string | null
           score: number
           updated_at: string | null
         }
@@ -76,6 +77,7 @@ export type Database = {
           evaluation_type: Database["public"]["Enums"]["user_role"]
           evaluator_id: string
           id?: string
+          recommendation?: string | null
           score: number
           updated_at?: string | null
         }
@@ -87,6 +89,7 @@ export type Database = {
           evaluation_type?: Database["public"]["Enums"]["user_role"]
           evaluator_id?: string
           id?: string
+          recommendation?: string | null
           score?: number
           updated_at?: string | null
         }

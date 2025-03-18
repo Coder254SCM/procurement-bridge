@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Download, CheckCircle, FileText } from 'lucide-react';
@@ -43,7 +42,7 @@ interface Evaluation {
   evaluation_type: UserRole;
   score: number;
   comments: string | null;
-  recommendation?: string; // Add recommendation field
+  recommendation: string | null;
   created_at: string;
   updated_at?: string;
 }
@@ -144,13 +143,23 @@ const EvaluationForm = () => {
         
       if (bidError) throw bidError;
       
-      // Safe assignment with type checking and defaults for supplier
+      // Create a safe bid object with proper type handling
+      let supplierData = {
+        full_name: 'Unknown',
+        company_name: 'Unknown Company'
+      };
+      
+      // Only assign if supplier data is valid (not an error object)
+      if (bidData.supplier && typeof bidData.supplier === 'object' && !('error' in bidData.supplier)) {
+        supplierData = {
+          full_name: bidData.supplier.full_name || 'Unknown',
+          company_name: bidData.supplier.company_name || 'Unknown Company'
+        };
+      }
+      
       const safeBid: Bid = {
         ...bidData,
-        supplier: {
-          full_name: bidData.supplier?.full_name || 'Unknown',
-          company_name: bidData.supplier?.company_name || 'Unknown Company'
-        }
+        supplier: supplierData
       };
       
       setBid(safeBid);
@@ -202,8 +211,22 @@ const EvaluationForm = () => {
         return;
       }
       
-      // Convert string role to UserRole enum
-      const evaluationTypeValue = evaluatorType as UserRole;
+      // Convert the evaluation type string to the correct enum format
+      let evaluationType: UserRole;
+      
+      switch (evaluatorType) {
+        case 'evaluator_finance':
+          evaluationType = UserRole.EVALUATOR_FINANCE;
+          break;
+        case 'evaluator_technical':
+          evaluationType = UserRole.EVALUATOR_TECHNICAL;
+          break;
+        case 'evaluator_procurement':
+          evaluationType = UserRole.EVALUATOR_PROCUREMENT;
+          break;
+        default:
+          throw new Error('Invalid evaluator type');
+      }
       
       if (existingEvaluation) {
         // Update existing evaluation
@@ -230,7 +253,7 @@ const EvaluationForm = () => {
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluationTypeValue,
+            evaluation_type: evaluationType,
             score,
             comments,
             recommendation

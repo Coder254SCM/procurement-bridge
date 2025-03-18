@@ -1,354 +1,220 @@
-
+// Imports
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, ChevronUp, Search, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { UserRole } from '@/types/enums';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { CalendarDateRangePicker } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils"
+import { CalendarIcon } from "lucide-react"
 
-interface Tender {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  budget_amount: number;
-  budget_currency: string;
-  submission_deadline: string;
-  status: string;
-  created_at: string;
-  buyer_id: string;
-  buyer_name?: string;
-}
-
+// Interfaces
 interface Bid {
   id: string;
   tender_id: string;
   supplier_id: string;
   bid_amount: number;
   status: string;
+  documents: any;
+  technical_details: any;
   created_at: string;
-  supplier_name?: string;
-  tender_title?: string;
+  tender?: {
+    title: string;
+    description: string;
+    category: string;
+    budget_amount: number;
+    budget_currency: string;
+  };
+  supplier?: {
+    full_name: string | null;
+    company_name: string | null;
+  };
+}
+
+interface Evaluation {
+  id: string;
+  bid_id: string;
+  evaluator_id: string;
+  evaluation_type: string;
+  score: number;
+  comments: string | null;
+  created_at: string;
 }
 
 const Evaluations = () => {
+  const [bids, setBids] = useState<Bid[]>([]);
+  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = React.useState<Date | undefined>([
+    undefined,
+    undefined,
+  ])
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [userRoles, setUserRoles] = useState<string[]>([]);
-  const [pendingEvaluations, setPendingEvaluations] = useState<Bid[]>([]);
-  const [completedEvaluations, setCompletedEvaluations] = useState<Bid[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (error || !data.session) {
-        toast({
-          variant: "destructive",
-          title: "Not Authenticated",
-          description: "Please log in to view evaluations",
-        });
-        navigate('/');
-        return;
-      }
-      
-      setSession(data.session);
-      
-      // Check user roles
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', data.session.user.id);
-        
-      if (rolesError) {
-        console.error("Error fetching user roles:", rolesError);
+    const fetchEvaluations = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch all bids with tender and supplier details
+        const { data: bidsData, error: bidsError } = await supabase
+          .from('bids')
+          .select(`
+            *,
+            tender:tender_id(
+              title,
+              description,
+              category,
+              budget_amount,
+              budget_currency
+            ),
+            supplier:supplier_id(
+              full_name,
+              company_name
+            )
+          `);
+
+        if (bidsError) throw bidsError;
+        setBids(bidsData || []);
+
+        // Fetch all evaluations
+        const { data: evaluationsData, error: evaluationsError } = await supabase
+          .from('evaluations')
+          .select('*');
+
+        if (evaluationsError) throw evaluationsError;
+        setEvaluations(evaluationsData || []);
+
+        // Extract bid IDs that have already been evaluated
+        const evaluatedBidIds = evaluationsData.map((evaluation: any) => evaluation.bid_id);
+
+        // Filter bids to only show those that haven't been evaluated
+        const filteredBids = bidsData?.filter(bid => !evaluatedBidIds.includes(bid.id)) || [];
+        setBids(filteredBids);
+
+      } catch (error: any) {
+        console.error('Error fetching data:', error);
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Could not verify your permissions",
+          description: error.message || "Failed to load evaluations",
         });
-      } else if (rolesData) {
-        const roles = rolesData.map((r: { role: string }) => r.role);
-        setUserRoles(roles);
-        
-        // Check if user has any evaluator role
-        const isEvaluator = roles.some(role => role.includes('evaluator_'));
-        
-        if (!isEvaluator) {
-          toast({
-            variant: "destructive",
-            title: "Permission Denied",
-            description: "Only evaluators can access this page",
-          });
-          navigate('/dashboard');
-          return;
-        }
-        
-        // Fetch pending evaluations
-        fetchEvaluations(data.session.user.id, roles);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
-    
-    checkSession();
-  }, [navigate, toast]);
 
-  const fetchEvaluations = async (userId: string, roles: string[]) => {
-    try {
-      setLoading(true);
-      
-      // Get the evaluation types for this user
-      const evaluationTypes = roles.filter(role => role.includes('evaluator_'));
-      
-      // Fetch bids that need evaluation from this user type and don't have evaluations yet
-      // This is a more complex query that would ideally be handled with a stored procedure
-      // For this example, we'll simulate by fetching all bids under review
-      const { data: bidsData, error: bidsError } = await supabase
-        .from('bids')
-        .select(`
-          *,
-          tenders(title, buyer_id)
-        `)
-        .eq('status', 'under_evaluation');
-        
-      if (bidsError) throw bidsError;
-      
-      // Fetch evaluations done by this user
-      const { data: evaluationsData, error: evaluationsError } = await supabase
-        .from('evaluations')
-        .select('*')
-        .eq('evaluator_id', userId);
-        
-      if (evaluationsError) throw evaluationsError;
-      
-      // Format the bids data
-      const formattedBids = bidsData.map((bid: any) => ({
-        id: bid.id,
-        tender_id: bid.tender_id,
-        supplier_id: bid.supplier_id,
-        bid_amount: bid.bid_amount,
-        status: bid.status,
-        created_at: bid.created_at,
-        tender_title: bid.tenders?.title
-      }));
-      
-      // Filter out bids that have already been evaluated by this user
-      const evaluatedBidIds = evaluationsData.map((evaluation: any) => evaluation.bid_id);
-      
-      const pending = formattedBids.filter((bid: any) => !evaluatedBidIds.includes(bid.id));
-      const completed = formattedBids.filter((bid: any) => evaluatedBidIds.includes(bid.id));
-      
-      setPendingEvaluations(pending);
-      setCompletedEvaluations(completed);
-      
-    } catch (error) {
-      console.error('Error fetching evaluations:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load evaluations",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchEvaluations();
+  }, [toast]);
 
-  const handleEvaluate = (bidId: string) => {
-    navigate(`/evaluations/${bidId}`);
-  };
-
-  const filteredPendingEvaluations = pendingEvaluations.filter(bid => {
-    if (searchQuery && !bid.tender_title?.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    
-    if (selectedFilter !== 'all' && !bid.tender_id.includes(selectedFilter)) {
-      return false;
-    }
-    
-    return true;
+  const filteredBids = bids.filter(bid => {
+    const searchTermLower = searchTerm.toLowerCase();
+    const titleMatch = bid.tender?.title?.toLowerCase().includes(searchTermLower);
+    const supplierMatch = bid.supplier?.company_name?.toLowerCase().includes(searchTermLower);
+    return titleMatch || supplierMatch;
   });
 
-  if (loading) {
-    return (
-      <div className="min-h-screen p-8 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="mb-8">
-        <Button variant="ghost" asChild>
-          <Link to="/dashboard">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Link>
-        </Button>
+    <div className="container mx-auto py-10">
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Bids for Evaluation</h1>
+        <Input
+          type="search"
+          placeholder="Search by tender title or supplier..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-md"
+        />
       </div>
-      
-      <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Bid Evaluations</h1>
-          <p className="text-muted-foreground mt-2">
-            Review and evaluate supplier bids based on your expertise.
-          </p>
-        </div>
-        
-        <div className="mb-6 flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search by tender title..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <Select value={selectedFilter} onValueChange={setSelectedFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="construction">Construction</SelectItem>
-              <SelectItem value="it">IT Services</SelectItem>
-              <SelectItem value="supplies">Office Supplies</SelectItem>
-              <SelectItem value="consulting">Consulting</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <Tabs defaultValue="pending">
-          <TabsList className="mb-8">
-            <TabsTrigger value="pending">
-              Pending Evaluations
-              {pendingEvaluations.length > 0 && (
-                <Badge variant="secondary" className="ml-2">{pendingEvaluations.length}</Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="completed">
-              Completed Evaluations
-              {completedEvaluations.length > 0 && (
-                <Badge variant="secondary" className="ml-2">{completedEvaluations.length}</Badge>
-              )}
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="pending">
-            {filteredPendingEvaluations.length === 0 ? (
-              <div className="text-center py-12 border rounded-lg">
-                <p className="text-lg text-muted-foreground">No pending evaluations found</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {searchQuery || selectedFilter !== 'all' ? 
-                    "Try changing your search or filter" : 
-                    "All assigned evaluations are complete"}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredPendingEvaluations.map((bid) => (
-                  <Card key={bid.id} className="overflow-hidden">
-                    <CardHeader className="pb-3">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle>{bid.tender_title}</CardTitle>
-                          <CardDescription>Bid #{bid.id.slice(0, 8)}</CardDescription>
-                        </div>
-                        <Badge>{bid.status}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Bid Amount</p>
-                          <p className="font-medium">{bid.bid_amount} KES</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Submitted</p>
-                          <p className="font-medium">{new Date(bid.created_at).toLocaleDateString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Supplier ID</p>
-                          <p className="font-medium">{bid.supplier_id.slice(0, 8)}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex justify-end bg-muted/50 pt-3">
-                      <Button onClick={() => handleEvaluate(bid.id)}>
-                        Evaluate Bid
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="completed">
-            {completedEvaluations.length === 0 ? (
-              <div className="text-center py-12 border rounded-lg">
-                <p className="text-lg text-muted-foreground">No completed evaluations</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Evaluations you complete will appear here
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {completedEvaluations.map((bid) => (
-                  <Card key={bid.id} className="overflow-hidden">
-                    <CardHeader className="pb-3">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle>{bid.tender_title}</CardTitle>
-                          <CardDescription>Bid #{bid.id.slice(0, 8)}</CardDescription>
-                        </div>
-                        <Badge variant="outline">Evaluated</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Bid Amount</p>
-                          <p className="font-medium">{bid.bid_amount} KES</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Evaluated On</p>
-                          <p className="font-medium">{new Date().toLocaleDateString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Supplier ID</p>
-                          <p className="font-medium">{bid.supplier_id.slice(0, 8)}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex justify-end bg-muted/50 pt-3">
-                      <Button variant="outline" onClick={() => handleEvaluate(bid.id)}>
-                        View Evaluation
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+
+      <div className="mb-4">
+        <p className="text-sm text-muted-foreground">
+          Displaying bids that require evaluation.
+        </p>
       </div>
+
+      <div className="mb-4">
+        <CalendarDateRangePicker className="border rounded-md" date={dateRange} onDateChange={setDateRange} />
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      ) : filteredBids.length > 0 ? (
+        <div className="mx-auto">
+          <Table>
+            <TableCaption>A list of bids that require evaluation.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[200px]">Title</TableHead>
+                <TableHead>Supplier</TableHead>
+                <TableHead>Bid Amount</TableHead>
+                <TableHead>Submission Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredBids.map((bid) => (
+                <TableRow key={bid.id}>
+                  <TableCell className="font-medium">{bid.tender?.title}</TableCell>
+                  <TableCell>{bid.supplier?.company_name || 'Unknown'}</TableCell>
+                  <TableCell>{bid.bid_amount} {bid.tender?.budget_currency}</TableCell>
+                  <TableCell>{formatDate(bid.created_at)}</TableCell>
+                  <TableCell className="text-right">
+                    <Button size="sm" asChild>
+                      <Link to={`/evaluation/${bid.id}`}>Evaluate</Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  {filteredBids.length} bids awaiting evaluation
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </div>
+      ) : (
+        <Card className="text-center">
+          <CardHeader>
+            <CardTitle>No Bids Available</CardTitle>
+            <CardDescription>
+              There are no bids currently available for evaluation.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Please check back later.</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
