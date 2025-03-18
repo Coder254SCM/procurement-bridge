@@ -145,7 +145,7 @@ const Evaluations = () => {
       }));
       
       // Filter out bids that have already been evaluated by this user
-      const evaluatedBidIds = evaluationsData.map((eval: any) => eval.bid_id);
+      const evaluatedBidIds = evaluationsData.map((evaluation: any) => evaluation.bid_id);
       
       const pending = formattedBids.filter((bid: any) => !evaluatedBidIds.includes(bid.id));
       const completed = formattedBids.filter((bid: any) => evaluatedBidIds.includes(bid.id));

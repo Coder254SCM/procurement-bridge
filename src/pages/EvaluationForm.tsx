@@ -5,6 +5,7 @@ import { ArrowLeft, Download, CheckCircle, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/types/enums';
@@ -22,16 +23,16 @@ interface Bid {
   documents: any;
   technical_details: any;
   created_at: string;
-  tender: {
+  tender?: {
     title: string;
     description: string;
     category: string;
     budget_amount: number;
     budget_currency: string;
   };
-  supplier: {
-    full_name: string;
-    company_name: string;
+  supplier?: {
+    full_name: string | null;
+    company_name: string | null;
   };
 }
 
@@ -39,10 +40,12 @@ interface Evaluation {
   id: string;
   bid_id: string;
   evaluator_id: string;
-  evaluation_type: string;
+  evaluation_type: UserRole;
   score: number;
-  comments: string;
+  comments: string | null;
+  recommendation?: string; // Add recommendation field
   created_at: string;
+  updated_at?: string;
 }
 
 const EvaluationForm = () => {
@@ -141,7 +144,16 @@ const EvaluationForm = () => {
         
       if (bidError) throw bidError;
       
-      setBid(bidData);
+      // Safe assignment with type checking and defaults for supplier
+      const safeBid: Bid = {
+        ...bidData,
+        supplier: {
+          full_name: bidData.supplier?.full_name || 'Unknown',
+          company_name: bidData.supplier?.company_name || 'Unknown Company'
+        }
+      };
+      
+      setBid(safeBid);
       
       // Check if user has already evaluated this bid
       const { data: evaluationData, error: evaluationError } = await supabase
@@ -190,6 +202,9 @@ const EvaluationForm = () => {
         return;
       }
       
+      // Convert string role to UserRole enum
+      const evaluationTypeValue = evaluatorType as UserRole;
+      
       if (existingEvaluation) {
         // Update existing evaluation
         const { error } = await supabase
@@ -197,6 +212,7 @@ const EvaluationForm = () => {
           .update({
             score,
             comments,
+            recommendation,
             updated_at: new Date().toISOString()
           })
           .eq('id', existingEvaluation.id);
@@ -214,9 +230,10 @@ const EvaluationForm = () => {
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluatorType,
+            evaluation_type: evaluationTypeValue,
             score,
             comments,
+            recommendation
             // In a real implementation, we'd add blockchain hash here
           });
           
