@@ -1,18 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Download, CheckCircle, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/types/enums';
-import { Textarea } from '@/components/ui/textarea';
-import { Slider } from '@/components/ui/slider';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+
+// Import our new components
+import EvaluationHeader from '@/components/evaluations/EvaluationHeader';
+import BidSummaryCards from '@/components/evaluations/BidSummaryCards';
+import TenderDetailCards from '@/components/evaluations/TenderDetailCards';
+import EvaluationFormComponent from '@/components/evaluations/EvaluationForm';
 
 interface Bid {
   id: string;
@@ -309,190 +307,42 @@ const EvaluationForm = () => {
 
   return (
     <div className="min-h-screen p-8">
-      <div className="mb-8">
-        <Button variant="ghost" asChild>
-          <Link to="/evaluations">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Evaluations
-          </Link>
-        </Button>
-      </div>
-      
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">{bid.tender?.title}</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <p className="text-muted-foreground">
-              Bid #{bid.id.slice(0, 8)} • {new Date(bid.created_at).toLocaleDateString()}
-            </p>
-            {existingEvaluation && (
-              <Badge variant="secondary" className="ml-2">Previously Evaluated</Badge>
-            )}
-          </div>
-        </div>
+        <EvaluationHeader 
+          title={bid.tender?.title || 'Untitled Tender'} 
+          bidId={bid.id} 
+          createdAt={bid.created_at} 
+          isEvaluated={!!existingEvaluation}
+        />
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Bid Amount</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{bid.bid_amount} {bid.tender?.budget_currency || 'KES'}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Budget: {bid.tender?.budget_amount} {bid.tender?.budget_currency || 'KES'}
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Supplier</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium">{bid.supplier?.company_name || 'Unknown Company'}</p>
-              <p className="text-sm text-muted-foreground mt-1">{bid.supplier?.full_name || 'Unknown Supplier'}</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium">{bid.tender?.category || 'Uncategorized'}</p>
-              <p className="text-sm text-muted-foreground mt-1">Your role: {evaluatorType.toUpperCase()} Evaluator</p>
-            </CardContent>
-          </Card>
-        </div>
+        <BidSummaryCards 
+          bidAmount={bid.bid_amount}
+          budgetAmount={bid.tender?.budget_amount}
+          budgetCurrency={bid.tender?.budget_currency}
+          supplierName={bid.supplier?.full_name || 'Unknown'}
+          supplierCompany={bid.supplier?.company_name || 'Unknown Company'}
+          category={bid.tender?.category}
+          evaluatorType={evaluatorType}
+        />
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Tender Description</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>{bid.tender?.description || 'No description available'}</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Technical Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {bid.technical_details ? (
-                <pre className="bg-muted p-4 rounded-md overflow-auto text-sm whitespace-pre-wrap">
-                  {JSON.stringify(bid.technical_details, null, 2)}
-                </pre>
-              ) : (
-                <p className="text-muted-foreground">No technical details provided</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        <TenderDetailCards 
+          description={bid.tender?.description}
+          technicalDetails={bid.technical_details}
+          documents={bid.documents}
+        />
         
-        {bid.documents && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Attached Documents</CardTitle>
-              <CardDescription>
-                Review these documents before submitting your evaluation
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {Object.entries(bid.documents || {}).map(([key, value]: [string, any]) => (
-                  <div key={key} className="flex items-center justify-between p-2 bg-muted rounded-md">
-                    <div className="flex items-center">
-                      <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span>{key}</span>
-                    </div>
-                    <Button size="sm" variant="ghost">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>{isReadOnly ? 'Your Evaluation' : 'Submit Your Evaluation'}</CardTitle>
-            <CardDescription>
-              {isReadOnly 
-                ? 'You have already evaluated this bid' 
-                : `Evaluate this bid based on your ${evaluatorType} expertise`}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <h3 className="font-medium">Score (1-10)</h3>
-              <div className="flex items-center gap-4">
-                <Slider
-                  defaultValue={[score]}
-                  max={10}
-                  step={1}
-                  onValueChange={(value) => setScore(value[0])}
-                  disabled={isReadOnly}
-                  className="flex-1"
-                />
-                <span className="font-bold text-lg min-w-10 text-center">{score}/10</span>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="font-medium">Comments</h3>
-              <Textarea
-                placeholder="Provide your professional assessment of this bid..."
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-                disabled={isReadOnly}
-                className="min-h-32"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="font-medium">Recommendation</h3>
-              <RadioGroup 
-                value={recommendation} 
-                onValueChange={setRecommendation}
-                disabled={isReadOnly}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="accept" id="accept" />
-                  <Label htmlFor="accept">Accept</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="reject" id="reject" />
-                  <Label htmlFor="reject">Reject</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="request_more_info" id="request_more_info" />
-                  <Label htmlFor="request_more_info">Request More Information</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          </CardContent>
-          <CardFooter>
-            {isReadOnly ? (
-              <div className="flex items-center text-green-600">
-                <CheckCircle className="h-5 w-5 mr-2" />
-                <span>Evaluation submitted on {new Date(existingEvaluation?.created_at || '').toLocaleDateString()}</span>
-              </div>
-            ) : (
-              <Button 
-                onClick={handleSubmitEvaluation} 
-                disabled={submitting || score === 0 || !recommendation}
-                className="ml-auto"
-              >
-                {submitting ? 'Submitting...' : 'Submit Evaluation'}
-              </Button>
-            )}
-          </CardFooter>
-        </Card>
+        <EvaluationFormComponent 
+          score={score}
+          comments={comments}
+          recommendation={recommendation}
+          isReadOnly={isReadOnly}
+          submitting={submitting}
+          existingEvaluation={existingEvaluation}
+          onScoreChange={setScore}
+          onCommentsChange={setComments}
+          onRecommendationChange={setRecommendation}
+          onSubmit={handleSubmitEvaluation}
+        />
       </div>
     </div>
   );

@@ -1,45 +1,31 @@
 
-// Imports
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { SearchX, Clock, CheckCircle2, Filter } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { CalendarDateRangePicker } from "@/components/ui/date-range-picker";
-import { cn } from "@/lib/utils";
-import { DateRange } from "react-day-picker";
-import { CalendarIcon } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CalendarDateRangePicker } from '@/components/evaluations/DateRangePicker';
+import { DateRange } from 'react-day-picker';
 
-// Interfaces
+// Types
 interface Bid {
   id: string;
   tender_id: string;
   supplier_id: string;
   bid_amount: number;
   status: string;
-  documents: any;
-  technical_details: any;
   created_at: string;
   tender?: {
     title: string;
-    description: string;
     category: string;
-    budget_amount: number;
-    budget_currency: string;
   };
   supplier?: {
     full_name: string | null;
@@ -47,186 +33,375 @@ interface Bid {
   };
 }
 
-interface Evaluation {
-  id: string;
-  bid_id: string;
-  evaluator_id: string;
-  evaluation_type: string;
-  score: number;
-  comments: string | null;
-  recommendation: string | null;
-  created_at: string;
-}
-
 const Evaluations = () => {
-  const [bids, setBids] = useState<Bid[]>([]);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const navigate = useNavigate();
   const { toast } = useToast();
-
+  const [loading, setLoading] = useState(true);
+  const [pendingBids, setPendingBids] = useState<Bid[]>([]);
+  const [evaluatedBids, setEvaluatedBids] = useState<Bid[]>([]);
+  const [category, setCategory] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [userRoles, setUserRoles] = useState<string[]>([]);
+  
   useEffect(() => {
-    const fetchEvaluations = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch all bids with tender and supplier details
-        const { data: bidsData, error: bidsError } = await supabase
-          .from('bids')
-          .select(`
-            *,
-            tender:tender_id(
-              title,
-              description,
-              category,
-              budget_amount,
-              budget_currency
-            ),
-            supplier:supplier_id(
-              full_name,
-              company_name
-            )
-          `);
-
-        if (bidsError) throw bidsError;
-        
-        // Make sure all bids have supplier property with required fields
-        const safelyTypedBids = (bidsData || []).map(bid => {
-          // Ensure we have a properly structured supplier object
-          return {
-            ...bid,
-            supplier: {
-              full_name: bid.supplier?.full_name || null,
-              company_name: bid.supplier?.company_name || null
-            }
-          } as Bid;
-        });
-
-        // Fetch all evaluations
-        const { data: evaluationsData, error: evaluationsError } = await supabase
-          .from('evaluations')
-          .select('*');
-
-        if (evaluationsError) throw evaluationsError;
-        setEvaluations(evaluationsData || []);
-
-        // Extract bid IDs that have already been evaluated
-        const evaluatedBidIds = evaluationsData?.map((evaluation: any) => evaluation.bid_id) || [];
-
-        // Filter bids to only show those that haven't been evaluated
-        const filteredBids = safelyTypedBids.filter(bid => !evaluatedBidIds.includes(bid.id)) || [];
-        setBids(filteredBids);
-
-      } catch (error: any) {
-        console.error('Error fetching data:', error);
+    const fetchSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error || !data.session) {
         toast({
           variant: "destructive",
-          title: "Error",
-          description: error.message || "Failed to load evaluations",
+          title: "Authentication Error",
+          description: "Please log in to view evaluations",
         });
-      } finally {
-        setLoading(false);
+        navigate('/');
+        return;
       }
+      
+      // Check user roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', data.session.user.id);
+      
+      if (rolesError) {
+        console.error("Error fetching user roles:", rolesError);
+        return;
+      }
+      
+      if (rolesData) {
+        const roles = rolesData.map((r: { role: string }) => r.role);
+        setUserRoles(roles);
+        
+        // Check if user has any evaluator role
+        const isEvaluator = roles.some(role => role.includes('evaluator_'));
+        
+        if (!isEvaluator) {
+          toast({
+            variant: "destructive",
+            title: "Permission Denied",
+            description: "Only evaluators can access this page",
+          });
+          navigate('/dashboard');
+          return;
+        }
+      }
+      
+      fetchBids(data.session.user.id);
     };
-
-    fetchEvaluations();
-  }, [toast]);
-
-  const filteredBids = bids.filter(bid => {
-    const searchTermLower = searchTerm.toLowerCase();
-    const titleMatch = bid.tender?.title?.toLowerCase().includes(searchTermLower);
-    const supplierMatch = bid.supplier?.company_name?.toLowerCase().includes(searchTermLower);
-    return titleMatch || supplierMatch;
-  });
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    
+    fetchSession();
+  }, [navigate, toast]);
+  
+  const fetchBids = async (userId: string) => {
+    try {
+      setLoading(true);
+      
+      // Get bids pending evaluation (no evaluation from this user yet)
+      const { data: pendingData, error: pendingError } = await supabase
+        .from('bids')
+        .select(`
+          *,
+          tender:tender_id(title, category),
+          supplier:supplier_id(full_name, company_name)
+        `)
+        .eq('status', 'under_evaluation')
+        .not('id', 'in', `(
+          select bid_id from evaluations 
+          where evaluator_id = '${userId}'
+        )`);
+      
+      if (pendingError) throw pendingError;
+      
+      // Process pending bids with safe type handling
+      const safePendingBids = pendingData.map((bid: any) => ({
+        ...bid,
+        supplier: {
+          full_name: bid.supplier?.full_name || 'Unknown',
+          company_name: bid.supplier?.company_name || 'Unknown Company'
+        }
+      }));
+      
+      setPendingBids(safePendingBids);
+      
+      // Get bids already evaluated by this user
+      const { data: evaluatedData, error: evaluatedError } = await supabase
+        .from('bids')
+        .select(`
+          *,
+          tender:tender_id(title, category),
+          supplier:supplier_id(full_name, company_name)
+        `)
+        .in('id', `(
+          select bid_id from evaluations 
+          where evaluator_id = '${userId}'
+        )`);
+      
+      if (evaluatedError) throw evaluatedError;
+      
+      // Process evaluated bids with safe type handling
+      const safeEvaluatedBids = evaluatedData.map((bid: any) => ({
+        ...bid,
+        supplier: {
+          full_name: bid.supplier?.full_name || 'Unknown',
+          company_name: bid.supplier?.company_name || 'Unknown Company'
+        }
+      }));
+      
+      setEvaluatedBids(safeEvaluatedBids);
+      
+    } catch (error) {
+      console.error('Error fetching bids:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load evaluation data",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
-
+  
+  // Filter bids based on selected category and date range
+  const filterBids = (bids: Bid[]) => {
+    let filtered = [...bids];
+    
+    // Apply category filter if not 'all'
+    if (category !== 'all') {
+      filtered = filtered.filter(bid => bid.tender?.category === category);
+    }
+    
+    // Apply date range filter if selected
+    if (dateRange?.from) {
+      const fromDate = new Date(dateRange.from);
+      filtered = filtered.filter(bid => {
+        const bidDate = new Date(bid.created_at);
+        return bidDate >= fromDate;
+      });
+      
+      if (dateRange.to) {
+        const toDate = new Date(dateRange.to);
+        toDate.setHours(23, 59, 59, 999); // End of the day
+        filtered = filtered.filter(bid => {
+          const bidDate = new Date(bid.created_at);
+          return bidDate <= toDate;
+        });
+      }
+    }
+    
+    return filtered;
+  };
+  
+  // Get unique categories from all bids
+  const getCategories = () => {
+    const categories = new Set<string>();
+    [...pendingBids, ...evaluatedBids].forEach(bid => {
+      if (bid.tender?.category) {
+        categories.add(bid.tender.category);
+      }
+    });
+    return Array.from(categories);
+  };
+  
+  const filteredPendingBids = filterBids(pendingBids);
+  const filteredEvaluatedBids = filterBids(evaluatedBids);
+  const categories = getCategories();
+  
   return (
-    <div className="container mx-auto py-10">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Bids for Evaluation</h1>
-        <Input
-          type="search"
-          placeholder="Search by tender title or supplier..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-md"
-        />
-      </div>
-
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground">
-          Displaying bids that require evaluation.
-        </p>
-      </div>
-
-      <div className="mb-4">
-        <CalendarDateRangePicker date={dateRange} onDateChange={setDateRange} />
-      </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    <div className="min-h-screen p-8">
+      <div className="container mx-auto max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Evaluations</h1>
+          <p className="text-muted-foreground mt-2">
+            Review and evaluate procurement bids
+          </p>
         </div>
-      ) : filteredBids.length > 0 ? (
-        <div className="mx-auto">
-          <Table>
-            <TableCaption>A list of bids that require evaluation.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[200px]">Title</TableHead>
-                <TableHead>Supplier</TableHead>
-                <TableHead>Bid Amount</TableHead>
-                <TableHead>Submission Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredBids.map((bid) => (
-                <TableRow key={bid.id}>
-                  <TableCell className="font-medium">{bid.tender?.title}</TableCell>
-                  <TableCell>{bid.supplier?.company_name || 'Unknown'}</TableCell>
-                  <TableCell>{bid.bid_amount} {bid.tender?.budget_currency}</TableCell>
-                  <TableCell>{formatDate(bid.created_at)}</TableCell>
-                  <TableCell className="text-right">
-                    <Button size="sm" asChild>
-                      <Link to={`/evaluation/${bid.id}`}>Evaluate</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  {filteredBids.length} bids awaiting evaluation
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
+        
+        <div className="mb-8 flex flex-col sm:flex-row justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <CalendarDateRangePicker 
+              date={dateRange}
+              onDateChange={setDateRange}
+            />
+          </div>
+          
+          {category !== 'all' || dateRange?.from ? (
+            <Button 
+              variant="ghost" 
+              onClick={() => {
+                setCategory('all');
+                setDateRange(undefined);
+              }}
+            >
+              Clear Filters
+            </Button>
+          ) : null}
         </div>
-      ) : (
-        <Card className="text-center">
-          <CardHeader>
-            <CardTitle>No Bids Available</CardTitle>
-            <CardDescription>
-              There are no bids currently available for evaluation.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Please check back later.</p>
-          </CardContent>
-        </Card>
-      )}
+        
+        <Tabs defaultValue="pending" className="mb-8">
+          <TabsList>
+            <TabsTrigger value="pending" className="flex items-center">
+              <Clock className="h-4 w-4 mr-2" />
+              Pending Evaluation
+              {pendingBids.length > 0 && (
+                <Badge className="ml-2">{filteredPendingBids.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="evaluated" className="flex items-center">
+              <CheckCircle2 className="h-4 w-4 mr-2" />
+              Evaluated
+              {evaluatedBids.length > 0 && (
+                <Badge className="ml-2">{filteredEvaluatedBids.length}</Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="pending">
+            <Card>
+              <CardHeader>
+                <CardTitle>Pending Evaluations</CardTitle>
+                <CardDescription>
+                  Bids requiring your evaluation
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-[250px]" />
+                          <Skeleton className="h-4 w-[200px]" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredPendingBids.length === 0 ? (
+                  <div className="text-center py-8">
+                    <SearchX className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium">No pending evaluations</h3>
+                    <p className="text-muted-foreground mt-1">
+                      {category !== 'all' || dateRange?.from 
+                        ? 'Try changing your filters' 
+                        : 'All bids have been evaluated'}
+                    </p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Tender</TableHead>
+                        <TableHead>Supplier</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Bid Amount</TableHead>
+                        <TableHead>Submission Date</TableHead>
+                        <TableHead></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredPendingBids.map((bid) => (
+                        <TableRow key={bid.id}>
+                          <TableCell className="font-medium">
+                            {bid.tender?.title || 'Unknown Tender'}
+                          </TableCell>
+                          <TableCell>{bid.supplier?.company_name || 'Unknown'}</TableCell>
+                          <TableCell>{bid.tender?.category || 'Uncategorized'}</TableCell>
+                          <TableCell>{bid.bid_amount.toLocaleString()} KES</TableCell>
+                          <TableCell>{new Date(bid.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <Button asChild>
+                              <Link to={`/evaluation/${bid.id}`}>Evaluate</Link>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="evaluated">
+            <Card>
+              <CardHeader>
+                <CardTitle>Evaluated Bids</CardTitle>
+                <CardDescription>
+                  Bids you have already evaluated
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-[250px]" />
+                          <Skeleton className="h-4 w-[200px]" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredEvaluatedBids.length === 0 ? (
+                  <div className="text-center py-8">
+                    <SearchX className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium">No evaluated bids</h3>
+                    <p className="text-muted-foreground mt-1">
+                      {category !== 'all' || dateRange?.from 
+                        ? 'Try changing your filters' 
+                        : 'You have not evaluated any bids yet'}
+                    </p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Tender</TableHead>
+                        <TableHead>Supplier</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Bid Amount</TableHead>
+                        <TableHead>Evaluation Date</TableHead>
+                        <TableHead></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredEvaluatedBids.map((bid) => (
+                        <TableRow key={bid.id}>
+                          <TableCell className="font-medium">
+                            {bid.tender?.title || 'Unknown Tender'}
+                          </TableCell>
+                          <TableCell>{bid.supplier?.company_name || 'Unknown'}</TableCell>
+                          <TableCell>{bid.tender?.category || 'Uncategorized'}</TableCell>
+                          <TableCell>{bid.bid_amount.toLocaleString()} KES</TableCell>
+                          <TableCell>{new Date(bid.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <Button variant="outline" asChild>
+                              <Link to={`/evaluation/${bid.id}`}>View</Link>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
