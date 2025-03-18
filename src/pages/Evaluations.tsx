@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -144,7 +143,7 @@ const Evaluations = () => {
         .eq('evaluator_id', userId);
 
       if (evaluationsSubquery.data && evaluationsSubquery.data.length > 0) {
-        const bidIds = evaluationsSubquery.data.map(eval => eval.bid_id);
+        const bidIds = evaluationsSubquery.data.map(evaluation => evaluation.bid_id);
         const { data: evaluatedData, error: evaluatedError } = await evaluatedBidsQuery
           .in('id', bidIds);
         
