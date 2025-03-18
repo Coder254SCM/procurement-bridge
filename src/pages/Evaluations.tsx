@@ -131,41 +131,48 @@ const Evaluations = () => {
       setPendingBids(pendingBidsWithSuppliers);
       
       // Get evaluated bids
-      const { data: evaluatedData, error: evaluatedError } = await supabase
+      const evaluatedBidsQuery = supabase
         .from('bids')
         .select(`
           *,
           tender:tender_id(title, category)
-        `)
-        .in('id', (subquery) => {
-          return subquery
-            .from('evaluations')
-            .select('bid_id')
-            .eq('evaluator_id', userId);
-        });
-      
-      if (evaluatedError) throw evaluatedError;
-      
-      // Fetch supplier profiles for evaluated bids
-      const evaluatedBidsWithSuppliers = await Promise.all(
-        (evaluatedData || []).map(async (bid) => {
-          const { data: supplierData } = await supabase
-            .from('profiles')
-            .select('full_name, company_name')
-            .eq('id', bid.supplier_id)
-            .single();
-          
-          return {
-            ...bid,
-            supplier: supplierData || {
-              full_name: 'Unknown',
-              company_name: 'Unknown Company'
-            }
-          };
-        })
-      );
-      
-      setEvaluatedBids(evaluatedBidsWithSuppliers);
+        `);
+
+      const evaluationsSubquery = await supabase
+        .from('evaluations')
+        .select('bid_id')
+        .eq('evaluator_id', userId);
+
+      if (evaluationsSubquery.data && evaluationsSubquery.data.length > 0) {
+        const bidIds = evaluationsSubquery.data.map(eval => eval.bid_id);
+        const { data: evaluatedData, error: evaluatedError } = await evaluatedBidsQuery
+          .in('id', bidIds);
+        
+        if (evaluatedError) throw evaluatedError;
+        
+        // Fetch supplier profiles for evaluated bids
+        const evaluatedBidsWithSuppliers = await Promise.all(
+          (evaluatedData || []).map(async (bid) => {
+            const { data: supplierData } = await supabase
+              .from('profiles')
+              .select('full_name, company_name')
+              .eq('id', bid.supplier_id)
+              .single();
+            
+            return {
+              ...bid,
+              supplier: supplierData || {
+                full_name: 'Unknown',
+                company_name: 'Unknown Company'
+              }
+            };
+          })
+        );
+        
+        setEvaluatedBids(evaluatedBidsWithSuppliers);
+      } else {
+        setEvaluatedBids([]);
+      }
       
     } catch (error) {
       console.error('Error fetching bids:', error);
