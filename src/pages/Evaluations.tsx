@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -103,10 +104,12 @@ const Evaluations = () => {
           tender:tender_id(title, category)
         `)
         .eq('status', 'under_evaluation')
-        .not('id', 'in', `(
-          select bid_id from evaluations 
-          where evaluator_id = '${userId}'
-        )`);
+        .not('bid_id', 'in', (subquery) => {
+          return subquery
+            .from('evaluations')
+            .select('bid_id')
+            .eq('evaluator_id', userId);
+        });
       
       if (pendingError) throw pendingError;
 
@@ -138,10 +141,12 @@ const Evaluations = () => {
           *,
           tender:tender_id(title, category)
         `)
-        .in('id', `(
-          select bid_id from evaluations 
-          where evaluator_id = '${userId}'
-        )`);
+        .in('id', (subquery) => {
+          return subquery
+            .from('evaluations')
+            .select('bid_id')
+            .eq('evaluator_id', userId);
+        });
       
       if (evaluatedError) throw evaluatedError;
       
