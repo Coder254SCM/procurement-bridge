@@ -141,16 +141,25 @@ const Profile = () => {
         return;
       }
       
-      // Cast the selectedRole to string for database compatibility
-      // Check if the role is valid for the database
-      const dbRole = selectedRole.toLowerCase();
+      // We need to ensure the role value matches one of the valid enum values in Supabase
+      // The UserRole enum in our code might have more values than in the database
+      const validDbRoles = ['buyer', 'supplier', 'admin', 'evaluator_finance', 'evaluator_technical', 'evaluator_procurement'];
       
-      // Add new role
+      if (!validDbRoles.includes(selectedRole.toLowerCase())) {
+        toast({
+          title: 'Invalid Role',
+          description: `The role "${selectedRole}" is not supported in the database.`,
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      // Add new role with a valid role value
       const { error } = await supabase
         .from('user_roles')
         .insert({
           user_id: user.id,
-          role: dbRole
+          role: selectedRole.toLowerCase() as any
         });
         
       if (error) throw error;
