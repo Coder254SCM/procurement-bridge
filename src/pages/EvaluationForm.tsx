@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Download, CheckCircle, FileText } from 'lucide-react';
@@ -144,18 +145,10 @@ const EvaluationForm = () => {
       if (bidError) throw bidError;
       
       // Create a safe bid object with proper type handling
-      let supplierData = {
-        full_name: 'Unknown',
-        company_name: 'Unknown Company'
+      const supplierData = {
+        full_name: bidData.supplier?.full_name || 'Unknown',
+        company_name: bidData.supplier?.company_name || 'Unknown Company'
       };
-      
-      // Only assign if supplier data is valid (not an error object)
-      if (bidData.supplier && typeof bidData.supplier === 'object' && !('error' in bidData.supplier)) {
-        supplierData = {
-          full_name: bidData.supplier.full_name || 'Unknown',
-          company_name: bidData.supplier.company_name || 'Unknown Company'
-        };
-      }
       
       const safeBid: Bid = {
         ...bidData,
@@ -175,7 +168,13 @@ const EvaluationForm = () => {
       if (evaluationError) throw evaluationError;
       
       if (evaluationData) {
-        setExistingEvaluation(evaluationData);
+        // Convert string evaluation_type to UserRole enum
+        const typedEvaluation: Evaluation = {
+          ...evaluationData,
+          evaluation_type: evaluationData.evaluation_type as UserRole
+        };
+        
+        setExistingEvaluation(typedEvaluation);
         setScore(evaluationData.score);
         setComments(evaluationData.comments || '');
         setRecommendation(evaluationData.recommendation || '');

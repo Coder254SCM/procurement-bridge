@@ -27,7 +27,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-tender" element={<CreateTender />} />
           <Route path="/evaluations" element={<Evaluations />} />
-          <Route path="/evaluations/:bidId" element={<EvaluationForm />} />
+          <Route path="/evaluation/:bidId" element={<EvaluationForm />} />
           <Route path="/tenders" element={<NotFound />} />
           <Route path="/tenders/:id" element={<NotFound />} />
           <Route path="/supplier-marketplace" element={<NotFound />} />

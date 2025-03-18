@@ -1,3 +1,4 @@
+
 // Imports
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,10 +17,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { CalendarDateRangePicker } from "@/components/ui/calendar"
-import { cn } from "@/lib/utils"
-import { CalendarIcon } from "lucide-react"
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { CalendarDateRangePicker } from "@/components/ui/date-range-picker";
+import { cn } from "@/lib/utils";
+import { DateRange } from "react-day-picker";
+import { CalendarIcon } from "lucide-react";
 
 // Interfaces
 interface Bid {
@@ -51,6 +54,7 @@ interface Evaluation {
   evaluation_type: string;
   score: number;
   comments: string | null;
+  recommendation: string | null;
   created_at: string;
 }
 
@@ -59,10 +63,7 @@ const Evaluations = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [dateRange, setDateRange] = React.useState<Date | undefined>([
-    undefined,
-    undefined,
-  ])
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -90,7 +91,18 @@ const Evaluations = () => {
           `);
 
         if (bidsError) throw bidsError;
-        setBids(bidsData || []);
+        
+        // Make sure all bids have supplier property with required fields
+        const safelyTypedBids = (bidsData || []).map(bid => {
+          // Ensure we have a properly structured supplier object
+          return {
+            ...bid,
+            supplier: {
+              full_name: bid.supplier?.full_name || null,
+              company_name: bid.supplier?.company_name || null
+            }
+          } as Bid;
+        });
 
         // Fetch all evaluations
         const { data: evaluationsData, error: evaluationsError } = await supabase
@@ -101,10 +113,10 @@ const Evaluations = () => {
         setEvaluations(evaluationsData || []);
 
         // Extract bid IDs that have already been evaluated
-        const evaluatedBidIds = evaluationsData.map((evaluation: any) => evaluation.bid_id);
+        const evaluatedBidIds = evaluationsData?.map((evaluation: any) => evaluation.bid_id) || [];
 
         // Filter bids to only show those that haven't been evaluated
-        const filteredBids = bidsData?.filter(bid => !evaluatedBidIds.includes(bid.id)) || [];
+        const filteredBids = safelyTypedBids.filter(bid => !evaluatedBidIds.includes(bid.id)) || [];
         setBids(filteredBids);
 
       } catch (error: any) {
@@ -158,7 +170,7 @@ const Evaluations = () => {
       </div>
 
       <div className="mb-4">
-        <CalendarDateRangePicker className="border rounded-md" date={dateRange} onDateChange={setDateRange} />
+        <CalendarDateRangePicker date={dateRange} onDateChange={setDateRange} />
       </div>
 
       {loading ? (
