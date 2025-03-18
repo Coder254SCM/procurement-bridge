@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -120,7 +119,7 @@ const EvaluationForm = () => {
     try {
       setLoading(true);
       
-      // Fetch bid with tender and supplier details
+      // Update query to properly join with profiles table
       const { data: bidData, error: bidError } = await supabase
         .from('bids')
         .select(`
@@ -132,10 +131,10 @@ const EvaluationForm = () => {
             budget_amount,
             budget_currency
           ),
-          supplier:supplier_id(
+          supplier:supplier_id(profiles!supplier_id(
             full_name,
             company_name
-          )
+          ))
         `)
         .eq('id', bidId)
         .single();
@@ -144,8 +143,8 @@ const EvaluationForm = () => {
       
       // Create a safe bid object with proper type handling
       const supplierData = {
-        full_name: bidData.supplier?.full_name || 'Unknown',
-        company_name: bidData.supplier?.company_name || 'Unknown Company'
+        full_name: bidData.supplier?.profiles?.[0]?.full_name || 'Unknown',
+        company_name: bidData.supplier?.profiles?.[0]?.company_name || 'Unknown Company'
       };
       
       const safeBid: Bid = {

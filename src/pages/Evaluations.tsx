@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -96,13 +95,16 @@ const Evaluations = () => {
     try {
       setLoading(true);
       
-      // Get bids pending evaluation (no evaluation from this user yet)
+      // Update query to properly join with profiles table
       const { data: pendingData, error: pendingError } = await supabase
         .from('bids')
         .select(`
           *,
           tender:tender_id(title, category),
-          supplier:supplier_id(full_name, company_name)
+          supplier:supplier_id(profiles!supplier_id(
+            full_name,
+            company_name
+          ))
         `)
         .eq('status', 'under_evaluation')
         .not('id', 'in', `(
@@ -116,20 +118,23 @@ const Evaluations = () => {
       const safePendingBids = pendingData.map((bid: any) => ({
         ...bid,
         supplier: {
-          full_name: bid.supplier?.full_name || 'Unknown',
-          company_name: bid.supplier?.company_name || 'Unknown Company'
+          full_name: bid.supplier?.profiles?.[0]?.full_name || 'Unknown',
+          company_name: bid.supplier?.profiles?.[0]?.company_name || 'Unknown Company'
         }
       }));
       
       setPendingBids(safePendingBids);
       
-      // Get bids already evaluated by this user
+      // Similar update for evaluated bids
       const { data: evaluatedData, error: evaluatedError } = await supabase
         .from('bids')
         .select(`
           *,
           tender:tender_id(title, category),
-          supplier:supplier_id(full_name, company_name)
+          supplier:supplier_id(profiles!supplier_id(
+            full_name,
+            company_name
+          ))
         `)
         .in('id', `(
           select bid_id from evaluations 
@@ -138,12 +143,11 @@ const Evaluations = () => {
       
       if (evaluatedError) throw evaluatedError;
       
-      // Process evaluated bids with safe type handling
       const safeEvaluatedBids = evaluatedData.map((bid: any) => ({
         ...bid,
         supplier: {
-          full_name: bid.supplier?.full_name || 'Unknown',
-          company_name: bid.supplier?.company_name || 'Unknown Company'
+          full_name: bid.supplier?.profiles?.[0]?.full_name || 'Unknown',
+          company_name: bid.supplier?.profiles?.[0]?.company_name || 'Unknown Company'
         }
       }));
       
