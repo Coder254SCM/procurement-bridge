@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { UserRole, KycStatus } from '@/types/enums';
+import { UserRole, KycStatus, VerificationLevel, BusinessType } from '@/types/enums';
 import { Profile as ProfileType, UserRoleRecord } from '@/types/database.types';
 import { UploadCloud, Loader2 } from 'lucide-react';
 
@@ -45,7 +45,27 @@ const Profile = () => {
             .single();
             
           if (profileError) throw profileError;
-          setProfile(profileData);
+          
+          // Create a complete Profile object with default values for missing fields
+          const completeProfile: ProfileType = {
+            id: profileData.id,
+            full_name: profileData.full_name || null,
+            company_name: profileData.company_name || null,
+            position: profileData.position || null,
+            industry: profileData.industry || null,
+            verified: profileData.verified || false,
+            kyc_status: profileData.kyc_status as KycStatus || KycStatus.PENDING,
+            kyc_documents: profileData.kyc_documents || null,
+            created_at: profileData.created_at || new Date().toISOString(),
+            updated_at: profileData.updated_at || new Date().toISOString(),
+            // Add default values for missing fields from the database
+            verification_level: profileData.verification_level as VerificationLevel || VerificationLevel.NONE,
+            business_type: profileData.business_type as BusinessType || null,
+            business_registration_number: profileData.business_registration_number || null,
+            tax_pin: profileData.tax_pin || null,
+          };
+          
+          setProfile(completeProfile);
           
           // Initialize form data
           setFormData({

@@ -127,3 +127,8 @@ export interface TenderTemplate {
   created_at: string;
   updated_at: string;
 }
+
+// Define a more flexible evaluation criteria type to allow for dynamic criteria
+export interface EvaluationCriteria {
+  [key: string]: number;
+}

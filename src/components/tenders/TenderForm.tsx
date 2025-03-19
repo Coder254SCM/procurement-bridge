@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { TenderTemplateType } from '@/types/enums';
+import { EvaluationCriteria } from '@/types/database.types';
 import {
   Form,
   FormControl,
@@ -99,7 +100,7 @@ const templateOptions = [
 ];
 
 // Default evaluation criteria
-const defaultEvaluationCriteria = {
+const defaultEvaluationCriteria: EvaluationCriteria = {
   technical: 30,
   financial: 30,
   experience: 15,
@@ -117,7 +118,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
   const [submitting, setSubmitting] = useState(false);
   const [documents, setDocuments] = useState<File[]>([]);
   const [useTemplate, setUseTemplate] = useState(false);
-  const [evaluationCriteria, setEvaluationCriteria] = useState(defaultEvaluationCriteria);
+  const [evaluationCriteria, setEvaluationCriteria] = useState<EvaluationCriteria>(defaultEvaluationCriteria);
   const [templateContent, setTemplateContent] = useState<string>('');
   const [digitalSignature, setDigitalSignature] = useState<boolean>(false);
 
@@ -144,23 +145,25 @@ const TenderForm = ({ userId }: TenderFormProps) => {
     switch (templateType) {
       case TenderTemplateType.CONSTRUCTION:
         setTemplateContent('Standard construction tender template following Kenyan PPD Act requirements...');
-        setEvaluationCriteria({
+        // Use updater function to set state based on previous state
+        setEvaluationCriteria(() => ({
           technical: 35,
           financial: 25,
           experience: 20,
           compliance: 10,
           quality: 10,
-        });
+        }));
         break;
       case TenderTemplateType.IT_SERVICES:
         setTemplateContent('IT services procurement template following ICTA guidelines...');
-        setEvaluationCriteria({
+        // Use updater function to set state based on previous state
+        setEvaluationCriteria(() => ({
           technical: 40,
           financial: 25,
           experience: 15,
           innovation: 10,
           support: 10,
-        });
+        }));
         break;
       // Add more template types here
       default:
