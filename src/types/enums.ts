@@ -73,3 +73,71 @@ export enum EvaluationCriteriaWeight {
   DELIVERY = 'delivery',
   SUSTAINABILITY = 'sustainability'
 }
+
+// Enhanced procurement methods based on international standards
+export enum ProcurementMethod {
+  OPEN_TENDER = 'open_tender',
+  RESTRICTED_TENDER = 'restricted_tender',
+  DIRECT_PROCUREMENT = 'direct_procurement',
+  REQUEST_FOR_QUOTATION = 'request_for_quotation',
+  REQUEST_FOR_PROPOSAL = 'request_for_proposal',
+  TWO_STAGE_TENDERING = 'two_stage_tendering',
+  FRAMEWORK_AGREEMENT = 'framework_agreement',
+  ELECTRONIC_REVERSE_AUCTION = 'electronic_reverse_auction',
+  DESIGN_CONTEST = 'design_contest',
+  COMPETITIVE_DIALOGUE = 'competitive_dialogue',
+  INNOVATION_PARTNERSHIP = 'innovation_partnership'
+}
+
+// Enhanced evaluation criteria categories based on comprehensive research
+export enum EvaluationCriteriaCategory {
+  // Financial Criteria
+  PRICE_COMPETITIVENESS = 'price_competitiveness',
+  FINANCIAL_STABILITY = 'financial_stability',
+  COST_EFFECTIVENESS = 'cost_effectiveness',
+  LIFECYCLE_COSTS = 'lifecycle_costs',
+  PAYMENT_TERMS = 'payment_terms',
+  
+  // Technical Criteria
+  TECHNICAL_CAPABILITY = 'technical_capability',
+  METHODOLOGY = 'methodology',
+  INNOVATION = 'innovation',
+  QUALITY_STANDARDS = 'quality_standards',
+  TECHNICAL_COMPLIANCE = 'technical_compliance',
+  
+  // Experience and Capability
+  RELEVANT_EXPERIENCE = 'relevant_experience',
+  PAST_PERFORMANCE = 'past_performance',
+  QUALIFICATIONS = 'qualifications',
+  INDUSTRY_EXPERTISE = 'industry_expertise',
+  KEY_PERSONNEL = 'key_personnel',
+  PROJECT_MANAGEMENT = 'project_management',
+  
+  // Operational Criteria
+  DELIVERY_TIMEFRAME = 'delivery_timeframe',
+  IMPLEMENTATION_PLAN = 'implementation_plan',
+  OPERATIONAL_CAPACITY = 'operational_capacity',
+  QUALITY_ASSURANCE = 'quality_assurance',
+  SERVICE_LEVEL_AGREEMENTS = 'service_level_agreements',
+  
+  // Compliance and Risk
+  LEGAL_COMPLIANCE = 'legal_compliance',
+  REGULATORY_COMPLIANCE = 'regulatory_compliance',
+  RISK_MANAGEMENT = 'risk_management',
+  INSURANCE_COVERAGE = 'insurance_coverage',
+  SECURITY_MEASURES = 'security_measures',
+  
+  // Sustainability and Social Value
+  ENVIRONMENTAL_SUSTAINABILITY = 'environmental_sustainability',
+  SOCIAL_RESPONSIBILITY = 'social_responsibility',
+  LOCAL_CONTENT = 'local_content',
+  DIVERSITY_INCLUSION = 'diversity_inclusion',
+  COMMUNITY_IMPACT = 'community_impact',
+  
+  // Contract Management
+  WARRANTY_TERMS = 'warranty_terms',
+  AFTER_SALES_SUPPORT = 'after_sales_support',
+  MAINTENANCE_CAPABILITY = 'maintenance_capability',
+  INTELLECTUAL_PROPERTY = 'intellectual_property',
+  CONTRACT_TERMS_ACCEPTANCE = 'contract_terms_acceptance'
+}

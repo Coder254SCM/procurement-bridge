@@ -1,5 +1,5 @@
 
-import { UserRole, KycStatus, VerificationLevel, BusinessType } from './enums';
+import { UserRole, KycStatus, VerificationLevel, BusinessType, ProcurementMethod, EvaluationCriteriaCategory } from './enums';
 
 export interface Profile {
   id: string;
@@ -43,6 +43,7 @@ export interface Tender {
   template_type: string | null;
   digital_signature: string | null;
   signature_timestamp: string | null;
+  procurement_method: ProcurementMethod | null;
 }
 
 export interface Bid {
@@ -68,6 +69,9 @@ export interface Evaluation {
   blockchain_hash: string | null;
   created_at: string;
   updated_at: string;
+  recommendation: string | null;
+  criteria_scores: EvaluationCriteriaScores | null;
+  justification: string | null;
 }
 
 // Blockchain specific interfaces
@@ -126,9 +130,68 @@ export interface TenderTemplate {
   is_public: boolean;
   created_at: string;
   updated_at: string;
+  procurement_method: ProcurementMethod | null;
 }
 
 // Define a more flexible evaluation criteria type to allow for dynamic criteria
 export interface EvaluationCriteria {
   [key: string]: number;
+}
+
+// Define a structure for detailed evaluation scoring across multiple criteria
+export interface EvaluationCriteriaScores {
+  [EvaluationCriteriaCategory.PRICE_COMPETITIVENESS]?: number;
+  [EvaluationCriteriaCategory.FINANCIAL_STABILITY]?: number;
+  [EvaluationCriteriaCategory.COST_EFFECTIVENESS]?: number;
+  [EvaluationCriteriaCategory.LIFECYCLE_COSTS]?: number;
+  [EvaluationCriteriaCategory.PAYMENT_TERMS]?: number;
+  
+  [EvaluationCriteriaCategory.TECHNICAL_CAPABILITY]?: number;
+  [EvaluationCriteriaCategory.METHODOLOGY]?: number;
+  [EvaluationCriteriaCategory.INNOVATION]?: number;
+  [EvaluationCriteriaCategory.QUALITY_STANDARDS]?: number;
+  [EvaluationCriteriaCategory.TECHNICAL_COMPLIANCE]?: number;
+  
+  [EvaluationCriteriaCategory.RELEVANT_EXPERIENCE]?: number;
+  [EvaluationCriteriaCategory.PAST_PERFORMANCE]?: number;
+  [EvaluationCriteriaCategory.QUALIFICATIONS]?: number;
+  [EvaluationCriteriaCategory.INDUSTRY_EXPERTISE]?: number;
+  [EvaluationCriteriaCategory.KEY_PERSONNEL]?: number;
+  [EvaluationCriteriaCategory.PROJECT_MANAGEMENT]?: number;
+  
+  [EvaluationCriteriaCategory.DELIVERY_TIMEFRAME]?: number;
+  [EvaluationCriteriaCategory.IMPLEMENTATION_PLAN]?: number;
+  [EvaluationCriteriaCategory.OPERATIONAL_CAPACITY]?: number;
+  [EvaluationCriteriaCategory.QUALITY_ASSURANCE]?: number;
+  [EvaluationCriteriaCategory.SERVICE_LEVEL_AGREEMENTS]?: number;
+  
+  [EvaluationCriteriaCategory.LEGAL_COMPLIANCE]?: number;
+  [EvaluationCriteriaCategory.REGULATORY_COMPLIANCE]?: number;
+  [EvaluationCriteriaCategory.RISK_MANAGEMENT]?: number;
+  [EvaluationCriteriaCategory.INSURANCE_COVERAGE]?: number;
+  [EvaluationCriteriaCategory.SECURITY_MEASURES]?: number;
+  
+  [EvaluationCriteriaCategory.ENVIRONMENTAL_SUSTAINABILITY]?: number;
+  [EvaluationCriteriaCategory.SOCIAL_RESPONSIBILITY]?: number;
+  [EvaluationCriteriaCategory.LOCAL_CONTENT]?: number;
+  [EvaluationCriteriaCategory.DIVERSITY_INCLUSION]?: number;
+  [EvaluationCriteriaCategory.COMMUNITY_IMPACT]?: number;
+  
+  [EvaluationCriteriaCategory.WARRANTY_TERMS]?: number;
+  [EvaluationCriteriaCategory.AFTER_SALES_SUPPORT]?: number;
+  [EvaluationCriteriaCategory.MAINTENANCE_CAPABILITY]?: number;
+  [EvaluationCriteriaCategory.INTELLECTUAL_PROPERTY]?: number;
+  [EvaluationCriteriaCategory.CONTRACT_TERMS_ACCEPTANCE]?: number;
+  
+  [key: string]: number | undefined;
+}
+
+// Define standardized procurement templates based on method
+export interface ProcurementMethodTemplate {
+  method: ProcurementMethod;
+  name: string;
+  description: string;
+  defaultCriteria: EvaluationCriteria;
+  suitableFor: string[];
+  regulatoryBasis: string;
 }

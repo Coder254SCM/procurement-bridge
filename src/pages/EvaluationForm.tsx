@@ -3,14 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { UserRole } from '@/types/enums';
+import { UserRole, ProcurementMethod } from '@/types/enums';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Import our new components
+// Import our components
 import EvaluationHeader from '@/components/evaluations/EvaluationHeader';
 import BidSummaryCards from '@/components/evaluations/BidSummaryCards';
 import TenderDetailCards from '@/components/evaluations/TenderDetailCards';
 import EvaluationFormComponent from '@/components/evaluations/EvaluationForm';
+import ProcurementMethodInfo from '@/components/evaluations/ProcurementMethodInfo';
+import { EvaluationCriteriaScores } from '@/types/database.types';
 
 interface Bid {
   id: string;
@@ -27,6 +30,7 @@ interface Bid {
     category: string;
     budget_amount: number;
     budget_currency: string;
+    procurement_method?: string;
   };
   supplier?: {
     full_name: string | null;
@@ -42,6 +46,8 @@ interface Evaluation {
   score: number;
   comments: string | null;
   recommendation: string | null;
+  criteria_scores?: EvaluationCriteriaScores;
+  justification?: string;
   created_at: string;
   updated_at?: string;
 }
@@ -59,6 +65,9 @@ const EvaluationForm = () => {
   const [score, setScore] = useState<number>(0);
   const [comments, setComments] = useState('');
   const [recommendation, setRecommendation] = useState('');
+  const [criteriaScores, setCriteriaScores] = useState<EvaluationCriteriaScores>({});
+  const [justification, setJustification] = useState('');
+  const [activeTab, setActiveTab] = useState('evaluation');
 
   useEffect(() => {
     const checkSession = async () => {
@@ -130,7 +139,8 @@ const EvaluationForm = () => {
             description,
             category,
             budget_amount,
-            budget_currency
+            budget_currency,
+            procurement_method
           )
         `)
         .eq('id', bidId)
@@ -181,6 +191,16 @@ const EvaluationForm = () => {
         setScore(evaluationData.score);
         setComments(evaluationData.comments || '');
         setRecommendation(evaluationData.recommendation || '');
+        
+        // Set criteria scores if available
+        if (evaluationData.criteria_scores) {
+          setCriteriaScores(evaluationData.criteria_scores);
+        }
+        
+        // Set justification if available
+        if (evaluationData.justification) {
+          setJustification(evaluationData.justification);
+        }
       }
       
     } catch (error) {
@@ -194,6 +214,13 @@ const EvaluationForm = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCriteriaScoreChange = (category: string, value: number) => {
+    setCriteriaScores(prev => ({
+      ...prev,
+      [category]: value
+    }));
   };
 
   const handleSubmitEvaluation = async () => {
@@ -226,6 +253,15 @@ const EvaluationForm = () => {
         case 'evaluator_procurement':
           evaluationType = UserRole.EVALUATOR_PROCUREMENT;
           break;
+        case 'evaluator_engineering':
+          evaluationType = UserRole.EVALUATOR_ENGINEERING;
+          break;
+        case 'evaluator_legal':
+          evaluationType = UserRole.EVALUATOR_LEGAL;
+          break;
+        case 'evaluator_accounting':
+          evaluationType = UserRole.EVALUATOR_ACCOUNTING;
+          break;
         default:
           throw new Error('Invalid evaluator type');
       }
@@ -238,6 +274,8 @@ const EvaluationForm = () => {
             score,
             comments,
             recommendation,
+            criteria_scores: Object.keys(criteriaScores).length > 0 ? criteriaScores : null,
+            justification: justification || null,
             updated_at: new Date().toISOString()
           })
           .eq('id', existingEvaluation.id);
@@ -258,7 +296,9 @@ const EvaluationForm = () => {
             evaluation_type: evaluationType,
             score,
             comments,
-            recommendation
+            recommendation,
+            criteria_scores: Object.keys(criteriaScores).length > 0 ? criteriaScores : null,
+            justification: justification || null
             // In a real implementation, we'd add blockchain hash here
           });
           
@@ -309,6 +349,7 @@ const EvaluationForm = () => {
 
   const evaluatorType = userRoles.find(role => role.includes('evaluator_'))?.replace('evaluator_', '') || '';
   const isReadOnly = !!existingEvaluation;
+  const procurementMethod = bid.tender?.procurement_method as ProcurementMethod || ProcurementMethod.OPEN_TENDER;
 
   return (
     <div className="min-h-screen p-8">
@@ -329,25 +370,47 @@ const EvaluationForm = () => {
           category={bid.tender?.category}
           evaluatorType={evaluatorType}
         />
-        
-        <TenderDetailCards 
-          description={bid.tender?.description}
-          technicalDetails={bid.technical_details}
-          documents={bid.documents}
-        />
-        
-        <EvaluationFormComponent 
-          score={score}
-          comments={comments}
-          recommendation={recommendation}
-          isReadOnly={isReadOnly}
-          submitting={submitting}
-          existingEvaluation={existingEvaluation}
-          onScoreChange={setScore}
-          onCommentsChange={setComments}
-          onRecommendationChange={setRecommendation}
-          onSubmit={handleSubmitEvaluation}
-        />
+
+        <div className="mb-8">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="evaluation">Evaluation Form</TabsTrigger>
+              <TabsTrigger value="details">Tender Details</TabsTrigger>
+              <TabsTrigger value="method">Procurement Method</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="evaluation" className="mt-6">
+              <EvaluationFormComponent 
+                score={score}
+                comments={comments}
+                recommendation={recommendation}
+                isReadOnly={isReadOnly}
+                submitting={submitting}
+                existingEvaluation={existingEvaluation}
+                criteriaScores={criteriaScores}
+                justification={justification}
+                onScoreChange={setScore}
+                onCommentsChange={setComments}
+                onRecommendationChange={setRecommendation}
+                onCriteriaScoreChange={handleCriteriaScoreChange}
+                onJustificationChange={setJustification}
+                onSubmit={handleSubmitEvaluation}
+              />
+            </TabsContent>
+            
+            <TabsContent value="details" className="mt-6">
+              <TenderDetailCards 
+                description={bid.tender?.description}
+                technicalDetails={bid.technical_details}
+                documents={bid.documents}
+              />
+            </TabsContent>
+            
+            <TabsContent value="method" className="mt-6">
+              <ProcurementMethodInfo method={procurementMethod} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
