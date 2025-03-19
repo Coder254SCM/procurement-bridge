@@ -1,15 +1,24 @@
+
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import BlockchainExplorer from "@/components/blockchain/BlockchainExplorer";
 
 const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
+    if (location.pathname !== "/blockchain-explorer") {
+      console.error(
+        "404 Error: User attempted to access non-existent route:",
+        location.pathname
+      );
+    }
   }, [location.pathname]);
+
+  // Special case for blockchain explorer
+  if (location.pathname === "/blockchain-explorer") {
+    return <BlockchainExplorer />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

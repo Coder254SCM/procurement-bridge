@@ -46,6 +46,8 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
+    "fabric-ca-client": "^2.2.18",
+    "fabric-network": "^2.2.18",
     "framer-motion": "^12.4.10",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
