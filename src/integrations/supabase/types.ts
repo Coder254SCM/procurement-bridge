@@ -56,6 +56,39 @@ export type Database = {
           },
         ]
       }
+      blockchain_transactions: {
+        Row: {
+          created_at: string
+          entity_id: string
+          hash: string
+          id: string
+          metadata: Json | null
+          status: string
+          timestamp: string
+          transaction_type: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          hash: string
+          id?: string
+          metadata?: Json | null
+          status: string
+          timestamp?: string
+          transaction_type: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          hash?: string
+          id?: string
+          metadata?: Json | null
+          status?: string
+          timestamp?: string
+          transaction_type?: string
+        }
+        Relationships: []
+      }
       evaluations: {
         Row: {
           bid_id: string

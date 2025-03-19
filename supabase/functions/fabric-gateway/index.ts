@@ -21,7 +21,8 @@ const simulateFabricOperation = async (operation: string, payload: any) => {
   // This is a simulation - in production, this would use the Fabric SDK
   // to interact with the Hyperledger Fabric network
   
-  const txId = crypto.randomUUID();
+  // Generate a transaction ID similar to Hyperledger Fabric format
+  const txId = crypto.randomUUID().replace(/-/g, '');
   const timestamp = new Date().toISOString();
   
   // Return simulated transaction details

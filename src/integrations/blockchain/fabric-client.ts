@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { blockchainConfig, TransactionType } from './config';
+import { Transaction } from '@/types/blockchain';
 
 // Interface for blockchain transaction results
 interface TransactionResult {
@@ -97,7 +98,7 @@ export const fabricClient = {
   },
   
   // Get transaction details from the database
-  async getTransaction(txId: string): Promise<any> {
+  async getTransaction(txId: string): Promise<Transaction | null> {
     try {
       const { data, error } = await supabase
         .from('blockchain_transactions')
@@ -106,15 +107,15 @@ export const fabricClient = {
         .single();
         
       if (error) throw error;
-      return data;
+      return data as Transaction;
     } catch (error) {
       console.error('Error fetching transaction:', error);
-      throw error;
+      return null;
     }
   },
   
   // Get all transactions for an entity (tender, bid, etc.)
-  async getEntityTransactions(entityId: string): Promise<any[]> {
+  async getEntityTransactions(entityId: string): Promise<Transaction[]> {
     try {
       const { data, error } = await supabase
         .from('blockchain_transactions')
@@ -123,7 +124,7 @@ export const fabricClient = {
         .order('timestamp', { ascending: false });
         
       if (error) throw error;
-      return data || [];
+      return data as Transaction[] || [];
     } catch (error) {
       console.error('Error fetching entity transactions:', error);
       return [];

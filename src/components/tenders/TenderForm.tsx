@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -8,6 +7,7 @@ import { CalendarIcon, Upload } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { fabricClient } from '@/integrations/blockchain/fabric-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -120,19 +120,46 @@ const TenderForm = ({ userId }: TenderFormProps) => {
           submission_deadline: values.submission_deadline.toISOString(),
           buyer_id: userId,
           status: 'draft',
-          // TODO: Add support for blockchain hash when implemented
         })
         .select('id')
         .single();
       
       if (error) throw error;
       
-      // TODO: Handle document uploads to Supabase storage
+      // Submit to blockchain
+      if (data && data.id) {
+        const tenderId = data.id;
+        
+        // Submit tender to blockchain
+        const blockchainResult = await fabricClient.submitTender(tenderId, {
+          title: values.title,
+          description: values.description.substring(0, 100), // Limit description length for blockchain
+          category: values.category,
+          budget_amount: values.budget_amount,
+          buyer_id: userId,
+          submission_deadline: values.submission_deadline.toISOString()
+        });
+        
+        if (blockchainResult.success && blockchainResult.txId) {
+          // Update tender with blockchain hash
+          await supabase
+            .from('tenders')
+            .update({ blockchain_hash: blockchainResult.txId })
+            .eq('id', tenderId);
+            
+          toast({
+            title: "Tender Created",
+            description: "Your tender has been created and recorded on the blockchain.",
+          });
+        } else {
+          toast({
+            title: "Tender Created",
+            description: "Your tender has been created, but blockchain recording failed. It will be retried automatically.",
+          });
+        }
+      }
       
-      toast({
-        title: "Tender Created",
-        description: "Your tender has been created successfully.",
-      });
+      // TODO: Handle document uploads to Supabase storage
       
       // Navigate to tender view or dashboard
       navigate('/dashboard');

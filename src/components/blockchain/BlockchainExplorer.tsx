@@ -1,223 +1,193 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Link, Clock, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatTransactionId } from '@/integrations/blockchain/config';
-
-interface Transaction {
-  id: string;
-  transaction_type: string;
-  entity_id: string;
-  hash: string;
-  timestamp: string;
-  status: 'pending' | 'confirmed' | 'failed';
-  metadata: any;
-}
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
+import { Transaction, TransactionStatus } from '@/types/blockchain';
+import { useToast } from '@/hooks/use-toast';
 
 const BlockchainExplorer = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentTransaction, setCurrentTransaction] = useState<Transaction | null>(null);
 
+  // Load recent transactions
   useEffect(() => {
+    const fetchRecentTransactions = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('blockchain_transactions')
+          .select('*')
+          .order('timestamp', { ascending: false })
+          .limit(10);
+        
+        if (error) throw error;
+        setTransactions(data as Transaction[]);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+        toast({
+          title: "Failed to load blockchain data",
+          description: "There was an error fetching the transaction history.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchRecentTransactions();
-  }, []);
+  }, [toast]);
 
-  const fetchRecentTransactions = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('blockchain_transactions')
-        .select('*')
-        .order('timestamp', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setTransactions(data || []);
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const searchTransaction = async () => {
+  // Handle search
+  const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     
     setIsLoading(true);
     try {
-      // Search by hash or entity_id
       const { data, error } = await supabase
         .from('blockchain_transactions')
         .select('*')
-        .or(`hash.eq.${searchQuery},entity_id.eq.${searchQuery}`);
-
+        .or(`hash.ilike.%${searchQuery}%,entity_id.ilike.%${searchQuery}%`)
+        .order('timestamp', { ascending: false });
+      
       if (error) throw error;
-      setTransactions(data || []);
+      setSearchResults(data as Transaction[]);
     } catch (error) {
       console.error('Error searching transactions:', error);
+      toast({
+        title: "Search Failed",
+        description: "There was an error performing your search.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const viewTransactionDetails = (transaction: Transaction) => {
-    setCurrentTransaction(transaction);
-  };
-
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString();
-  };
-
+  // Get badge variant based on transaction status
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'confirmed':
-        return <Badge variant="success" className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" /> Confirmed</Badge>;
-      case 'pending':
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" /> Pending</Badge>;
-      case 'failed':
-        return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" /> Failed</Badge>;
+      case TransactionStatus.CONFIRMED:
+        return "success";
+      case TransactionStatus.PENDING:
+        return "default";
+      case TransactionStatus.FAILED:
+        return "destructive";
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return "secondary";
     }
   };
 
-  const getTransactionTypeIcon = (type: string) => {
-    switch (type) {
-      case 'tender_creation':
-        return <FileText className="h-4 w-4 mr-2" />;
-      case 'bid_submission':
-        return <Link className="h-4 w-4 mr-2" />;
-      case 'evaluation':
-        return <CheckCircle className="h-4 w-4 mr-2" />;
-      case 'award':
-        return <CheckCircle className="h-4 w-4 mr-2" fill="currentColor" />;
-      default:
-        return null;
-    }
+  // Format the transaction type for display
+  const formatTransactionType = (type: string) => {
+    return type.replace('_', ' ').split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   };
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+  };
+
+  // Render a transaction card
+  const renderTransactionCard = (transaction: Transaction) => (
+    <Card key={transaction.id} className="mb-4">
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-lg">{formatTransactionType(transaction.transaction_type)}</CardTitle>
+            <CardDescription>
+              Transaction ID: {formatTransactionId(transaction.hash)}
+            </CardDescription>
+          </div>
+          <Badge variant={getStatusBadge(transaction.status) as "default" | "secondary" | "destructive" | "outline"}>
+            {transaction.status.toUpperCase()}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <div>
+            <span className="font-medium">Entity ID:</span> {transaction.entity_id}
+          </div>
+          <div>
+            <span className="font-medium">Timestamp:</span> {formatDate(transaction.timestamp)}
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button variant="outline" size="sm" onClick={() => window.open(`${blockchainConfig.chaincodeName}/transaction/${transaction.hash}`, '_blank')}>
+          View on Blockchain
+        </Button>
+      </CardFooter>
+    </Card>
+  );
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container py-8">
       <h1 className="text-3xl font-bold mb-6">Blockchain Explorer</h1>
-      
-      <div className="flex gap-2 mb-6">
+      <p className="text-gray-600 mb-8">
+        Explore transactions recorded on the Hyperledger Fabric blockchain for complete transparency
+        and auditability of the procurement process.
+      </p>
+
+      <div className="flex gap-4 mb-8">
         <Input
-          placeholder="Search by transaction hash or entity ID"
+          placeholder="Search by transaction hash or entity ID..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="flex-1"
+          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
-        <Button onClick={searchTransaction}>
-          <Search className="h-4 w-4 mr-2" /> Search
+        <Button onClick={handleSearch} disabled={isLoading}>
+          <Search className="h-4 w-4 mr-2" />
+          Search
         </Button>
       </div>
-      
-      <Tabs defaultValue="transactions">
-        <TabsList>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          {currentTransaction && (
-            <TabsTrigger value="details">Transaction Details</TabsTrigger>
-          )}
+
+      <Tabs defaultValue="recent">
+        <TabsList className="mb-4">
+          <TabsTrigger value="recent">Recent Transactions</TabsTrigger>
+          <TabsTrigger value="search">Search Results</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="transactions">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>
-                View recent transactions recorded on the blockchain
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex justify-center p-4">Loading transactions...</div>
-              ) : transactions.length === 0 ? (
-                <div className="text-center p-4 text-muted-foreground">
-                  No transactions found
-                </div>
-              ) : (
-                <div className="grid gap-2">
-                  {transactions.map((tx) => (
-                    <div 
-                      key={tx.id} 
-                      className="border rounded-md p-3 flex justify-between items-center hover:bg-accent cursor-pointer"
-                      onClick={() => viewTransactionDetails(tx)}
-                    >
-                      <div className="flex items-center">
-                        {getTransactionTypeIcon(tx.transaction_type)}
-                        <div>
-                          <div className="font-medium">{formatTransactionId(tx.hash)}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {formatTimestamp(tx.timestamp)}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{tx.transaction_type}</Badge>
-                        {getStatusBadge(tx.status)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        <TabsContent value="recent">
+          {isLoading ? (
+            <div className="text-center py-8">Loading transactions...</div>
+          ) : transactions.length > 0 ? (
+            <div>
+              {transactions.map(renderTransactionCard)}
+            </div>
+          ) : (
+            <div className="text-center py-8">No transactions found.</div>
+          )}
         </TabsContent>
         
-        {currentTransaction && (
-          <TabsContent value="details">
-            <Card>
-              <CardHeader>
-                <CardTitle>Transaction Details</CardTitle>
-                <CardDescription>
-                  Detailed information about the selected transaction
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Transaction Hash</h3>
-                      <p className="font-mono">{currentTransaction.hash}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Type</h3>
-                      <Badge variant="outline" className="mt-1">{currentTransaction.transaction_type}</Badge>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
-                      <div className="mt-1">{getStatusBadge(currentTransaction.status)}</div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Timestamp</h3>
-                    <p>{formatTimestamp(currentTransaction.timestamp)}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Entity ID</h3>
-                    <p className="font-mono">{currentTransaction.entity_id}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Metadata</h3>
-                    <pre className="bg-muted p-4 rounded-md overflow-auto text-xs mt-2">
-                      {JSON.stringify(currentTransaction.metadata, null, 2)}
-                    </pre>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
+        <TabsContent value="search">
+          {searchQuery ? (
+            searchResults.length > 0 ? (
+              <div>
+                {searchResults.map(renderTransactionCard)}
+              </div>
+            ) : (
+              <div className="text-center py-8">No matching transactions found.</div>
+            )
+          ) : (
+            <div className="text-center py-8">
+              Enter a transaction hash or entity ID to search.
+            </div>
+          )}
+        </TabsContent>
       </Tabs>
     </div>
   );
