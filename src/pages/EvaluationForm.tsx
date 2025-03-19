@@ -13,44 +13,7 @@ import BidSummaryCards from '@/components/evaluations/BidSummaryCards';
 import TenderDetailCards from '@/components/evaluations/TenderDetailCards';
 import EvaluationFormComponent from '@/components/evaluations/EvaluationForm';
 import ProcurementMethodInfo from '@/components/evaluations/ProcurementMethodInfo';
-import { EvaluationCriteriaScores } from '@/types/database.types';
-
-interface Bid {
-  id: string;
-  tender_id: string;
-  supplier_id: string;
-  bid_amount: number;
-  status: string;
-  documents: any;
-  technical_details: any;
-  created_at: string;
-  tender?: {
-    title: string;
-    description: string;
-    category: string;
-    budget_amount: number;
-    budget_currency: string;
-    procurement_method?: string;
-  };
-  supplier?: {
-    full_name: string | null;
-    company_name: string | null;
-  };
-}
-
-interface Evaluation {
-  id: string;
-  bid_id: string;
-  evaluator_id: string;
-  evaluation_type: UserRole;
-  score: number;
-  comments: string | null;
-  recommendation: string | null;
-  criteria_scores?: EvaluationCriteriaScores;
-  justification?: string;
-  created_at: string;
-  updated_at?: string;
-}
+import { Bid, Evaluation, EvaluationCriteriaScores } from '@/types/database.types';
 
 const EvaluationForm = () => {
   const { bidId } = useParams<{ bidId: string }>();
@@ -159,16 +122,34 @@ const EvaluationForm = () => {
         console.error('Error fetching supplier data:', supplierError);
       }
       
-      // Create a safe bid object with proper type handling
-      const safeBid: Bid = {
+      // Create a complete bid object with defaults if data is missing
+      const completeBid: Bid = {
         ...bidData,
-        supplier: {
-          full_name: supplierData?.full_name || 'Unknown',
-          company_name: supplierData?.company_name || 'Unknown Company'
+        tender: bidData.tender ? {
+          title: bidData.tender.title || 'Untitled',
+          description: bidData.tender.description || '',
+          category: bidData.tender.category || 'General',
+          budget_amount: bidData.tender.budget_amount || 0,
+          budget_currency: bidData.tender.budget_currency || 'KES',
+          procurement_method: bidData.tender.procurement_method || null
+        } : {
+          title: 'Untitled',
+          description: '',
+          category: 'General',
+          budget_amount: 0,
+          budget_currency: 'KES',
+          procurement_method: null
+        },
+        supplier: supplierData ? {
+          full_name: supplierData.full_name || 'Unknown',
+          company_name: supplierData.company_name || 'Unknown Company'
+        } : {
+          full_name: 'Unknown',
+          company_name: 'Unknown Company'
         }
       };
       
-      setBid(safeBid);
+      setBid(completeBid);
       
       // Check if user has already evaluated this bid
       const { data: evaluationData, error: evaluationError } = await supabase
@@ -181,10 +162,12 @@ const EvaluationForm = () => {
       if (evaluationError) throw evaluationError;
       
       if (evaluationData) {
-        // Convert string evaluation_type to UserRole enum
+        // Convert string evaluation_type to UserRole enum and ensure we have all needed fields
         const typedEvaluation: Evaluation = {
           ...evaluationData,
-          evaluation_type: evaluationData.evaluation_type as UserRole
+          evaluation_type: evaluationData.evaluation_type as UserRole,
+          criteria_scores: evaluationData.criteria_scores || null,
+          justification: evaluationData.justification || null
         };
         
         setExistingEvaluation(typedEvaluation);
@@ -263,19 +246,25 @@ const EvaluationForm = () => {
           evaluationType = UserRole.EVALUATOR_ACCOUNTING;
           break;
         default:
-          throw new Error('Invalid evaluator type');
+          // Default to finance evaluator if something goes wrong
+          evaluationType = UserRole.EVALUATOR_FINANCE;
       }
+      
+      // Prepare the evaluation data that matches the database schema
+      const evaluationData = {
+        score,
+        comments,
+        recommendation,
+        criteria_scores: Object.keys(criteriaScores).length > 0 ? criteriaScores : null,
+        justification: justification || null
+      };
       
       if (existingEvaluation) {
         // Update existing evaluation
         const { error } = await supabase
           .from('evaluations')
           .update({
-            score,
-            comments,
-            recommendation,
-            criteria_scores: Object.keys(criteriaScores).length > 0 ? criteriaScores : null,
-            justification: justification || null,
+            ...evaluationData,
             updated_at: new Date().toISOString()
           })
           .eq('id', existingEvaluation.id);
@@ -287,19 +276,14 @@ const EvaluationForm = () => {
           description: "Your evaluation has been successfully updated.",
         });
       } else {
-        // Create new evaluation
+        // Create new evaluation with only the fields that are in the database schema
         const { error } = await supabase
           .from('evaluations')
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluationType,
-            score,
-            comments,
-            recommendation,
-            criteria_scores: Object.keys(criteriaScores).length > 0 ? criteriaScores : null,
-            justification: justification || null
-            // In a real implementation, we'd add blockchain hash here
+            evaluation_type: evaluatorType, // Use the string value directly as it's in the enum
+            ...evaluationData
           });
           
         if (error) throw error;
@@ -363,11 +347,11 @@ const EvaluationForm = () => {
         
         <BidSummaryCards 
           bidAmount={bid.bid_amount}
-          budgetAmount={bid.tender?.budget_amount}
-          budgetCurrency={bid.tender?.budget_currency}
+          budgetAmount={bid.tender?.budget_amount || 0}
+          budgetCurrency={bid.tender?.budget_currency || 'KES'}
           supplierName={bid.supplier?.full_name || 'Unknown'}
           supplierCompany={bid.supplier?.company_name || 'Unknown Company'}
-          category={bid.tender?.category}
+          category={bid.tender?.category || 'Unknown'}
           evaluatorType={evaluatorType}
         />
 

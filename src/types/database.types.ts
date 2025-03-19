@@ -57,6 +57,18 @@ export interface Bid {
   status: string;
   created_at: string;
   updated_at: string;
+  tender?: {
+    title: string;
+    description: string;
+    category: string;
+    budget_amount: number | null;
+    budget_currency: string;
+    procurement_method?: string | null;
+  };
+  supplier?: {
+    full_name: string | null;
+    company_name: string | null;
+  };
 }
 
 export interface Evaluation {

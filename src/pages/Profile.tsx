@@ -59,8 +59,8 @@ const Profile = () => {
             created_at: profileData.created_at || new Date().toISOString(),
             updated_at: profileData.updated_at || new Date().toISOString(),
             // Add default values for missing fields from the database
-            verification_level: profileData.verification_level as VerificationLevel || VerificationLevel.NONE,
-            business_type: profileData.business_type as BusinessType || null,
+            verification_level: (profileData.verification_level as VerificationLevel) || VerificationLevel.NONE,
+            business_type: (profileData.business_type as BusinessType) || null,
             business_registration_number: profileData.business_registration_number || null,
             tax_pin: profileData.tax_pin || null,
           };
