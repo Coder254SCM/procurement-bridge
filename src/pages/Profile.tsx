@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,11 +57,10 @@ const Profile = () => {
             kyc_documents: profileData.kyc_documents || null,
             created_at: profileData.created_at || new Date().toISOString(),
             updated_at: profileData.updated_at || new Date().toISOString(),
-            // Add default values for missing fields from the database
-            verification_level: (profileData.verification_level as VerificationLevel) || VerificationLevel.NONE,
-            business_type: (profileData.business_type as BusinessType) || null,
-            business_registration_number: profileData.business_registration_number || null,
-            tax_pin: profileData.tax_pin || null,
+            verification_level: VerificationLevel.NONE,
+            business_type: null,
+            business_registration_number: null,
+            tax_pin: null,
           };
           
           setProfile(completeProfile);

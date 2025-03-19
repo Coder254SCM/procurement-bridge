@@ -14,7 +14,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { EvaluationCriteriaCategory } from '@/types/enums';
-import { EvaluationCriteriaScores } from '@/types/database.types';
+import { EvaluationCriteriaScores, Evaluation } from '@/types/database.types';
 
 interface EvaluationFormProps {
   score: number;
@@ -22,7 +22,7 @@ interface EvaluationFormProps {
   recommendation: string;
   isReadOnly: boolean;
   submitting: boolean;
-  existingEvaluation: any;
+  existingEvaluation: Evaluation | null;
   criteriaScores?: EvaluationCriteriaScores;
   justification?: string;
   onScoreChange: (value: number) => void;

@@ -92,24 +92,25 @@ const EvaluationForm = () => {
     try {
       setLoading(true);
       
-      // Simplified query to get bid and related data
+      // Get the bid data
       const { data: bidData, error: bidError } = await supabase
         .from('bids')
-        .select(`
-          *,
-          tender:tender_id(
-            title,
-            description,
-            category,
-            budget_amount,
-            budget_currency,
-            procurement_method
-          )
-        `)
+        .select('*')
         .eq('id', bidId)
         .single();
         
       if (bidError) throw bidError;
+
+      // Separate query to get tender details
+      const { data: tenderData, error: tenderError } = await supabase
+        .from('tenders')
+        .select('title, description, category, budget_amount, budget_currency, procurement_method')
+        .eq('id', bidData.tender_id)
+        .single();
+      
+      if (tenderError) {
+        console.error('Error fetching tender data:', tenderError);
+      }
 
       // Separate query to get supplier profile
       const { data: supplierData, error: supplierError } = await supabase
@@ -125,13 +126,13 @@ const EvaluationForm = () => {
       // Create a complete bid object with defaults if data is missing
       const completeBid: Bid = {
         ...bidData,
-        tender: bidData.tender ? {
-          title: bidData.tender.title || 'Untitled',
-          description: bidData.tender.description || '',
-          category: bidData.tender.category || 'General',
-          budget_amount: bidData.tender.budget_amount || 0,
-          budget_currency: bidData.tender.budget_currency || 'KES',
-          procurement_method: bidData.tender.procurement_method || null
+        tender: tenderData ? {
+          title: tenderData.title || 'Untitled',
+          description: tenderData.description || '',
+          category: tenderData.category || 'General',
+          budget_amount: tenderData.budget_amount || 0,
+          budget_currency: tenderData.budget_currency || 'KES',
+          procurement_method: tenderData.procurement_method || null
         } : {
           title: 'Untitled',
           description: '',
@@ -162,10 +163,10 @@ const EvaluationForm = () => {
       if (evaluationError) throw evaluationError;
       
       if (evaluationData) {
-        // Convert string evaluation_type to UserRole enum and ensure we have all needed fields
+        // Create a complete Evaluation object with all needed fields
         const typedEvaluation: Evaluation = {
           ...evaluationData,
-          evaluation_type: evaluationData.evaluation_type as UserRole,
+          evaluation_type: evaluationData.evaluation_type || '',
           criteria_scores: evaluationData.criteria_scores || null,
           justification: evaluationData.justification || null
         };
@@ -223,33 +224,6 @@ const EvaluationForm = () => {
         return;
       }
       
-      // Convert the evaluation type string to the correct enum format
-      let evaluationType: UserRole;
-      
-      switch (evaluatorType) {
-        case 'evaluator_finance':
-          evaluationType = UserRole.EVALUATOR_FINANCE;
-          break;
-        case 'evaluator_technical':
-          evaluationType = UserRole.EVALUATOR_TECHNICAL;
-          break;
-        case 'evaluator_procurement':
-          evaluationType = UserRole.EVALUATOR_PROCUREMENT;
-          break;
-        case 'evaluator_engineering':
-          evaluationType = UserRole.EVALUATOR_ENGINEERING;
-          break;
-        case 'evaluator_legal':
-          evaluationType = UserRole.EVALUATOR_LEGAL;
-          break;
-        case 'evaluator_accounting':
-          evaluationType = UserRole.EVALUATOR_ACCOUNTING;
-          break;
-        default:
-          // Default to finance evaluator if something goes wrong
-          evaluationType = UserRole.EVALUATOR_FINANCE;
-      }
-      
       // Prepare the evaluation data that matches the database schema
       const evaluationData = {
         score,
@@ -282,7 +256,7 @@ const EvaluationForm = () => {
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluatorType, // Use the string value directly as it's in the enum
+            evaluation_type: evaluatorType,
             ...evaluationData
           });
           

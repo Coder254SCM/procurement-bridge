@@ -75,7 +75,7 @@ export interface Evaluation {
   id: string;
   bid_id: string;
   evaluator_id: string;
-  evaluation_type: UserRole;
+  evaluation_type: UserRole | string;
   score: number;
   comments: string | null;
   blockchain_hash: string | null;
