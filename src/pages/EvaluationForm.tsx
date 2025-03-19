@@ -92,7 +92,7 @@ const EvaluationForm = () => {
     try {
       setLoading(true);
       
-      // Get the bid data
+      // Get the bid data first
       const { data: bidData, error: bidError } = await supabase
         .from('bids')
         .select('*')
@@ -101,54 +101,62 @@ const EvaluationForm = () => {
         
       if (bidError) throw bidError;
 
-      // Separate query to get tender details
-      const { data: tenderData, error: tenderError } = await supabase
-        .from('tenders')
-        .select('title, description, category, budget_amount, budget_currency, procurement_method')
-        .eq('id', bidData.tender_id)
-        .single();
-      
-      if (tenderError) {
-        console.error('Error fetching tender data:', tenderError);
-      }
-
-      // Separate query to get supplier profile
-      const { data: supplierData, error: supplierError } = await supabase
-        .from('profiles')
-        .select('full_name, company_name')
-        .eq('id', bidData.supplier_id)
-        .single();
-      
-      if (supplierError) {
-        console.error('Error fetching supplier data:', supplierError);
-      }
-      
-      // Create a complete bid object with defaults if data is missing
-      const completeBid: Bid = {
+      // Define the completed bid object we'll build
+      let completeBid: Bid = {
         ...bidData,
-        tender: tenderData ? {
-          title: tenderData.title || 'Untitled',
-          description: tenderData.description || '',
-          category: tenderData.category || 'General',
-          budget_amount: tenderData.budget_amount || 0,
-          budget_currency: tenderData.budget_currency || 'KES',
-          procurement_method: tenderData.procurement_method || null
-        } : {
-          title: 'Untitled',
+        tender: {
+          title: 'Untitled Tender',
           description: '',
           category: 'General',
           budget_amount: 0,
           budget_currency: 'KES',
           procurement_method: null
         },
-        supplier: supplierData ? {
-          full_name: supplierData.full_name || 'Unknown',
-          company_name: supplierData.company_name || 'Unknown Company'
-        } : {
+        supplier: {
           full_name: 'Unknown',
           company_name: 'Unknown Company'
         }
       };
+
+      // Separate query to get tender details
+      try {
+        const { data: tenderData, error: tenderError } = await supabase
+          .from('tenders')
+          .select('title, description, category, budget_amount, budget_currency, procurement_method')
+          .eq('id', bidData.tender_id)
+          .single();
+          
+        if (!tenderError && tenderData) {
+          completeBid.tender = {
+            title: tenderData.title || 'Untitled',
+            description: tenderData.description || '',
+            category: tenderData.category || 'General',
+            budget_amount: tenderData.budget_amount || 0,
+            budget_currency: tenderData.budget_currency || 'KES',
+            procurement_method: tenderData.procurement_method || null
+          };
+        }
+      } catch (tenderError) {
+        console.error('Error fetching tender data:', tenderError);
+      }
+
+      // Separate query to get supplier profile
+      try {
+        const { data: supplierData, error: supplierError } = await supabase
+          .from('profiles')
+          .select('full_name, company_name')
+          .eq('id', bidData.supplier_id)
+          .single();
+          
+        if (!supplierError && supplierData) {
+          completeBid.supplier = {
+            full_name: supplierData.full_name || 'Unknown',
+            company_name: supplierData.company_name || 'Unknown Company'
+          };
+        }
+      } catch (supplierError) {
+        console.error('Error fetching supplier data:', supplierError);
+      }
       
       setBid(completeBid);
       
