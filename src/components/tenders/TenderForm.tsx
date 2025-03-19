@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { CalendarIcon, Upload } from 'lucide-react';
+import { CalendarIcon, Upload, FileCheck, ListFilter } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
+import { TenderTemplateType } from '@/types/enums';
 import {
   Form,
   FormControl,
@@ -33,6 +35,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
 
 // Define form schema with Zod
@@ -46,6 +61,7 @@ const formSchema = z.object({
   category: z.string().min(1, {
     message: "Please select a category.",
   }),
+  template_type: z.string().optional(),
   budget_amount: z.coerce.number().positive({
     message: "Budget must be a positive number.",
   }),
@@ -53,6 +69,7 @@ const formSchema = z.object({
   submission_deadline: z.date({
     required_error: "Please select a deadline date.",
   }),
+  evaluation_criteria: z.record(z.string(), z.number()).optional(),
 });
 
 // Industry/Category options
@@ -70,6 +87,26 @@ const categoryOptions = [
   "Other"
 ];
 
+// Template options
+const templateOptions = [
+  { value: TenderTemplateType.STANDARD, label: "Standard Procurement" },
+  { value: TenderTemplateType.CONSTRUCTION, label: "Construction Projects" },
+  { value: TenderTemplateType.IT_SERVICES, label: "IT Services & Systems" },
+  { value: TenderTemplateType.CONSULTING, label: "Consulting Services" },
+  { value: TenderTemplateType.SUPPLIES, label: "Goods & Supplies" },
+  { value: TenderTemplateType.MEDICAL, label: "Medical & Healthcare" },
+  { value: TenderTemplateType.CUSTOM, label: "Custom Template" },
+];
+
+// Default evaluation criteria
+const defaultEvaluationCriteria = {
+  technical: 30,
+  financial: 30,
+  experience: 15,
+  compliance: 15,
+  delivery: 10,
+};
+
 interface TenderFormProps {
   userId: string;
 }
@@ -79,6 +116,10 @@ const TenderForm = ({ userId }: TenderFormProps) => {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [documents, setDocuments] = useState<File[]>([]);
+  const [useTemplate, setUseTemplate] = useState(false);
+  const [evaluationCriteria, setEvaluationCriteria] = useState(defaultEvaluationCriteria);
+  const [templateContent, setTemplateContent] = useState<string>('');
+  const [digitalSignature, setDigitalSignature] = useState<boolean>(false);
 
   // Initialize form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -87,11 +128,49 @@ const TenderForm = ({ userId }: TenderFormProps) => {
       title: "",
       description: "",
       category: "",
+      template_type: TenderTemplateType.STANDARD,
       budget_amount: undefined,
       budget_currency: "KES",
       submission_deadline: undefined,
+      evaluation_criteria: defaultEvaluationCriteria,
     },
   });
+
+  // Handle template selection
+  const handleTemplateChange = (templateType: string) => {
+    form.setValue('template_type', templateType);
+    
+    // Set template content based on selection
+    switch (templateType) {
+      case TenderTemplateType.CONSTRUCTION:
+        setTemplateContent('Standard construction tender template following Kenyan PPD Act requirements...');
+        setEvaluationCriteria({
+          technical: 35,
+          financial: 25,
+          experience: 20,
+          compliance: 10,
+          quality: 10,
+        });
+        break;
+      case TenderTemplateType.IT_SERVICES:
+        setTemplateContent('IT services procurement template following ICTA guidelines...');
+        setEvaluationCriteria({
+          technical: 40,
+          financial: 25,
+          experience: 15,
+          innovation: 10,
+          support: 10,
+        });
+        break;
+      // Add more template types here
+      default:
+        setTemplateContent('');
+        setEvaluationCriteria(defaultEvaluationCriteria);
+    }
+    
+    // Update form evaluation criteria
+    form.setValue('evaluation_criteria', evaluationCriteria);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -104,10 +183,35 @@ const TenderForm = ({ userId }: TenderFormProps) => {
     setDocuments(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleCriteriaChange = (criterion: string, value: number) => {
+    setEvaluationCriteria(prev => ({
+      ...prev,
+      [criterion]: value
+    }));
+    
+    // Update form value
+    form.setValue('evaluation_criteria', {
+      ...evaluationCriteria,
+      [criterion]: value
+    });
+  };
+
+  // Generate a simple digital signature (in real world, this would use proper digital signature standards)
+  const generateDigitalSignature = (): string => {
+    const timestamp = new Date().toISOString();
+    const userSignature = `${userId}:${timestamp}`;
+    
+    // In a real implementation, this would use cryptographic signing
+    return window.btoa(userSignature);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setSubmitting(true);
     
     try {
+      const signatureData = digitalSignature ? generateDigitalSignature() : null;
+      const signatureTimestamp = digitalSignature ? new Date().toISOString() : null;
+      
       // Insert tender data
       const { data, error } = await supabase
         .from('tenders')
@@ -120,6 +224,10 @@ const TenderForm = ({ userId }: TenderFormProps) => {
           submission_deadline: values.submission_deadline.toISOString(),
           buyer_id: userId,
           status: 'draft',
+          template_type: values.template_type,
+          evaluation_criteria: values.evaluation_criteria || evaluationCriteria,
+          digital_signature: signatureData,
+          signature_timestamp: signatureTimestamp,
         })
         .select('id')
         .single();
@@ -137,7 +245,9 @@ const TenderForm = ({ userId }: TenderFormProps) => {
           category: values.category,
           budget_amount: values.budget_amount,
           buyer_id: userId,
-          submission_deadline: values.submission_deadline.toISOString()
+          submission_deadline: values.submission_deadline.toISOString(),
+          digital_signature: signatureData,
+          signature_timestamp: signatureTimestamp,
         });
         
         if (blockchainResult.success && blockchainResult.txId) {
@@ -179,6 +289,44 @@ const TenderForm = ({ userId }: TenderFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mb-12">
+        <div className="mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Template Selection</CardTitle>
+              <CardDescription>
+                Choose a template to speed up the tender creation process
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {templateOptions.map((template) => (
+                  <div 
+                    key={template.value}
+                    className={cn(
+                      "cursor-pointer border rounded-lg p-4 transition-all",
+                      form.watch('template_type') === template.value 
+                        ? "border-primary bg-primary/10" 
+                        : "border-border hover:border-primary/50"
+                    )}
+                    onClick={() => handleTemplateChange(template.value)}
+                  >
+                    <h3 className="font-medium mb-1">{template.label}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {template.value === TenderTemplateType.STANDARD && "Basic tender template"}
+                      {template.value === TenderTemplateType.CONSTRUCTION && "For construction projects"}
+                      {template.value === TenderTemplateType.IT_SERVICES && "For IT services procurement"}
+                      {template.value === TenderTemplateType.CONSULTING && "For consulting services"}
+                      {template.value === TenderTemplateType.SUPPLIES && "For goods and supplies"}
+                      {template.value === TenderTemplateType.MEDICAL && "For medical equipment & services"}
+                      {template.value === TenderTemplateType.CUSTOM && "Create your own template"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
             <FormField
@@ -322,8 +470,9 @@ const TenderForm = ({ userId }: TenderFormProps) => {
               <FormControl>
                 <Textarea 
                   placeholder="Provide a detailed description of the goods or services required..." 
-                  className="min-h-[120px]" 
-                  {...field} 
+                  className="min-h-[150px]" 
+                  value={templateContent ? `${templateContent}\n\n${field.value}` : field.value}
+                  onChange={field.onChange}
                 />
               </FormControl>
               <FormDescription>
@@ -333,6 +482,59 @@ const TenderForm = ({ userId }: TenderFormProps) => {
             </FormItem>
           )}
         />
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <ListFilter className="mr-2 h-5 w-5" />
+              Evaluation Criteria
+            </CardTitle>
+            <CardDescription>
+              Define how bids will be evaluated by allocating percentage weights
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-sm mb-4">
+                Total allocation must equal 100%. Adjust the sliders to set the importance of each criterion.
+              </p>
+              
+              {Object.entries(evaluationCriteria).map(([criterion, weight]) => (
+                <div key={criterion} className="space-y-2">
+                  <div className="flex justify-between">
+                    <label className="text-sm font-medium capitalize">{criterion}</label>
+                    <span className="text-sm">{weight}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={weight} 
+                    onChange={(e) => handleCriteriaChange(criterion, parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+              ))}
+              
+              <div className="flex justify-between pt-4 border-t">
+                <span className="font-medium">Total:</span>
+                <span className={
+                  Object.values(evaluationCriteria).reduce((a, b) => a + b, 0) === 100 
+                    ? "font-medium" 
+                    : "font-medium text-destructive"
+                }>
+                  {Object.values(evaluationCriteria).reduce((a, b) => a + b, 0)}%
+                </span>
+              </div>
+              
+              {Object.values(evaluationCriteria).reduce((a, b) => a + b, 0) !== 100 && (
+                <p className="text-sm text-destructive">
+                  Criteria weights must sum to exactly 100%.
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
         
         <div className="space-y-4">
           <div>
@@ -386,6 +588,19 @@ const TenderForm = ({ userId }: TenderFormProps) => {
           )}
         </div>
         
+        <div className="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            id="digital-signature" 
+            checked={digitalSignature}
+            onChange={() => setDigitalSignature(!digitalSignature)}
+            className="rounded border-gray-300"
+          />
+          <label htmlFor="digital-signature" className="text-sm">
+            Add digital signature and blockchain timestamp
+          </label>
+        </div>
+        
         <div className="flex justify-end space-x-4">
           <Button
             type="button"
@@ -395,7 +610,10 @@ const TenderForm = ({ userId }: TenderFormProps) => {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={submitting}>
+          <Button 
+            type="submit" 
+            disabled={submitting || Object.values(evaluationCriteria).reduce((a, b) => a + b, 0) !== 100}
+          >
             {submitting ? (
               <>
                 <div className="animate-spin mr-2 h-4 w-4 border-2 border-b-transparent rounded-full"></div>

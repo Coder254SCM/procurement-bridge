@@ -1,5 +1,5 @@
 
-import { UserRole } from './enums';
+import { UserRole, KycStatus, VerificationLevel, BusinessType } from './enums';
 
 export interface Profile {
   id: string;
@@ -8,7 +8,11 @@ export interface Profile {
   position: string | null;
   industry: string | null;
   verified: boolean;
-  kyc_status: string;
+  verification_level: VerificationLevel;
+  business_type: BusinessType | null;
+  business_registration_number: string | null;
+  tax_pin: string | null;
+  kyc_status: KycStatus;
   kyc_documents: any | null;
   created_at: string;
   updated_at: string;
@@ -36,6 +40,9 @@ export interface Tender {
   documents: any | null;
   created_at: string;
   updated_at: string;
+  template_type: string | null;
+  digital_signature: string | null;
+  signature_timestamp: string | null;
 }
 
 export interface Bid {
@@ -83,6 +90,40 @@ export interface TenderAward {
   contract_details: any;
   blockchain_hash: string | null;
   status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KycVerification {
+  id: string;
+  user_id: string;
+  business_name: string;
+  business_type: BusinessType;
+  registration_number: string;
+  tax_pin: string;
+  address: string;
+  contact_person: string;
+  contact_email: string;
+  contact_phone: string;
+  documents: any;
+  verification_level: VerificationLevel;
+  status: KycStatus;
+  reviewer_id: string | null;
+  review_comments: string | null;
+  blockchain_hash: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TenderTemplate {
+  id: string;
+  name: string;
+  description: string;
+  template_type: string;
+  content: any;
+  evaluation_criteria: any;
+  created_by: string;
+  is_public: boolean;
   created_at: string;
   updated_at: string;
 }

@@ -35,3 +35,41 @@ export enum KycStatus {
   APPROVED = 'approved',
   REJECTED = 'rejected'
 }
+
+export enum VerificationLevel {
+  NONE = 'none',
+  BASIC = 'basic',
+  INTERMEDIATE = 'intermediate',
+  FULL = 'full'
+}
+
+export enum BusinessType {
+  SOLE_PROPRIETORSHIP = 'sole_proprietorship',
+  PARTNERSHIP = 'partnership',
+  LIMITED_COMPANY = 'limited_company',
+  CORPORATION = 'corporation',
+  COOPERATIVE = 'cooperative',
+  NGO = 'ngo',
+  GOVERNMENT_ENTITY = 'government_entity',
+  OTHER = 'other'
+}
+
+export enum TenderTemplateType {
+  STANDARD = 'standard',
+  CONSTRUCTION = 'construction',
+  IT_SERVICES = 'it_services',
+  CONSULTING = 'consulting',
+  SUPPLIES = 'supplies',
+  MEDICAL = 'medical',
+  CUSTOM = 'custom'
+}
+
+export enum EvaluationCriteriaWeight {
+  TECHNICAL = 'technical',
+  FINANCIAL = 'financial',
+  COMPLIANCE = 'compliance',
+  EXPERIENCE = 'experience',
+  QUALITY = 'quality',
+  DELIVERY = 'delivery',
+  SUSTAINABILITY = 'sustainability'
+}

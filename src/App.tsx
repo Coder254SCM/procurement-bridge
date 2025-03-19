@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import CreateTender from "./pages/CreateTender";
 import Evaluations from "./pages/Evaluations";
 import EvaluationForm from "./pages/EvaluationForm";
+import BlockchainExplorer from "./components/blockchain/BlockchainExplorer";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +32,7 @@ const App = () => (
           <Route path="/tenders" element={<NotFound />} />
           <Route path="/tenders/:id" element={<NotFound />} />
           <Route path="/supplier-marketplace" element={<NotFound />} />
-          <Route path="/blockchain-explorer" element={<NotFound />} />
+          <Route path="/blockchain-explorer" element={<BlockchainExplorer />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
