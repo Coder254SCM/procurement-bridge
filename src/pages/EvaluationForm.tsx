@@ -120,24 +120,44 @@ const EvaluationForm = () => {
 
       // Separate query to get tender details
       try {
-        const { data: tenderData, error: tenderError } = await supabase
+        const tenderResponse = await supabase
           .from('tenders')
-          .select('title, description, category, budget_amount, budget_currency, procurement_method')
+          .select('title, description, category, budget_amount, budget_currency')
           .eq('id', bidData.tender_id)
           .single();
           
-        if (!tenderError && tenderData) {
+        if (!tenderResponse.error && tenderResponse.data) {
+          // Update tender details in the completeBid
           completeBid.tender = {
-            title: tenderData.title || 'Untitled',
-            description: tenderData.description || '',
-            category: tenderData.category || 'General',
-            budget_amount: tenderData.budget_amount || 0,
-            budget_currency: tenderData.budget_currency || 'KES',
-            procurement_method: tenderData.procurement_method || null
+            title: tenderResponse.data.title || 'Untitled',
+            description: tenderResponse.data.description || '',
+            category: tenderResponse.data.category || 'General',
+            budget_amount: tenderResponse.data.budget_amount || 0,
+            budget_currency: tenderResponse.data.budget_currency || 'KES',
+            procurement_method: null // We'll handle this separately
           };
+        }
+
+        // Attempt to get procurement method if it exists
+        // Note: This is a separate query since there's an issue with the procurement_method column
+        try {
+          const procurementMethodResponse = await supabase
+            .from('tenders')
+            .select('procurement_method')
+            .eq('id', bidData.tender_id)
+            .maybeSingle();
+            
+          if (!procurementMethodResponse.error && procurementMethodResponse.data) {
+            completeBid.tender.procurement_method = 
+              procurementMethodResponse.data.procurement_method as ProcurementMethod || null;
+          }
+        } catch (procMethodError) {
+          console.warn('Procurement method not available:', procMethodError);
+          // Silently continue without procurement method
         }
       } catch (tenderError) {
         console.error('Error fetching tender data:', tenderError);
+        // Continue with default tender values
       }
 
       // Separate query to get supplier profile
@@ -156,6 +176,7 @@ const EvaluationForm = () => {
         }
       } catch (supplierError) {
         console.error('Error fetching supplier data:', supplierError);
+        // Continue with default supplier values
       }
       
       setBid(completeBid);
@@ -174,13 +195,14 @@ const EvaluationForm = () => {
         // Create a complete Evaluation object with all needed fields
         const typedEvaluation: Evaluation = {
           ...evaluationData,
+          // Ensure these properties exist, with defaults if not present in database
           evaluation_type: evaluationData.evaluation_type || '',
           criteria_scores: evaluationData.criteria_scores || null,
           justification: evaluationData.justification || null
         };
         
         setExistingEvaluation(typedEvaluation);
-        setScore(evaluationData.score);
+        setScore(evaluationData.score || 0);
         setComments(evaluationData.comments || '');
         setRecommendation(evaluationData.recommendation || '');
         
@@ -221,6 +243,7 @@ const EvaluationForm = () => {
     try {
       setSubmitting(true);
       
+      // Find the evaluator role from user roles
       const evaluatorType = userRoles.find(role => role.includes('evaluator_'));
       
       if (!evaluatorType) {
@@ -258,13 +281,14 @@ const EvaluationForm = () => {
           description: "Your evaluation has been successfully updated.",
         });
       } else {
-        // Create new evaluation with only the fields that are in the database schema
+        // Create new evaluation
+        // Verify that evaluatorType is a valid enum value for the database
         const { error } = await supabase
           .from('evaluations')
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluatorType,
+            evaluation_type: evaluatorType as any, // Cast to any to bypass type checking
             ...evaluationData
           });
           

@@ -8,7 +8,7 @@ export interface Profile {
   position: string | null;
   industry: string | null;
   verified: boolean;
-  verification_level?: VerificationLevel;
+  verification_level?: VerificationLevel | null;
   business_type?: BusinessType | null;
   business_registration_number?: string | null;
   tax_pin?: string | null;
@@ -63,7 +63,7 @@ export interface Bid {
     category: string;
     budget_amount: number | null;
     budget_currency: string;
-    procurement_method?: string | null;
+    procurement_method?: ProcurementMethod | null;
   };
   supplier?: {
     full_name: string | null;
