@@ -1,4 +1,3 @@
-
 export enum UserRole {
   BUYER = 'buyer',
   SUPPLIER = 'supplier',
@@ -140,4 +139,42 @@ export enum EvaluationCriteriaCategory {
   MAINTENANCE_CAPABILITY = 'maintenance_capability',
   INTELLECTUAL_PROPERTY = 'intellectual_property',
   CONTRACT_TERMS_ACCEPTANCE = 'contract_terms_acceptance'
+}
+
+// Digital Identity Verification Enums
+export enum VerificationType {
+  BUSINESS_REGISTRY = 'business_registry',
+  TAX_COMPLIANCE = 'tax_compliance',
+  IDENTITY_DOCUMENT = 'identity_document',
+  BLOCKCHAIN_VERIFICATION = 'blockchain_verification',
+  DIGITAL_SIGNATURE = 'digital_signature',
+  BIOMETRIC = 'biometric',
+  ADDRESS_VERIFICATION = 'address_verification',
+  SOCIAL_VERIFICATION = 'social_verification'
+}
+
+export enum ComplianceCheckType {
+  PEP_CHECK = 'pep_check',
+  SANCTIONS_LIST = 'sanctions_list',
+  ADVERSE_MEDIA = 'adverse_media',
+  SHELL_COMPANY_CHECK = 'shell_company_check',
+  FRAUD_DATABASE_CHECK = 'fraud_database_check',
+  DISBARRED_ENTITIES = 'disbarred_entities'
+}
+
+export enum BehaviorAnalysisType {
+  BID_PATTERN = 'bid_pattern',
+  PRICING_ANALYSIS = 'pricing_analysis',
+  TIMING_ANALYSIS = 'timing_analysis',
+  DOCUMENT_AUTHENTICITY = 'document_authenticity',
+  COLLUSION_DETECTION = 'collusion_detection',
+  UNUSUAL_ACTIVITY = 'unusual_activity'
+}
+
+export enum VerificationStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  VERIFIED = 'verified',
+  REJECTED = 'rejected',
+  FLAGGED = 'flagged'
 }

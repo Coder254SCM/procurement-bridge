@@ -15,6 +15,8 @@ export interface Profile {
   kyc_documents: any | null;
   created_at: string;
   updated_at: string;
+  verification_status?: VerificationStatus;
+  risk_score?: number;
 }
 
 export interface UserRoleRecord {
@@ -205,4 +207,52 @@ export interface ProcurementMethodTemplate {
   defaultCriteria: EvaluationCriteria;
   suitableFor: string[];
   regulatoryBasis: string;
+}
+
+// Digital Identity Verification Interfaces
+export type VerificationStatus = 'pending' | 'in_progress' | 'verified' | 'rejected' | 'flagged';
+
+export interface DigitalIdentityVerification {
+  id: string;
+  user_id: string;
+  business_id: string;
+  verification_type: string;
+  verification_status: VerificationStatus;
+  verification_data: any | null;
+  blockchain_hash: string | null;
+  created_at: string;
+  updated_at: string;
+  verified_by: string | null;
+  verification_date: string | null;
+}
+
+export interface ComplianceCheck {
+  id: string;
+  user_id: string;
+  check_type: string;
+  status: VerificationStatus;
+  result_data: any | null;
+  check_date: string;
+  next_check_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BehaviorAnalysis {
+  id: string;
+  entity_id: string;
+  entity_type: 'tender' | 'bid' | 'user';
+  analysis_type: string;
+  risk_score: number;
+  analysis_data: any | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VerificationResult {
+  passed: boolean;
+  score: number;
+  details: string;
+  flags: string[];
+  timestamp: string;
 }

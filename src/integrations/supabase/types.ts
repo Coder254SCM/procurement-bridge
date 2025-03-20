@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      behavior_analysis: {
+        Row: {
+          analysis_data: Json | null
+          analysis_type: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          risk_score: number
+          updated_at: string
+        }
+        Insert: {
+          analysis_data?: Json | null
+          analysis_type: string
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          risk_score?: number
+          updated_at?: string
+        }
+        Update: {
+          analysis_data?: Json | null
+          analysis_type?: string
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          risk_score?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bids: {
         Row: {
           bid_amount: number
@@ -89,6 +122,84 @@ export type Database = {
         }
         Relationships: []
       }
+      compliance_checks: {
+        Row: {
+          check_date: string
+          check_type: string
+          created_at: string
+          id: string
+          next_check_date: string | null
+          result_data: Json | null
+          status: Database["public"]["Enums"]["verification_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          check_date?: string
+          check_type: string
+          created_at?: string
+          id?: string
+          next_check_date?: string | null
+          result_data?: Json | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          check_date?: string
+          check_type?: string
+          created_at?: string
+          id?: string
+          next_check_date?: string | null
+          result_data?: Json | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      digital_identity_verification: {
+        Row: {
+          blockchain_hash: string | null
+          business_id: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          verification_data: Json | null
+          verification_date: string | null
+          verification_status: Database["public"]["Enums"]["verification_status"]
+          verification_type: string
+          verified_by: string | null
+        }
+        Insert: {
+          blockchain_hash?: string | null
+          business_id: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          verification_data?: Json | null
+          verification_date?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verification_type: string
+          verified_by?: string | null
+        }
+        Update: {
+          blockchain_hash?: string | null
+          business_id?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          verification_data?: Json | null
+          verification_date?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verification_type?: string
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       evaluations: {
         Row: {
           bid_id: string
@@ -152,7 +263,12 @@ export type Database = {
           kyc_documents: Json | null
           kyc_status: string | null
           position: string | null
+          risk_score: number | null
           updated_at: string | null
+          verification_level: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
           verified: boolean | null
         }
         Insert: {
@@ -164,7 +280,12 @@ export type Database = {
           kyc_documents?: Json | null
           kyc_status?: string | null
           position?: string | null
+          risk_score?: number | null
           updated_at?: string | null
+          verification_level?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
           verified?: boolean | null
         }
         Update: {
@@ -176,7 +297,12 @@ export type Database = {
           kyc_documents?: Json | null
           kyc_status?: string | null
           position?: string | null
+          risk_score?: number | null
           updated_at?: string | null
+          verification_level?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
           verified?: boolean | null
         }
         Relationships: []
@@ -280,6 +406,12 @@ export type Database = {
         | "evaluator_engineering"
         | "evaluator_legal"
         | "evaluator_accounting"
+      verification_status:
+        | "pending"
+        | "in_progress"
+        | "verified"
+        | "rejected"
+        | "flagged"
     }
     CompositeTypes: {
       [_ in never]: never
