@@ -139,28 +139,21 @@ const EvaluationForm = () => {
         }
 
         // Attempt to get procurement method if it exists
-        // Note: This needs to be handled separately due to the error with the procurement_method column
+        // Note: Since the column might not exist, we'll use a safer approach
         try {
-          // Use a more generic approach instead of directly accessing procurement_method
-          const { data: methodData } = await supabase.rpc(
-            'get_tender_procurement_method',
-            { tender_id: bidData.tender_id }
-          ).maybeSingle();
-          
-          // If the RPC function doesn't exist or fails, use a standard query but handle the potential error
-          if (!methodData) {
-            console.log("Falling back to standard query for procurement method");
-            try {
-              // Try to access any column that might store the procurement method
-              // This is a fallback that assumes procurement_method might be named differently or not available
-              const procurementMethodFallback = ProcurementMethod.OPEN_TENDER; // Default fallback
-              completeBid.tender.procurement_method = procurementMethodFallback;
-            } catch (fallbackError) {
-              console.warn('Cannot determine procurement method, using default:', fallbackError);
-              completeBid.tender.procurement_method = ProcurementMethod.OPEN_TENDER;
-            }
+          // Directly query the table and handle error if column doesn't exist
+          const { data: procMethodData, error: procMethodError } = await supabase
+            .from('tenders')
+            .select('procurement_method')
+            .eq('id', bidData.tender_id)
+            .single();
+
+          if (!procMethodError && procMethodData && procMethodData.procurement_method) {
+            completeBid.tender.procurement_method = procMethodData.procurement_method as ProcurementMethod;
           } else {
-            completeBid.tender.procurement_method = methodData.procurement_method || ProcurementMethod.OPEN_TENDER;
+            // If there's an error or no data, use a default
+            console.log("No procurement method found, using default");
+            completeBid.tender.procurement_method = ProcurementMethod.OPEN_TENDER;
           }
         } catch (procMethodError) {
           console.warn('Error getting procurement method, using default:', procMethodError);
@@ -205,9 +198,16 @@ const EvaluationForm = () => {
       if (evaluationData) {
         // Create a complete Evaluation object with all needed fields
         const typedEvaluation: Evaluation = {
-          ...evaluationData,
-          // Ensure these properties exist, with defaults if not present in database
-          evaluation_type: evaluationData.evaluation_type || '',
+          id: evaluationData.id,
+          bid_id: evaluationData.bid_id,
+          evaluator_id: evaluationData.evaluator_id,
+          evaluation_type: evaluationData.evaluation_type,
+          score: evaluationData.score,
+          comments: evaluationData.comments || null,
+          recommendation: evaluationData.recommendation || null,
+          blockchain_hash: evaluationData.blockchain_hash || null,
+          created_at: evaluationData.created_at,
+          updated_at: evaluationData.updated_at,
           criteria_scores: evaluationData.criteria_scores || {},
           justification: evaluationData.justification || ''
         };
@@ -268,6 +268,9 @@ const EvaluationForm = () => {
       
       // Prepare the evaluation data that matches the database schema
       const evaluationData = {
+        bid_id: bid.id,
+        evaluator_id: session.user.id,
+        evaluation_type: evaluatorType, // Pass the evaluator type as a string
         score,
         comments,
         recommendation,
@@ -280,7 +283,11 @@ const EvaluationForm = () => {
         const { error } = await supabase
           .from('evaluations')
           .update({
-            ...evaluationData,
+            score: evaluationData.score,
+            comments: evaluationData.comments,
+            recommendation: evaluationData.recommendation,
+            criteria_scores: evaluationData.criteria_scores,
+            justification: evaluationData.justification,
             updated_at: new Date().toISOString()
           })
           .eq('id', existingEvaluation.id);
@@ -293,15 +300,9 @@ const EvaluationForm = () => {
         });
       } else {
         // Create new evaluation
-        // Make sure to pass the evaluation_type as string, not as UserRole enum
         const { error } = await supabase
           .from('evaluations')
-          .insert({
-            bid_id: bid.id,
-            evaluator_id: session.user.id,
-            evaluation_type: evaluatorType,
-            ...evaluationData
-          });
+          .insert(evaluationData);
           
         if (error) throw error;
         
@@ -356,20 +357,20 @@ const EvaluationForm = () => {
     <div className="min-h-screen p-8">
       <div className="container mx-auto max-w-4xl">
         <EvaluationHeader 
-          title={bid.tender?.title || 'Untitled Tender'} 
-          bidId={bid.id} 
-          createdAt={bid.created_at} 
+          title={bid?.tender?.title || 'Untitled Tender'} 
+          bidId={bid?.id || ''} 
+          createdAt={bid?.created_at || ''} 
           isEvaluated={!!existingEvaluation}
         />
         
         <BidSummaryCards 
-          bidAmount={bid.bid_amount}
-          budgetAmount={bid.tender?.budget_amount || 0}
-          budgetCurrency={bid.tender?.budget_currency || 'KES'}
-          supplierName={bid.supplier?.full_name || 'Unknown'}
-          supplierCompany={bid.supplier?.company_name || 'Unknown Company'}
-          category={bid.tender?.category || 'Unknown'}
-          evaluatorType={evaluatorType}
+          bidAmount={bid?.bid_amount || 0}
+          budgetAmount={bid?.tender?.budget_amount || 0}
+          budgetCurrency={bid?.tender?.budget_currency || 'KES'}
+          supplierName={bid?.supplier?.full_name || 'Unknown'}
+          supplierCompany={bid?.supplier?.company_name || 'Unknown Company'}
+          category={bid?.tender?.category || 'Unknown'}
+          evaluatorType={userRoles.find(role => role.includes('evaluator_'))?.replace('evaluator_', '') || ''}
         />
 
         <div className="mb-8">
@@ -385,7 +386,7 @@ const EvaluationForm = () => {
                 score={score}
                 comments={comments}
                 recommendation={recommendation}
-                isReadOnly={isReadOnly}
+                isReadOnly={!!existingEvaluation}
                 submitting={submitting}
                 existingEvaluation={existingEvaluation}
                 criteriaScores={criteriaScores}
@@ -401,14 +402,14 @@ const EvaluationForm = () => {
             
             <TabsContent value="details" className="mt-6">
               <TenderDetailCards 
-                description={bid.tender?.description}
-                technicalDetails={bid.technical_details}
-                documents={bid.documents}
+                description={bid?.tender?.description}
+                technicalDetails={bid?.technical_details}
+                documents={bid?.documents}
               />
             </TabsContent>
             
             <TabsContent value="method" className="mt-6">
-              <ProcurementMethodInfo method={procurementMethod} />
+              <ProcurementMethodInfo method={bid?.tender?.procurement_method || ProcurementMethod.OPEN_TENDER} />
             </TabsContent>
           </Tabs>
         </div>
