@@ -1,3 +1,4 @@
+
 import { UserRole, KycStatus, VerificationLevel, BusinessType, ProcurementMethod, EvaluationCriteriaCategory } from './enums';
 
 export interface Profile {

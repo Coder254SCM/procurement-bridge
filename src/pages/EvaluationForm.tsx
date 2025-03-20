@@ -1,420 +1,58 @@
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { UserRole, ProcurementMethod } from '@/types/enums';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useEvaluationData } from '@/hooks/useEvaluationData';
+import EvaluationLoader from '@/components/evaluations/EvaluationLoader';
+import EvaluationNotFound from '@/components/evaluations/EvaluationNotFound';
+import EvaluationContent from '@/components/evaluations/EvaluationContent';
 
-// Import our components
-import EvaluationHeader from '@/components/evaluations/EvaluationHeader';
-import BidSummaryCards from '@/components/evaluations/BidSummaryCards';
-import TenderDetailCards from '@/components/evaluations/TenderDetailCards';
-import EvaluationFormComponent from '@/components/evaluations/EvaluationForm';
-import ProcurementMethodInfo from '@/components/evaluations/ProcurementMethodInfo';
-import { Bid, Evaluation, EvaluationCriteriaScores } from '@/types/database.types';
-
-const EvaluationForm = () => {
+const EvaluationForm: React.FC = () => {
   const { bidId } = useParams<{ bidId: string }>();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [session, setSession] = useState<any>(null);
-  const [userRoles, setUserRoles] = useState<string[]>([]);
-  const [bid, setBid] = useState<Bid | null>(null);
-  const [existingEvaluation, setExistingEvaluation] = useState<Evaluation | null>(null);
-  const [score, setScore] = useState<number>(0);
-  const [comments, setComments] = useState('');
-  const [recommendation, setRecommendation] = useState('');
-  const [criteriaScores, setCriteriaScores] = useState<EvaluationCriteriaScores>({});
-  const [justification, setJustification] = useState('');
-  const [activeTab, setActiveTab] = useState('evaluation');
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (error || !data.session) {
-        toast({
-          variant: "destructive",
-          title: "Not Authenticated",
-          description: "Please log in to evaluate bids",
-        });
-        navigate('/');
-        return;
-      }
-      
-      setSession(data.session);
-      
-      // Check user roles
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', data.session.user.id);
-        
-      if (rolesError) {
-        console.error("Error fetching user roles:", rolesError);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not verify your permissions",
-        });
-      } else if (rolesData) {
-        const roles = rolesData.map((r: { role: string }) => r.role);
-        setUserRoles(roles);
-        
-        // Check if user has any evaluator role
-        const isEvaluator = roles.some(role => role.includes('evaluator_'));
-        
-        if (!isEvaluator) {
-          toast({
-            variant: "destructive",
-            title: "Permission Denied",
-            description: "Only evaluators can access this page",
-          });
-          navigate('/dashboard');
-          return;
-        }
-        
-        // Fetch bid data and check for existing evaluation
-        if (bidId) {
-          fetchBidData(bidId, data.session.user.id, roles);
-        }
-      }
-    };
-    
-    checkSession();
-  }, [bidId, navigate, toast]);
-
-  const fetchBidData = async (bidId: string, userId: string, roles: string[]) => {
-    try {
-      setLoading(true);
-      
-      // Get the bid data first
-      const { data: bidData, error: bidError } = await supabase
-        .from('bids')
-        .select('*')
-        .eq('id', bidId)
-        .single();
-        
-      if (bidError) throw bidError;
-
-      // Define the completed bid object we'll build
-      let completeBid: Bid = {
-        ...bidData,
-        tender: {
-          title: 'Untitled Tender',
-          description: '',
-          category: 'General',
-          budget_amount: 0,
-          budget_currency: 'KES',
-          procurement_method: null
-        },
-        supplier: {
-          full_name: 'Unknown',
-          company_name: 'Unknown Company'
-        }
-      };
-
-      // Separate query to get tender details
-      try {
-        const { data: tenderData, error: tenderError } = await supabase
-          .from('tenders')
-          .select('title, description, category, budget_amount, budget_currency')
-          .eq('id', bidData.tender_id)
-          .single();
-          
-        if (!tenderError && tenderData) {
-          // Update tender details in the completeBid
-          completeBid.tender = {
-            title: tenderData.title || 'Untitled',
-            description: tenderData.description || '',
-            category: tenderData.category || 'General',
-            budget_amount: tenderData.budget_amount || 0,
-            budget_currency: tenderData.budget_currency || 'KES',
-            procurement_method: null // Will be updated separately
-          };
-        }
-
-        // Attempt to get procurement method if it exists
-        // Note: Since the column might not exist, we'll use a safer approach
-        try {
-          // Directly query the table and handle error if column doesn't exist
-          const { data: procMethodData, error: procMethodError } = await supabase
-            .from('tenders')
-            .select('procurement_method')
-            .eq('id', bidData.tender_id)
-            .single();
-
-          if (!procMethodError && procMethodData && procMethodData.procurement_method) {
-            completeBid.tender.procurement_method = procMethodData.procurement_method as ProcurementMethod;
-          } else {
-            // If there's an error or no data, use a default
-            console.log("No procurement method found, using default");
-            completeBid.tender.procurement_method = ProcurementMethod.OPEN_TENDER;
-          }
-        } catch (procMethodError) {
-          console.warn('Error getting procurement method, using default:', procMethodError);
-          completeBid.tender.procurement_method = ProcurementMethod.OPEN_TENDER;
-        }
-      } catch (tenderError) {
-        console.error('Error fetching tender data:', tenderError);
-        // Continue with default tender values
-      }
-
-      // Separate query to get supplier profile
-      try {
-        const { data: supplierData, error: supplierError } = await supabase
-          .from('profiles')
-          .select('full_name, company_name')
-          .eq('id', bidData.supplier_id)
-          .single();
-          
-        if (!supplierError && supplierData) {
-          completeBid.supplier = {
-            full_name: supplierData.full_name || 'Unknown',
-            company_name: supplierData.company_name || 'Unknown Company'
-          };
-        }
-      } catch (supplierError) {
-        console.error('Error fetching supplier data:', supplierError);
-        // Continue with default supplier values
-      }
-      
-      setBid(completeBid);
-      
-      // Check if user has already evaluated this bid
-      const { data: evaluationData, error: evaluationError } = await supabase
-        .from('evaluations')
-        .select('*')
-        .eq('bid_id', bidId)
-        .eq('evaluator_id', userId)
-        .maybeSingle();
-        
-      if (evaluationError) throw evaluationError;
-      
-      if (evaluationData) {
-        // Create a complete Evaluation object with all needed fields
-        const typedEvaluation: Evaluation = {
-          id: evaluationData.id,
-          bid_id: evaluationData.bid_id,
-          evaluator_id: evaluationData.evaluator_id,
-          evaluation_type: evaluationData.evaluation_type,
-          score: evaluationData.score,
-          comments: evaluationData.comments || null,
-          recommendation: evaluationData.recommendation || null,
-          blockchain_hash: evaluationData.blockchain_hash || null,
-          created_at: evaluationData.created_at,
-          updated_at: evaluationData.updated_at,
-          criteria_scores: evaluationData.criteria_scores || {},
-          justification: evaluationData.justification || ''
-        };
-        
-        setExistingEvaluation(typedEvaluation);
-        setScore(evaluationData.score || 0);
-        setComments(evaluationData.comments || '');
-        setRecommendation(evaluationData.recommendation || '');
-        
-        // Set criteria scores if available
-        if (evaluationData.criteria_scores) {
-          setCriteriaScores(evaluationData.criteria_scores as EvaluationCriteriaScores);
-        }
-        
-        // Set justification if available
-        if (evaluationData.justification) {
-          setJustification(evaluationData.justification);
-        }
-      }
-      
-    } catch (error) {
-      console.error('Error fetching bid data:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load bid data",
-      });
-      navigate('/evaluations');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCriteriaScoreChange = (category: string, value: number) => {
-    setCriteriaScores(prev => ({
-      ...prev,
-      [category]: value
-    }));
-  };
-
-  const handleSubmitEvaluation = async () => {
-    if (!session || !bid) return;
-    
-    try {
-      setSubmitting(true);
-      
-      // Find the evaluator role from user roles
-      const evaluatorType = userRoles.find(role => role.includes('evaluator_')) || '';
-      
-      if (!evaluatorType) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not determine evaluator type",
-        });
-        return;
-      }
-      
-      // Prepare the evaluation data that matches the database schema
-      const evaluationData = {
-        bid_id: bid.id,
-        evaluator_id: session.user.id,
-        evaluation_type: evaluatorType, // Pass the evaluator type as a string
-        score,
-        comments,
-        recommendation,
-        criteria_scores: Object.keys(criteriaScores).length > 0 ? criteriaScores : null,
-        justification: justification || null
-      };
-      
-      if (existingEvaluation) {
-        // Update existing evaluation
-        const { error } = await supabase
-          .from('evaluations')
-          .update({
-            score: evaluationData.score,
-            comments: evaluationData.comments,
-            recommendation: evaluationData.recommendation,
-            criteria_scores: evaluationData.criteria_scores,
-            justification: evaluationData.justification,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existingEvaluation.id);
-          
-        if (error) throw error;
-        
-        toast({
-          title: "Evaluation Updated",
-          description: "Your evaluation has been successfully updated.",
-        });
-      } else {
-        // Create new evaluation
-        const { error } = await supabase
-          .from('evaluations')
-          .insert(evaluationData);
-          
-        if (error) throw error;
-        
-        toast({
-          title: "Evaluation Submitted",
-          description: "Your evaluation has been successfully submitted.",
-        });
-      }
-      
-      // Navigate back to evaluations list
-      navigate('/evaluations');
-      
-    } catch (error) {
-      console.error('Error submitting evaluation:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to submit evaluation",
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const {
+    loading,
+    submitting,
+    userRoles,
+    bid,
+    existingEvaluation,
+    score,
+    comments,
+    recommendation,
+    criteriaScores,
+    justification,
+    setScore,
+    setComments,
+    setRecommendation,
+    setJustification,
+    handleCriteriaScoreChange,
+    handleSubmitEvaluation
+  } = useEvaluationData(bidId);
 
   if (loading) {
-    return (
-      <div className="min-h-screen p-8 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <EvaluationLoader />;
   }
 
   if (!bid) {
-    return (
-      <div className="min-h-screen p-8">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h1 className="text-2xl font-bold mb-4">Bid Not Found</h1>
-          <p className="mb-8">The bid you're looking for could not be found.</p>
-          <Button asChild>
-            <Link to="/evaluations">Back to Evaluations</Link>
-          </Button>
-        </div>
-      </div>
-    );
+    return <EvaluationNotFound />;
   }
 
-  const evaluatorType = userRoles.find(role => role.includes('evaluator_'))?.replace('evaluator_', '') || '';
-  const isReadOnly = !!existingEvaluation;
-  const procurementMethod = bid.tender?.procurement_method || ProcurementMethod.OPEN_TENDER;
-
   return (
-    <div className="min-h-screen p-8">
-      <div className="container mx-auto max-w-4xl">
-        <EvaluationHeader 
-          title={bid?.tender?.title || 'Untitled Tender'} 
-          bidId={bid?.id || ''} 
-          createdAt={bid?.created_at || ''} 
-          isEvaluated={!!existingEvaluation}
-        />
-        
-        <BidSummaryCards 
-          bidAmount={bid?.bid_amount || 0}
-          budgetAmount={bid?.tender?.budget_amount || 0}
-          budgetCurrency={bid?.tender?.budget_currency || 'KES'}
-          supplierName={bid?.supplier?.full_name || 'Unknown'}
-          supplierCompany={bid?.supplier?.company_name || 'Unknown Company'}
-          category={bid?.tender?.category || 'Unknown'}
-          evaluatorType={userRoles.find(role => role.includes('evaluator_'))?.replace('evaluator_', '') || ''}
-        />
-
-        <div className="mb-8">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="evaluation">Evaluation Form</TabsTrigger>
-              <TabsTrigger value="details">Tender Details</TabsTrigger>
-              <TabsTrigger value="method">Procurement Method</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="evaluation" className="mt-6">
-              <EvaluationFormComponent 
-                score={score}
-                comments={comments}
-                recommendation={recommendation}
-                isReadOnly={!!existingEvaluation}
-                submitting={submitting}
-                existingEvaluation={existingEvaluation}
-                criteriaScores={criteriaScores}
-                justification={justification}
-                onScoreChange={setScore}
-                onCommentsChange={setComments}
-                onRecommendationChange={setRecommendation}
-                onCriteriaScoreChange={handleCriteriaScoreChange}
-                onJustificationChange={setJustification}
-                onSubmit={handleSubmitEvaluation}
-              />
-            </TabsContent>
-            
-            <TabsContent value="details" className="mt-6">
-              <TenderDetailCards 
-                description={bid?.tender?.description}
-                technicalDetails={bid?.technical_details}
-                documents={bid?.documents}
-              />
-            </TabsContent>
-            
-            <TabsContent value="method" className="mt-6">
-              <ProcurementMethodInfo method={bid?.tender?.procurement_method || ProcurementMethod.OPEN_TENDER} />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    </div>
+    <EvaluationContent
+      bid={bid}
+      userRoles={userRoles}
+      existingEvaluation={existingEvaluation}
+      submitting={submitting}
+      score={score}
+      comments={comments}
+      recommendation={recommendation}
+      criteriaScores={criteriaScores}
+      justification={justification}
+      onScoreChange={setScore}
+      onCommentsChange={setComments}
+      onRecommendationChange={setRecommendation}
+      onCriteriaScoreChange={handleCriteriaScoreChange}
+      onJustificationChange={setJustification}
+      onSubmit={handleSubmitEvaluation}
+    />
   );
 };
 
