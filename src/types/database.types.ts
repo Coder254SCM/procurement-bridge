@@ -1,4 +1,3 @@
-
 import { UserRole, KycStatus, VerificationLevel, BusinessType, ProcurementMethod, EvaluationCriteriaCategory } from './enums';
 
 export interface Profile {
@@ -75,15 +74,15 @@ export interface Evaluation {
   id: string;
   bid_id: string;
   evaluator_id: string;
-  evaluation_type: string; // Changed from UserRole to string to accept any evaluator role
+  evaluation_type: string; 
   score: number;
   comments: string | null;
   blockchain_hash: string | null;
   created_at: string;
   updated_at: string;
   recommendation: string | null;
-  criteria_scores?: EvaluationCriteriaScores | null; // Added as optional
-  justification?: string | null; // Added as optional
+  criteria_scores?: EvaluationCriteriaScores | null;
+  justification?: string | null;
 }
 
 // Blockchain specific interfaces

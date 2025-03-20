@@ -131,7 +131,7 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
       try {
         const { data: tenderData, error: tenderError } = await supabase
           .from('tenders')
-          .select('title, description, category, budget_amount, budget_currency')
+          .select('title, description, category, budget_amount, budget_currency, procurement_method')
           .eq('id', bidData.tender_id)
           .single();
           
@@ -143,33 +143,13 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
             category: tenderData.category || 'General',
             budget_amount: tenderData.budget_amount || 0,
             budget_currency: tenderData.budget_currency || 'KES',
-            procurement_method: null // Will be updated separately
+            procurement_method: tenderData.procurement_method as ProcurementMethod || ProcurementMethod.OPEN_TENDER
           };
-        }
-
-        // Attempt to get procurement method
-        try {
-          const { data: procMethodData, error: procMethodError } = await supabase
-            .from('tenders')
-            .select('procurement_method')
-            .eq('id', bidData.tender_id)
-            .single();
-
-          if (!procMethodError && procMethodData && procMethodData.procurement_method) {
-            // If successful, update the procurement method
-            completeBid.tender!.procurement_method = procMethodData.procurement_method as ProcurementMethod;
-          } else {
-            // Use default if query fails or returns no data
-            console.log("No procurement method found, using default");
-            completeBid.tender!.procurement_method = ProcurementMethod.OPEN_TENDER;
-          }
-        } catch (procMethodError) {
-          console.warn('Error getting procurement method, using default:', procMethodError);
-          completeBid.tender!.procurement_method = ProcurementMethod.OPEN_TENDER;
         }
       } catch (tenderError) {
         console.error('Error fetching tender data:', tenderError);
         // Continue with default tender values
+        completeBid.tender!.procurement_method = ProcurementMethod.OPEN_TENDER;
       }
 
       // Separate query to get supplier profile
@@ -274,28 +254,16 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
         return;
       }
       
-      // Prepare the evaluation data
-      const evaluationData = {
-        bid_id: bid.id,
-        evaluator_id: session.user.id,
-        evaluation_type: evaluatorType as string, // Pass the evaluator type as a string
-        score,
-        comments,
-        recommendation,
-        criteria_scores: Object.keys(criteriaScores).length > 0 ? criteriaScores : null,
-        justification: justification || null
-      };
-      
       if (existingEvaluation) {
         // Update existing evaluation
         const { error } = await supabase
           .from('evaluations')
           .update({
-            score: evaluationData.score,
-            comments: evaluationData.comments,
-            recommendation: evaluationData.recommendation,
-            criteria_scores: evaluationData.criteria_scores,
-            justification: evaluationData.justification,
+            score: score,
+            comments: comments,
+            recommendation: recommendation,
+            criteria_scores: criteriaScores,
+            justification: justification,
             updated_at: new Date().toISOString()
           })
           .eq('id', existingEvaluation.id);
@@ -307,21 +275,21 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
           description: "Your evaluation has been successfully updated.",
         });
       } else {
-        // Create new evaluation - we need to explicitly convert the type
-        const evalToSubmit = {
-          bid_id: evaluationData.bid_id,
-          evaluator_id: evaluationData.evaluator_id,
-          evaluation_type: evaluationData.evaluation_type,
-          score: evaluationData.score,
-          comments: evaluationData.comments,
-          recommendation: evaluationData.recommendation,
-          criteria_scores: evaluationData.criteria_scores,
-          justification: evaluationData.justification
-        };
-        
+        // Create new evaluation with the correct type casting
+        // We need to explicitly cast the evaluation_type to match the database enum
+        // Cast the evaluatorType as any to satisfy TypeScript
         const { error } = await supabase
           .from('evaluations')
-          .insert(evalToSubmit);
+          .insert({
+            bid_id: bid.id,
+            evaluator_id: session.user.id,
+            evaluation_type: evaluatorType as any, // Cast to any to avoid type error
+            score: score,
+            comments: comments,
+            recommendation: recommendation,
+            criteria_scores: criteriaScores,
+            justification: justification
+          });
           
         if (error) throw error;
         
