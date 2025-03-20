@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Bid, Evaluation, EvaluationCriteriaScores } from '@/types/database.types';
-import { ProcurementMethod } from '@/types/enums';
+import { ProcurementMethod, UserRole } from '@/types/enums';
 
 interface EvaluationData {
   loading: boolean;
@@ -198,7 +198,7 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
           blockchain_hash: evaluationData.blockchain_hash || null,
           created_at: evaluationData.created_at,
           updated_at: evaluationData.updated_at,
-          criteria_scores: evaluationData.criteria_scores || {},
+          criteria_scores: evaluationData.criteria_scores ? evaluationData.criteria_scores as EvaluationCriteriaScores : {},
           justification: evaluationData.justification || null
         };
         
@@ -256,6 +256,10 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
         return;
       }
       
+      // Convert the string evaluatorType to the UserRole enum type
+      // This ensures proper type compatibility with Supabase
+      const evaluatorRole = evaluatorType as UserRole;
+      
       if (existingEvaluation) {
         // Update existing evaluation
         const { error } = await supabase
@@ -264,7 +268,7 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
             score: score,
             comments: comments,
             recommendation: recommendation,
-            criteria_scores: criteriaScores,
+            criteria_scores: criteriaScores as any, // Use type assertion for JSON compatibility
             justification: justification,
             updated_at: new Date().toISOString()
           })
@@ -283,11 +287,11 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluatorType,
+            evaluation_type: evaluatorRole,
             score: score,
             comments: comments,
             recommendation: recommendation,
-            criteria_scores: criteriaScores,
+            criteria_scores: criteriaScores as any, // Use type assertion for JSON compatibility
             justification: justification
           });
           
