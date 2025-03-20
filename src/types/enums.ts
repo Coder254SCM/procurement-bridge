@@ -1,3 +1,4 @@
+
 export enum UserRole {
   BUYER = 'buyer',
   SUPPLIER = 'supplier',
@@ -83,6 +84,8 @@ export enum ProcurementMethod {
   TWO_STAGE_TENDERING = 'two_stage_tendering',
   FRAMEWORK_AGREEMENT = 'framework_agreement',
   ELECTRONIC_REVERSE_AUCTION = 'electronic_reverse_auction',
+  FORWARD_AUCTION = 'forward_auction',
+  DUTCH_AUCTION = 'dutch_auction',
   DESIGN_CONTEST = 'design_contest',
   COMPETITIVE_DIALOGUE = 'competitive_dialogue',
   INNOVATION_PARTNERSHIP = 'innovation_partnership'

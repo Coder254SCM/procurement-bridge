@@ -68,6 +68,18 @@ const procurementMethodDetails: Record<ProcurementMethod, {
     suitableFor: ["Commodity products", "Price-sensitive purchases", "Highly competitive markets"],
     evaluationFocus: ["Price", "Market competitiveness", "Supplier responsiveness"]
   },
+  [ProcurementMethod.FORWARD_AUCTION]: {
+    title: "Forward Auction",
+    description: "Competitive bidding where prices increase as buyers compete for goods or services.",
+    suitableFor: ["Selling surplus assets", "High-demand items", "Revenue maximization"],
+    evaluationFocus: ["Bid legitimacy", "Payment reliability", "Market value optimization"]
+  },
+  [ProcurementMethod.DUTCH_AUCTION]: {
+    title: "Dutch Auction",
+    description: "Auction starting with a high price that drops until a bidder accepts the current price.",
+    suitableFor: ["Time-sensitive sales", "Perishable goods", "Unique or limited items"],
+    evaluationFocus: ["Speed of transaction", "Price discovery", "Market clearing"]
+  },
   [ProcurementMethod.DESIGN_CONTEST]: {
     title: "Design Contest",
     description: "Competition where suppliers submit design solutions judged by a panel.",

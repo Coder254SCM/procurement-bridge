@@ -1,15 +1,16 @@
+
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Index } from '@/pages/Index';
-import { Dashboard } from '@/pages/Dashboard';
-import { Profile } from '@/pages/Profile';
-import { CreateTender } from '@/pages/CreateTender';
-import { Evaluations } from '@/pages/Evaluations';
-import { EvaluationForm } from '@/pages/EvaluationForm';
-import { NotFound } from '@/pages/NotFound';
-import { Verification } from '@/pages/Verification';
-import { Layout } from '@/components/layout/layout';
+import Index from '@/pages/Index';
+import Dashboard from '@/pages/Dashboard';
+import Profile from '@/pages/Profile';
+import CreateTender from '@/pages/CreateTender';
+import Evaluations from '@/pages/Evaluations';
+import EvaluationForm from '@/pages/EvaluationForm';
+import NotFound from '@/pages/NotFound';
+import Verification from '@/pages/Verification';
+import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 
