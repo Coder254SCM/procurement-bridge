@@ -136,6 +136,9 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
           .single();
           
         if (!tenderError && tenderData) {
+          // Handle procurement method typing issue
+          const procMethod = tenderData.procurement_method as ProcurementMethod | null;
+          
           // Update tender details in the completeBid
           completeBid.tender = {
             title: tenderData.title || 'Untitled',
@@ -143,13 +146,12 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
             category: tenderData.category || 'General',
             budget_amount: tenderData.budget_amount || 0,
             budget_currency: tenderData.budget_currency || 'KES',
-            procurement_method: tenderData.procurement_method as ProcurementMethod || ProcurementMethod.OPEN_TENDER
+            procurement_method: procMethod || ProcurementMethod.OPEN_TENDER
           };
         }
       } catch (tenderError) {
         console.error('Error fetching tender data:', tenderError);
         // Continue with default tender values
-        completeBid.tender!.procurement_method = ProcurementMethod.OPEN_TENDER;
       }
 
       // Separate query to get supplier profile
@@ -197,7 +199,7 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
           created_at: evaluationData.created_at,
           updated_at: evaluationData.updated_at,
           criteria_scores: evaluationData.criteria_scores || {},
-          justification: evaluationData.justification || ''
+          justification: evaluationData.justification || null
         };
         
         setExistingEvaluation(typedEvaluation);
@@ -275,15 +277,13 @@ export function useEvaluationData(bidId: string | undefined): EvaluationData {
           description: "Your evaluation has been successfully updated.",
         });
       } else {
-        // Create new evaluation with the correct type casting
-        // We need to explicitly cast the evaluation_type to match the database enum
-        // Cast the evaluatorType as any to satisfy TypeScript
+        // Create new evaluation
         const { error } = await supabase
           .from('evaluations')
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluatorType as any, // Cast to any to avoid type error
+            evaluation_type: evaluatorType,
             score: score,
             comments: comments,
             recommendation: recommendation,

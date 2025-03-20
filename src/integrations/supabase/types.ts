@@ -95,9 +95,11 @@ export type Database = {
           blockchain_hash: string | null
           comments: string | null
           created_at: string | null
+          criteria_scores: Json | null
           evaluation_type: Database["public"]["Enums"]["user_role"]
           evaluator_id: string
           id: string
+          justification: string | null
           recommendation: string | null
           score: number
           updated_at: string | null
@@ -107,9 +109,11 @@ export type Database = {
           blockchain_hash?: string | null
           comments?: string | null
           created_at?: string | null
+          criteria_scores?: Json | null
           evaluation_type: Database["public"]["Enums"]["user_role"]
           evaluator_id: string
           id?: string
+          justification?: string | null
           recommendation?: string | null
           score: number
           updated_at?: string | null
@@ -119,9 +123,11 @@ export type Database = {
           blockchain_hash?: string | null
           comments?: string | null
           created_at?: string | null
+          criteria_scores?: Json | null
           evaluation_type?: Database["public"]["Enums"]["user_role"]
           evaluator_id?: string
           id?: string
+          justification?: string | null
           recommendation?: string | null
           score?: number
           updated_at?: string | null
@@ -187,6 +193,7 @@ export type Database = {
           documents: Json | null
           evaluation_criteria: Json | null
           id: string
+          procurement_method: string | null
           status: string | null
           submission_deadline: string
           title: string
@@ -203,6 +210,7 @@ export type Database = {
           documents?: Json | null
           evaluation_criteria?: Json | null
           id?: string
+          procurement_method?: string | null
           status?: string | null
           submission_deadline: string
           title: string
@@ -219,6 +227,7 @@ export type Database = {
           documents?: Json | null
           evaluation_criteria?: Json | null
           id?: string
+          procurement_method?: string | null
           status?: string | null
           submission_deadline?: string
           title?: string
@@ -268,6 +277,9 @@ export type Database = {
         | "evaluator_finance"
         | "evaluator_technical"
         | "evaluator_procurement"
+        | "evaluator_engineering"
+        | "evaluator_legal"
+        | "evaluator_accounting"
     }
     CompositeTypes: {
       [_ in never]: never
