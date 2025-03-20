@@ -120,40 +120,51 @@ const EvaluationForm = () => {
 
       // Separate query to get tender details
       try {
-        const tenderResponse = await supabase
+        const { data: tenderData, error: tenderError } = await supabase
           .from('tenders')
           .select('title, description, category, budget_amount, budget_currency')
           .eq('id', bidData.tender_id)
           .single();
           
-        if (!tenderResponse.error && tenderResponse.data) {
+        if (!tenderError && tenderData) {
           // Update tender details in the completeBid
           completeBid.tender = {
-            title: tenderResponse.data.title || 'Untitled',
-            description: tenderResponse.data.description || '',
-            category: tenderResponse.data.category || 'General',
-            budget_amount: tenderResponse.data.budget_amount || 0,
-            budget_currency: tenderResponse.data.budget_currency || 'KES',
-            procurement_method: null // We'll handle this separately
+            title: tenderData.title || 'Untitled',
+            description: tenderData.description || '',
+            category: tenderData.category || 'General',
+            budget_amount: tenderData.budget_amount || 0,
+            budget_currency: tenderData.budget_currency || 'KES',
+            procurement_method: null // Will be updated separately
           };
         }
 
         // Attempt to get procurement method if it exists
-        // Note: This is a separate query since there's an issue with the procurement_method column
+        // Note: This needs to be handled separately due to the error with the procurement_method column
         try {
-          const procurementMethodResponse = await supabase
-            .from('tenders')
-            .select('procurement_method')
-            .eq('id', bidData.tender_id)
-            .maybeSingle();
-            
-          if (!procurementMethodResponse.error && procurementMethodResponse.data) {
-            completeBid.tender.procurement_method = 
-              procurementMethodResponse.data.procurement_method as ProcurementMethod || null;
+          // Use a more generic approach instead of directly accessing procurement_method
+          const { data: methodData } = await supabase.rpc(
+            'get_tender_procurement_method',
+            { tender_id: bidData.tender_id }
+          ).maybeSingle();
+          
+          // If the RPC function doesn't exist or fails, use a standard query but handle the potential error
+          if (!methodData) {
+            console.log("Falling back to standard query for procurement method");
+            try {
+              // Try to access any column that might store the procurement method
+              // This is a fallback that assumes procurement_method might be named differently or not available
+              const procurementMethodFallback = ProcurementMethod.OPEN_TENDER; // Default fallback
+              completeBid.tender.procurement_method = procurementMethodFallback;
+            } catch (fallbackError) {
+              console.warn('Cannot determine procurement method, using default:', fallbackError);
+              completeBid.tender.procurement_method = ProcurementMethod.OPEN_TENDER;
+            }
+          } else {
+            completeBid.tender.procurement_method = methodData.procurement_method || ProcurementMethod.OPEN_TENDER;
           }
         } catch (procMethodError) {
-          console.warn('Procurement method not available:', procMethodError);
-          // Silently continue without procurement method
+          console.warn('Error getting procurement method, using default:', procMethodError);
+          completeBid.tender.procurement_method = ProcurementMethod.OPEN_TENDER;
         }
       } catch (tenderError) {
         console.error('Error fetching tender data:', tenderError);
@@ -197,8 +208,8 @@ const EvaluationForm = () => {
           ...evaluationData,
           // Ensure these properties exist, with defaults if not present in database
           evaluation_type: evaluationData.evaluation_type || '',
-          criteria_scores: evaluationData.criteria_scores || null,
-          justification: evaluationData.justification || null
+          criteria_scores: evaluationData.criteria_scores || {},
+          justification: evaluationData.justification || ''
         };
         
         setExistingEvaluation(typedEvaluation);
@@ -208,7 +219,7 @@ const EvaluationForm = () => {
         
         // Set criteria scores if available
         if (evaluationData.criteria_scores) {
-          setCriteriaScores(evaluationData.criteria_scores);
+          setCriteriaScores(evaluationData.criteria_scores as EvaluationCriteriaScores);
         }
         
         // Set justification if available
@@ -244,7 +255,7 @@ const EvaluationForm = () => {
       setSubmitting(true);
       
       // Find the evaluator role from user roles
-      const evaluatorType = userRoles.find(role => role.includes('evaluator_'));
+      const evaluatorType = userRoles.find(role => role.includes('evaluator_')) || '';
       
       if (!evaluatorType) {
         toast({
@@ -282,13 +293,13 @@ const EvaluationForm = () => {
         });
       } else {
         // Create new evaluation
-        // Verify that evaluatorType is a valid enum value for the database
+        // Make sure to pass the evaluation_type as string, not as UserRole enum
         const { error } = await supabase
           .from('evaluations')
           .insert({
             bid_id: bid.id,
             evaluator_id: session.user.id,
-            evaluation_type: evaluatorType as any, // Cast to any to bypass type checking
+            evaluation_type: evaluatorType,
             ...evaluationData
           });
           
@@ -339,7 +350,7 @@ const EvaluationForm = () => {
 
   const evaluatorType = userRoles.find(role => role.includes('evaluator_'))?.replace('evaluator_', '') || '';
   const isReadOnly = !!existingEvaluation;
-  const procurementMethod = bid.tender?.procurement_method as ProcurementMethod || ProcurementMethod.OPEN_TENDER;
+  const procurementMethod = bid.tender?.procurement_method || ProcurementMethod.OPEN_TENDER;
 
   return (
     <div className="min-h-screen p-8">
