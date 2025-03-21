@@ -20,7 +20,8 @@ export function useBehaviorAnalysis() {
         .eq('entity_type', entityType);
 
       if (error) throw error;
-      setAnalysisResults(data || []);
+      // Type assertion to ensure the data conforms to BehaviorAnalysis[]
+      setAnalysisResults(data as unknown as BehaviorAnalysis[]);
     } catch (error) {
       console.error('Error fetching behavior analysis:', error);
       toast({

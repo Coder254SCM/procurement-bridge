@@ -153,7 +153,10 @@ export enum VerificationType {
   DIGITAL_SIGNATURE = 'digital_signature',
   BIOMETRIC = 'biometric',
   ADDRESS_VERIFICATION = 'address_verification',
-  SOCIAL_VERIFICATION = 'social_verification'
+  SOCIAL_VERIFICATION = 'social_verification',
+  ZKSNARK_IDENTITY = 'zksnark_identity',
+  DISTRIBUTED_IDENTITY = 'distributed_identity',
+  CRYPTOGRAPHIC_ATTESTATION = 'cryptographic_attestation'
 }
 
 export enum ComplianceCheckType {
@@ -162,7 +165,10 @@ export enum ComplianceCheckType {
   ADVERSE_MEDIA = 'adverse_media',
   SHELL_COMPANY_CHECK = 'shell_company_check',
   FRAUD_DATABASE_CHECK = 'fraud_database_check',
-  DISBARRED_ENTITIES = 'disbarred_entities'
+  DISBARRED_ENTITIES = 'disbarred_entities',
+  BENEFICIAL_OWNERS_CHECK = 'beneficial_owners_check',
+  GRAPH_RELATIONSHIP_CHECK = 'graph_relationship_check',
+  TEMPORAL_BEHAVIOR_CHECK = 'temporal_behavior_check'
 }
 
 export enum BehaviorAnalysisType {
@@ -171,7 +177,12 @@ export enum BehaviorAnalysisType {
   TIMING_ANALYSIS = 'timing_analysis',
   DOCUMENT_AUTHENTICITY = 'document_authenticity',
   COLLUSION_DETECTION = 'collusion_detection',
-  UNUSUAL_ACTIVITY = 'unusual_activity'
+  UNUSUAL_ACTIVITY = 'unusual_activity',
+  BIDDING_RELATIONSHIP = 'bidding_relationship',
+  NETWORK_GRAPH_ANALYSIS = 'network_graph_analysis',
+  TEMPO_SPATIAL_ANALYSIS = 'tempo_spatial_analysis',
+  BEHAVIORAL_BIOMETRICS = 'behavioral_biometrics',
+  NLP_DOCUMENT_SIMILARITY = 'nlp_document_similarity'
 }
 
 export enum VerificationStatus {
@@ -180,4 +191,39 @@ export enum VerificationStatus {
   VERIFIED = 'verified',
   REJECTED = 'rejected',
   FLAGGED = 'flagged'
+}
+
+// Blockchain-specific enums
+export enum BlockchainNetworkType {
+  HYPERLEDGER_FABRIC = 'hyperledger_fabric',
+  ETHEREUM = 'ethereum',
+  QUORUM = 'quorum',
+  CORDA = 'corda',
+  POLYGON = 'polygon'
+}
+
+export enum BlockchainConsensusType {
+  PROOF_OF_AUTHORITY = 'proof_of_authority',
+  PROOF_OF_STAKE = 'proof_of_stake',
+  PRACTICAL_BYZANTINE_FAULT_TOLERANCE = 'pbft',
+  RAFT = 'raft',
+  KAFKA = 'kafka'
+}
+
+export enum CryptographicProofType {
+  HASH_BASED = 'hash_based',
+  ZERO_KNOWLEDGE = 'zero_knowledge',
+  MERKLE_PROOF = 'merkle_proof',
+  DIGITAL_SIGNATURE = 'digital_signature',
+  MULTI_SIGNATURE = 'multi_signature',
+  HOMOMORPHIC_ENCRYPTION = 'homomorphic_encryption'
+}
+
+export enum AIRiskDetectionType {
+  PATTERN_RECOGNITION = 'pattern_recognition',
+  ANOMALY_DETECTION = 'anomaly_detection',
+  GRAPH_NEURAL_NETWORK = 'graph_neural_network',
+  NATURAL_LANGUAGE_PROCESSING = 'natural_language_processing',
+  BEHAVIORAL_ANALYSIS = 'behavioral_analysis',
+  TEMPORAL_ANALYSIS = 'temporal_analysis'
 }

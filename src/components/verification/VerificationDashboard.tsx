@@ -69,7 +69,7 @@ const VerificationDashboard = () => {
     };
     
     fetchUserData();
-  }, [navigate, toast]);
+  }, [navigate, toast, fetchVerificationData, fetchAnalysisResults]);
   
   const getVerificationProgress = () => {
     // Calculate verification progress based on completed checks
@@ -78,7 +78,7 @@ const VerificationDashboard = () => {
     return Math.min(Math.round((completedChecks / totalChecks) * 100), 100);
   };
   
-  const getStatusBadge = (status: VerificationStatus) => {
+  const getStatusBadge = (status: string) => {
     switch(status) {
       case VerificationStatus.VERIFIED:
         return <Badge className="bg-green-500">Verified</Badge>;

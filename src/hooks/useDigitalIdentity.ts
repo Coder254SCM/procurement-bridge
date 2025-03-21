@@ -18,7 +18,7 @@ export function useDigitalIdentity() {
   const [loading, setLoading] = useState<boolean>(false);
   const [verificationData, setVerificationData] = useState<DigitalIdentityVerification[]>([]);
   const [complianceChecks, setComplianceChecks] = useState<ComplianceCheck[]>([]);
-  const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>(VerificationStatus.PENDING);
+  const [verificationStatus, setVerificationStatus] = useState<string>(VerificationStatus.PENDING);
 
   const fetchVerificationData = async (userId: string) => {
     setLoading(true);
@@ -143,7 +143,7 @@ export function useDigitalIdentity() {
           user_id: userId,
           check_type: checkType,
           status: checkResult.passed ? VerificationStatus.VERIFIED : VerificationStatus.FLAGGED,
-          result_data: checkResult,
+          result_data: checkResult as unknown as any, // Type cast to any to satisfy Supabase's Json type
           next_check_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString() // 90 days from now
         });
 
