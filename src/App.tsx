@@ -10,6 +10,8 @@ import Evaluations from '@/pages/Evaluations';
 import EvaluationForm from '@/pages/EvaluationForm';
 import NotFound from '@/pages/NotFound';
 import Verification from '@/pages/Verification';
+import Marketplace from '@/pages/Marketplace';
+import TenderDetail from '@/pages/TenderDetail';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
@@ -40,6 +42,8 @@ function App() {
             <Route path="/evaluations" element={<Evaluations />} />
             <Route path="/evaluations/:bidId" element={<EvaluationForm />} />
             <Route path="/verification" element={<Verification />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/tender/:id" element={<TenderDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

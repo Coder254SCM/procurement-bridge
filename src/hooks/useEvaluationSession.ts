@@ -84,13 +84,14 @@ export function useEvaluationSession(): SessionData {
           .single();
           
         if (!profileError && profileData) {
-          setVerificationStatus(profileData.verification_status || VerificationStatus.PENDING);
+          // Use VerificationStatus enum instead of string literal
+          setVerificationStatus(profileData.verification_status as VerificationStatus || VerificationStatus.PENDING);
           setIsVerified(profileData.verified || false);
           
           // If user is not verified and tries to access sensitive pages, redirect
           if (!profileData.verified && hasEvaluatorRole) {
             toast({
-              variant: "warning",
+              variant: "default",
               title: "Verification Required",
               description: "You need to complete verification before evaluating bids",
             });
