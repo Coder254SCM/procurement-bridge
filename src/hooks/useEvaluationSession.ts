@@ -89,7 +89,7 @@ export function useEvaluationSession(): SessionData {
           setIsVerified(profileData.verified || false);
           
           // If user is not verified and tries to access sensitive pages, redirect
-          if (!profileData.verified && hasEvaluatorRole) {
+          if (!profileData.verified && isEvaluator) {
             toast({
               variant: "default",
               title: "Verification Required",
@@ -107,7 +107,7 @@ export function useEvaluationSession(): SessionData {
     };
     
     checkSession();
-  }, [navigate, toast]);
+  }, [navigate, toast, isEvaluator]);
 
   return {
     loading,

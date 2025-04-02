@@ -16,7 +16,7 @@ export enum KycStatus {
   PENDING = 'pending',
   APPROVED = 'approved',
   REJECTED = 'rejected',
-  REVIEW = 'under_review',
+  UNDER_REVIEW = 'under_review',
   SUBMITTED = 'submitted'
 }
 
@@ -33,7 +33,10 @@ export enum VerificationType {
   IDENTITY = 'identity',
   FINANCIAL = 'financial',
   REGULATORY = 'regulatory',
-  OPERATIONAL = 'operational'
+  OPERATIONAL = 'operational',
+  BUSINESS_REGISTRY = 'business_registry',
+  TAX_COMPLIANCE = 'tax_compliance',
+  BLOCKCHAIN_VERIFICATION = 'blockchain_verification'
 }
 
 export enum ComplianceCheckType {
@@ -41,14 +44,20 @@ export enum ComplianceCheckType {
   AML = 'aml',
   TAX = 'tax',
   REGULATORY = 'regulatory',
-  SANCTIONS = 'sanctions'
+  SANCTIONS = 'sanctions',
+  PEP_CHECK = 'pep_check',
+  SANCTIONS_LIST = 'sanctions_list',
+  SHELL_COMPANY_CHECK = 'shell_company_check',
+  DISBARRED_ENTITIES = 'disbarred_entities'
 }
 
 export enum BehaviorAnalysisType {
   FRAUD_DETECTION = 'fraud_detection',
   PATTERN_MATCHING = 'pattern_matching',
   ANOMALY_DETECTION = 'anomaly_detection',
-  RISK_ASSESSMENT = 'risk_assessment'
+  RISK_ASSESSMENT = 'risk_assessment',
+  PRICING_ANALYSIS = 'pricing_analysis',
+  TIMING_ANALYSIS = 'timing_analysis'
 }
 
 export enum VerificationLevel {
