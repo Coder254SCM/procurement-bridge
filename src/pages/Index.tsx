@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { FileText, Shield, BarChart, Handshake, ArrowRight } from "lucide-react";
+import { FileText, Shield, BarChart, Handshake, ArrowRight, Lock, FileCheck } from "lucide-react";
 import OnboardingAnimation from "@/components/onboarding/OnboardingAnimation";
 
 const Index = () => {
@@ -57,8 +57,8 @@ const Index = () => {
               </div>
               <div className="glass-card p-8 rounded-2xl">
                 <img 
-                  src="/placeholder.svg" 
-                  alt="Blockchain procurement" 
+                  src="/lovable-uploads/c08e5583-71a0-475d-ba45-b7e39e7dc377.png" 
+                  alt="ProcureChain - Blockchain tender management" 
                   className="w-full h-auto rounded-lg" 
                 />
               </div>
@@ -107,6 +107,44 @@ const Index = () => {
                 <h3 className="text-xl font-medium mb-2">Supplier Marketplace</h3>
                 <p className="text-muted-foreground">
                   Connect with verified suppliers for all your procurement needs
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Security Section - New */}
+        <section className="py-20 px-4 md:px-6 bg-primary/5">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-12">
+              <h2 className="mb-4">Enterprise-Grade Security</h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                Your data security is our top priority. We implement multiple layers of protection to safeguard your sensitive procurement information.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="glass-card p-6 rounded-xl hover-lift">
+                <Lock className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-medium mb-2">End-to-End Encryption</h3>
+                <p className="text-muted-foreground">
+                  AES-256 encryption for data at rest and TLS 1.3 for data in transit ensures your tender documents remain private and secure
+                </p>
+              </div>
+
+              <div className="glass-card p-6 rounded-xl hover-lift">
+                <Shield className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-medium mb-2">Zero-Trust Security</h3>
+                <p className="text-muted-foreground">
+                  Multi-factor authentication, strict access controls, and continuous monitoring to prevent unauthorized access
+                </p>
+              </div>
+
+              <div className="glass-card p-6 rounded-xl hover-lift">
+                <FileCheck className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-medium mb-2">Compliance Ready</h3>
+                <p className="text-muted-foreground">
+                  Built to comply with Kenya's Data Protection Act, GDPR, and other relevant procurement regulations
                 </p>
               </div>
             </div>
