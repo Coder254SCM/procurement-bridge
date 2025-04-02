@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { FileText, Upload } from 'lucide-react';
+import { FileText, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { RequiredDocument } from '@/components/tenders/RequiredDocumentsList';
+import { RequiredDocument } from '@/types/database.types';
 import RequiredDocumentsList from '@/components/tenders/RequiredDocumentsList';
 
 interface DocumentsUploadFormProps {
@@ -29,15 +29,19 @@ const DocumentsUploadForm = ({
 }: DocumentsUploadFormProps) => {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <FileText className="mr-2 h-5 w-5" />
-            Required Documents from Suppliers
-          </CardTitle>
-          <CardDescription>
-            Select which documents suppliers must submit according to Kenya procurement laws
-          </CardDescription>
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <div className="flex items-center">
+            <div className="p-2 mr-3 rounded-full bg-primary/10">
+              <FileText className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <CardTitle>Required Documents from Suppliers</CardTitle>
+              <CardDescription>
+                Select which documents suppliers must submit according to Kenya procurement laws
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <RequiredDocumentsList 
@@ -48,26 +52,30 @@ const DocumentsUploadForm = ({
         </CardContent>
       </Card>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="mr-2 h-5 w-5" />
-              Supporting Documents (Optional)
-            </CardTitle>
-            <CardDescription>
-              Upload documents to support this tender (specifications, drawings, etc.)
-            </CardDescription>
+          <CardHeader className="pb-3">
+            <div className="flex items-center">
+              <div className="p-2 mr-3 rounded-full bg-primary/10">
+                <Upload className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <CardTitle>Supporting Documents</CardTitle>
+                <CardDescription>
+                  Upload documents to support this tender (specifications, drawings, etc.)
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="mt-2">
               <div className="flex items-center justify-center w-full">
                 <label
                   htmlFor="document-upload"
-                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-background hover:bg-secondary/50"
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-secondary/10 hover:bg-secondary/20 transition-colors"
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
+                    <Upload className="w-8 h-8 mb-2 text-primary" />
                     <p className="mb-1 text-sm text-muted-foreground">
                       <span className="font-semibold">Click to upload</span> or drag and drop
                     </p>
@@ -88,18 +96,19 @@ const DocumentsUploadForm = ({
             
             {documents.length > 0 && (
               <div className="space-y-2 mt-4">
-                <h3 className="text-sm font-medium">Attached Documents</h3>
+                <h3 className="text-sm font-medium mb-2">Uploaded Documents</h3>
                 <ul className="space-y-2">
                   {documents.map((file, index) => (
-                    <li key={index} className="flex items-center justify-between p-2 rounded-md bg-secondary/50">
+                    <li key={index} className="flex items-center justify-between p-2 rounded-md bg-secondary/20">
                       <span className="text-sm truncate max-w-[250px]">{file.name}</span>
                       <Button 
                         type="button" 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => removeFile(index)}
+                        className="h-8 w-8 p-0"
                       >
-                        Remove
+                        <X className="h-4 w-4" />
                       </Button>
                     </li>
                   ))}
@@ -110,24 +119,28 @@ const DocumentsUploadForm = ({
         </Card>
         
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="mr-2 h-5 w-5" />
-              Contract Documents
-            </CardTitle>
-            <CardDescription>
-              Upload contract template or standard terms and conditions
-            </CardDescription>
+          <CardHeader className="pb-3">
+            <div className="flex items-center">
+              <div className="p-2 mr-3 rounded-full bg-primary/10">
+                <FileText className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <CardTitle>Contract Documents</CardTitle>
+                <CardDescription>
+                  Upload contract template or standard terms and conditions
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="mt-2">
               <div className="flex items-center justify-center w-full">
                 <label
                   htmlFor="contract-upload"
-                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-background hover:bg-secondary/50"
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-secondary/10 hover:bg-secondary/20 transition-colors"
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
+                    <Upload className="w-8 h-8 mb-2 text-primary" />
                     <p className="mb-1 text-sm text-muted-foreground">
                       <span className="font-semibold">Upload contract template</span>
                     </p>
@@ -148,18 +161,19 @@ const DocumentsUploadForm = ({
             
             {contractDocuments.length > 0 && (
               <div className="space-y-2 mt-4">
-                <h3 className="text-sm font-medium">Contract Documents</h3>
+                <h3 className="text-sm font-medium mb-2">Contract Documents</h3>
                 <ul className="space-y-2">
                   {contractDocuments.map((file, index) => (
-                    <li key={index} className="flex items-center justify-between p-2 rounded-md bg-secondary/50">
+                    <li key={index} className="flex items-center justify-between p-2 rounded-md bg-secondary/20">
                       <span className="text-sm truncate max-w-[250px]">{file.name}</span>
                       <Button 
                         type="button" 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => removeContractFile(index)}
+                        className="h-8 w-8 p-0"
                       >
-                        Remove
+                        <X className="h-4 w-4" />
                       </Button>
                     </li>
                   ))}

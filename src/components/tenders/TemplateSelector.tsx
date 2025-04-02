@@ -3,6 +3,7 @@ import React from 'react';
 import { TenderTemplateType } from '@/types/enums';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { FileTemplate } from 'lucide-react';
 
 interface TemplateSelectorProps {
   selectedTemplate: string;
@@ -64,12 +65,19 @@ const templateOptions: TemplateOption[] = [
 
 const TemplateSelector = ({ selectedTemplate, onTemplateChange }: TemplateSelectorProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Template Selection</CardTitle>
-        <CardDescription>
-          Choose a template to speed up the tender creation process
-        </CardDescription>
+    <Card className="mb-6">
+      <CardHeader className="pb-3">
+        <div className="flex items-center">
+          <div className="p-2 mr-3 rounded-full bg-primary/10">
+            <FileTemplate className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <CardTitle>Template Selection</CardTitle>
+            <CardDescription>
+              Choose a template to speed up the tender creation process
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -77,9 +85,9 @@ const TemplateSelector = ({ selectedTemplate, onTemplateChange }: TemplateSelect
             <div 
               key={template.value}
               className={cn(
-                "cursor-pointer border rounded-lg p-4 transition-all",
+                "cursor-pointer border rounded-lg p-4 transition-all hover:shadow-md",
                 selectedTemplate === template.value 
-                  ? "border-primary bg-primary/10" 
+                  ? "border-primary bg-primary/5 shadow-sm" 
                   : "border-border hover:border-primary/50"
               )}
               onClick={() => onTemplateChange(template.value)}
@@ -88,7 +96,7 @@ const TemplateSelector = ({ selectedTemplate, onTemplateChange }: TemplateSelect
               <p className="text-sm text-muted-foreground mb-2">
                 {template.description}
               </p>
-              <div className="text-xs inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold">
+              <div className="text-xs inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 font-semibold">
                 Standard: {template.standard}
               </div>
             </div>
