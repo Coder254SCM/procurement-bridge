@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, CheckCircle, AlertTriangle } from 'lucide-react';
+import { UserRole } from '@/types/enums';
 
 interface SupplyChainReviewProps {
   tenderId: string;
@@ -25,6 +26,30 @@ const SupplyChainReview = ({
   const [status, setStatus] = useState(initialStatus);
   const [saving, setSaving] = useState(false);
 
+  // Fetch review data on component mount
+  useEffect(() => {
+    const fetchReviewData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('tender_reviews')
+          .select('supply_chain_remarks, supply_chain_status')
+          .eq('tender_id', tenderId)
+          .maybeSingle();
+          
+        if (error) throw error;
+        
+        if (data) {
+          setRemarks(data.supply_chain_remarks || '');
+          setStatus(data.supply_chain_status as any || 'pending');
+        }
+      } catch (error) {
+        console.error('Error fetching review data:', error);
+      }
+    };
+    
+    fetchReviewData();
+  }, [tenderId]);
+
   const handleSaveRemarks = async () => {
     if (!isSupplyChainProfessional) {
       toast({
@@ -38,12 +63,14 @@ const SupplyChainReview = ({
     setSaving(true);
     try {
       // First check if a review already exists for this tender
-      const { data: existingReview } = await supabase
+      const { data: existingReview, error: fetchError } = await supabase
         .from('tender_reviews')
-        .select('*')
+        .select('id')
         .eq('tender_id', tenderId)
-        .single();
+        .maybeSingle();
 
+      if (fetchError) throw fetchError;
+      
       let error;
       
       if (existingReview) {

@@ -16,7 +16,39 @@ export enum KycStatus {
   PENDING = 'pending',
   APPROVED = 'approved',
   REJECTED = 'rejected',
-  REVIEW = 'under_review'
+  REVIEW = 'under_review',
+  SUBMITTED = 'submitted'
+}
+
+export enum VerificationStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  VERIFIED = 'verified',
+  REJECTED = 'rejected',
+  FLAGGED = 'flagged'
+}
+
+export enum VerificationType {
+  BUSINESS = 'business',
+  IDENTITY = 'identity',
+  FINANCIAL = 'financial',
+  REGULATORY = 'regulatory',
+  OPERATIONAL = 'operational'
+}
+
+export enum ComplianceCheckType {
+  KYC = 'kyc',
+  AML = 'aml',
+  TAX = 'tax',
+  REGULATORY = 'regulatory',
+  SANCTIONS = 'sanctions'
+}
+
+export enum BehaviorAnalysisType {
+  FRAUD_DETECTION = 'fraud_detection',
+  PATTERN_MATCHING = 'pattern_matching',
+  ANOMALY_DETECTION = 'anomaly_detection',
+  RISK_ASSESSMENT = 'risk_assessment'
 }
 
 export enum VerificationLevel {
@@ -41,7 +73,24 @@ export enum ProcurementMethod {
   REQUEST_FOR_PROPOSAL = 'request_for_proposal',
   REQUEST_FOR_QUOTATION = 'request_for_quotation',
   FRAMEWORK_AGREEMENT = 'framework_agreement',
-  DESIGN_COMPETITION = 'design_competition'
+  DESIGN_COMPETITION = 'design_competition',
+  TWO_STAGE_TENDERING = 'two_stage_tendering',
+  ELECTRONIC_REVERSE_AUCTION = 'electronic_reverse_auction',
+  FORWARD_AUCTION = 'forward_auction',
+  DUTCH_AUCTION = 'dutch_auction',
+  DESIGN_CONTEST = 'design_contest',
+  COMPETITIVE_DIALOGUE = 'competitive_dialogue',
+  INNOVATION_PARTNERSHIP = 'innovation_partnership'
+}
+
+export enum TenderTemplateType {
+  STANDARD = 'standard',
+  CONSTRUCTION = 'construction',
+  IT_SERVICES = 'it_services',
+  CONSULTING = 'consulting',
+  SUPPLIES = 'supplies',
+  MEDICAL = 'medical',
+  CUSTOM = 'custom'
 }
 
 export enum EvaluationCriteriaCategory {
