@@ -307,6 +307,44 @@ export type Database = {
         }
         Relationships: []
       }
+      tender_reviews: {
+        Row: {
+          created_at: string
+          id: string
+          supply_chain_remarks: string | null
+          supply_chain_reviewer_id: string | null
+          supply_chain_status: string
+          tender_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          supply_chain_remarks?: string | null
+          supply_chain_reviewer_id?: string | null
+          supply_chain_status?: string
+          tender_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          supply_chain_remarks?: string | null
+          supply_chain_reviewer_id?: string | null
+          supply_chain_status?: string
+          tender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_reviews_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: true
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenders: {
         Row: {
           blockchain_hash: string | null
@@ -320,8 +358,10 @@ export type Database = {
           evaluation_criteria: Json | null
           id: string
           procurement_method: string | null
+          required_documents: string[] | null
           status: string | null
           submission_deadline: string
+          supply_chain_reviewer_id: string | null
           title: string
           updated_at: string | null
         }
@@ -337,8 +377,10 @@ export type Database = {
           evaluation_criteria?: Json | null
           id?: string
           procurement_method?: string | null
+          required_documents?: string[] | null
           status?: string | null
           submission_deadline: string
+          supply_chain_reviewer_id?: string | null
           title: string
           updated_at?: string | null
         }
@@ -354,8 +396,10 @@ export type Database = {
           evaluation_criteria?: Json | null
           id?: string
           procurement_method?: string | null
+          required_documents?: string[] | null
           status?: string | null
           submission_deadline?: string
+          supply_chain_reviewer_id?: string | null
           title?: string
           updated_at?: string | null
         }
@@ -406,6 +450,7 @@ export type Database = {
         | "evaluator_engineering"
         | "evaluator_legal"
         | "evaluator_accounting"
+        | "supply_chain_professional"
       verification_status:
         | "pending"
         | "in_progress"

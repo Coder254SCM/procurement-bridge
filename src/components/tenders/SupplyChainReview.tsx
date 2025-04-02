@@ -37,16 +37,40 @@ const SupplyChainReview = ({
 
     setSaving(true);
     try {
-      const { error } = await supabase
+      // First check if a review already exists for this tender
+      const { data: existingReview } = await supabase
         .from('tender_reviews')
-        .upsert({
-          tender_id: tenderId,
-          supply_chain_remarks: remarks,
-          supply_chain_status: status,
-          updated_at: new Date().toISOString(),
-        }, {
-          onConflict: 'tender_id'
-        });
+        .select('*')
+        .eq('tender_id', tenderId)
+        .single();
+
+      let error;
+      
+      if (existingReview) {
+        // Update existing review
+        const { error: updateError } = await supabase
+          .from('tender_reviews')
+          .update({
+            supply_chain_remarks: remarks,
+            supply_chain_status: status,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('tender_id', tenderId);
+          
+        error = updateError;
+      } else {
+        // Insert new review
+        const { error: insertError } = await supabase
+          .from('tender_reviews')
+          .insert({
+            tender_id: tenderId,
+            supply_chain_remarks: remarks,
+            supply_chain_status: status,
+            updated_at: new Date().toISOString(),
+          });
+          
+        error = insertError;
+      }
 
       if (error) throw error;
 
