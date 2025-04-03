@@ -3,7 +3,7 @@ import React from 'react';
 import { TenderTemplateType } from '@/types/enums';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { FileTemplate } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 interface TemplateSelectorProps {
   selectedTemplate: string;
@@ -69,7 +69,7 @@ const TemplateSelector = ({ selectedTemplate, onTemplateChange }: TemplateSelect
       <CardHeader className="pb-3">
         <div className="flex items-center">
           <div className="p-2 mr-3 rounded-full bg-primary/10">
-            <FileTemplate className="h-6 w-6 text-primary" />
+            <FileText className="h-6 w-6 text-primary" />
           </div>
           <div>
             <CardTitle>Template Selection</CardTitle>
