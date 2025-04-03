@@ -35,7 +35,13 @@ export function useEvaluationForm(): EvaluationFormData {
   const [score, setScore] = useState<number>(0);
   const [comments, setComments] = useState('');
   const [recommendation, setRecommendation] = useState('');
-  const [criteriaScores, setCriteriaScores] = useState<EvaluationCriteriaScores>({});
+  const [criteriaScores, setCriteriaScores] = useState<EvaluationCriteriaScores>({
+    technical: 0,
+    financial: 0,
+    experience: 0,
+    compliance: 0,
+    delivery: 0
+  });
   const [justification, setJustification] = useState('');
 
   const fetchExistingEvaluation = async (bidId: string, userId: string) => {
@@ -63,7 +69,13 @@ export function useEvaluationForm(): EvaluationFormData {
           blockchain_hash: evaluationData.blockchain_hash || null,
           created_at: evaluationData.created_at,
           updated_at: evaluationData.updated_at,
-          criteria_scores: evaluationData.criteria_scores ? evaluationData.criteria_scores as EvaluationCriteriaScores : {},
+          criteria_scores: evaluationData.criteria_scores ? evaluationData.criteria_scores as EvaluationCriteriaScores : {
+            technical: 0,
+            financial: 0,
+            experience: 0,
+            compliance: 0,
+            delivery: 0
+          },
           justification: evaluationData.justification || null
         };
         
@@ -74,7 +86,17 @@ export function useEvaluationForm(): EvaluationFormData {
         
         // Set criteria scores if available
         if (evaluationData.criteria_scores) {
-          setCriteriaScores(evaluationData.criteria_scores as EvaluationCriteriaScores);
+          const convertedScores = evaluationData.criteria_scores as Record<string, number>;
+          setCriteriaScores({
+            technical: convertedScores.technical || 0,
+            financial: convertedScores.financial || 0,
+            experience: convertedScores.experience || 0,
+            compliance: convertedScores.compliance || 0,
+            delivery: convertedScores.delivery || 0,
+            ...(convertedScores.quality !== undefined ? { quality: convertedScores.quality } : {}),
+            ...(convertedScores.innovation !== undefined ? { innovation: convertedScores.innovation } : {}),
+            ...(convertedScores.support !== undefined ? { support: convertedScores.support } : {})
+          });
         }
         
         // Set justification if available

@@ -47,6 +47,17 @@ const EvaluationContent: React.FC<EvaluationContentProps> = ({
   const [activeTab, setActiveTab] = useState('evaluation');
   const evaluatorType = userRoles.find(role => role.includes('evaluator_'))?.replace('evaluator_', '') || '';
   const procurementMethod = bid.tender?.procurement_method || ProcurementMethod.OPEN_TENDER;
+  
+  // Determine risk level based on procurement method
+  let riskLevel: 'low' | 'medium' | 'high' = 'medium';
+  if (procurementMethod === ProcurementMethod.OPEN_TENDER) {
+    riskLevel = 'low';
+  } else if (procurementMethod === ProcurementMethod.DIRECT_PROCUREMENT) {
+    riskLevel = 'high';
+  }
+
+  // Generate description based on procurement method
+  const methodDescription = `This procurement follows the ${procurementMethod.replace(/_/g, ' ')} methodology as defined in the procurement policy.`;
 
   return (
     <div className="min-h-screen p-8">
@@ -104,7 +115,11 @@ const EvaluationContent: React.FC<EvaluationContentProps> = ({
             </TabsContent>
             
             <TabsContent value="method" className="mt-6">
-              <ProcurementMethodInfo method={procurementMethod} />
+              <ProcurementMethodInfo 
+                method={procurementMethod} 
+                description={methodDescription}
+                riskLevel={riskLevel}
+              />
             </TabsContent>
           </Tabs>
         </div>

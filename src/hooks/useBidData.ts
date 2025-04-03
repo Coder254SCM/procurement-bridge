@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Bid } from '@/types/database.types';
+import { Bid, Profile, Tender } from '@/types/database.types';
 import { ProcurementMethod } from '@/types/enums';
 
 interface BidDataResult {
@@ -35,16 +35,56 @@ export function useBidData(): BidDataResult {
       let completeBid: Bid = {
         ...bidData,
         tender: {
+          id: bidData.tender_id,
           title: 'Untitled Tender',
           description: '',
           category: 'General',
           budget_amount: 0,
           budget_currency: 'KES',
-          procurement_method: null
+          procurement_method: ProcurementMethod.OPEN_TENDER,
+          created_at: new Date().toISOString(),
+          buyer_id: '',
+          submission_deadline: new Date().toISOString(),
+          status: '',
+          template_type: '',
+          blockchain_hash: '',
+          digital_signature: '',
+          signature_timestamp: '',
+          required_documents: [],
+          supply_chain_reviewer_id: '',
+          evaluation_criteria: {
+            technical: 0,
+            financial: 0,
+            experience: 0,
+            compliance: 0,
+            delivery: 0
+          }
         },
         supplier: {
+          id: bidData.supplier_id,
           full_name: 'Unknown',
-          company_name: 'Unknown Company'
+          company_name: 'Unknown Company',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          avatar_url: '',
+          email: '',
+          website: '',
+          phone_number: '',
+          address: '',
+          city: '',
+          country: '',
+          postal_code: '',
+          bio: '',
+          position: '',
+          industry: '',
+          verified: false,
+          kyc_status: '',
+          kyc_documents: {},
+          verification_level: '',
+          verification_status: '',
+          business_type: null,
+          business_registration_number: null,
+          tax_pin: null
         }
       };
 
@@ -58,16 +98,17 @@ export function useBidData(): BidDataResult {
           
         if (!tenderError && tenderData) {
           // Handle procurement method typing issue
-          const procMethod = tenderData.procurement_method as ProcurementMethod | null;
+          const procMethod = tenderData.procurement_method as ProcurementMethod || ProcurementMethod.OPEN_TENDER;
           
           // Update tender details in the completeBid
           completeBid.tender = {
+            ...completeBid.tender,
             title: tenderData.title || 'Untitled',
             description: tenderData.description || '',
             category: tenderData.category || 'General',
             budget_amount: tenderData.budget_amount || 0,
             budget_currency: tenderData.budget_currency || 'KES',
-            procurement_method: procMethod || ProcurementMethod.OPEN_TENDER
+            procurement_method: procMethod
           };
         }
       } catch (tenderError) {
@@ -85,6 +126,7 @@ export function useBidData(): BidDataResult {
           
         if (!supplierError && supplierData) {
           completeBid.supplier = {
+            ...completeBid.supplier,
             full_name: supplierData.full_name || 'Unknown',
             company_name: supplierData.company_name || 'Unknown Company'
           };

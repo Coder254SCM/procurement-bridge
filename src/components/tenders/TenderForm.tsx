@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { fabricClient } from '@/integrations/blockchain/fabric-client';
-import { TenderTemplateType, ProcurementMethod } from '@/types/enums';
+import { TenderTemplateType, ProcurementMethod, UserRole } from '@/types/enums';
 import { EvaluationCriteria, RequiredDocument } from '@/types/database.types';
 import { kenyaStatutoryDocuments } from './RequiredDocumentsList';
 import {
@@ -143,7 +143,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
       budget_amount: undefined,
       budget_currency: "KES",
       submission_deadline: undefined,
-      evaluation_criteria: defaultEvaluationCriteria,
+      evaluation_criteria: undefined,
       procurement_method: ProcurementMethod.OPEN_TENDER,
       required_documents: requiredDocuments.filter(doc => doc.required).map(doc => doc.id),
       supply_chain_reviewer: "",
@@ -158,25 +158,28 @@ const TenderForm = ({ userId }: TenderFormProps) => {
     switch (templateType) {
       case TenderTemplateType.CONSTRUCTION:
         setTemplateContent('Standard construction tender template following Kenya Public Procurement and Asset Disposal Act requirements and National Construction Authority standards...');
-        // Use updater function to set state based on previous state
-        setEvaluationCriteria(() => ({
+        // Set new evaluation criteria for construction
+        setEvaluationCriteria({
           technical: 35,
           financial: 25,
           experience: 20,
           compliance: 10,
-          quality: 10,
-        }));
+          delivery: 10,
+          quality: 0
+        });
         break;
       case TenderTemplateType.IT_SERVICES:
         setTemplateContent('IT services procurement template following ICT Authority guidelines and PPADA compliance standards...');
-        // Use updater function to set state based on previous state
-        setEvaluationCriteria(() => ({
+        // Set new evaluation criteria for IT services
+        setEvaluationCriteria({
           technical: 40,
           financial: 25,
           experience: 15,
-          innovation: 10,
-          support: 10,
-        }));
+          compliance: 5,
+          delivery: 5,
+          innovation: 5,
+          support: 5
+        });
         break;
       // Add more template types here
       default:
@@ -185,7 +188,9 @@ const TenderForm = ({ userId }: TenderFormProps) => {
     }
     
     // Update form evaluation criteria
-    form.setValue('evaluation_criteria', evaluationCriteria);
+    form.setValue('evaluation_criteria', Object.fromEntries(
+      Object.entries(evaluationCriteria).filter(([_, value]) => value !== undefined)
+    ));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,10 +222,15 @@ const TenderForm = ({ userId }: TenderFormProps) => {
     }));
     
     // Update form value
-    form.setValue('evaluation_criteria', {
+    const updatedCriteria = {
       ...evaluationCriteria,
       [criterion]: value
-    });
+    };
+    
+    // Convert to Record<string, number> format for Zod compatibility
+    form.setValue('evaluation_criteria', Object.fromEntries(
+      Object.entries(updatedCriteria).filter(([_, value]) => value !== undefined)
+    ));
   };
 
   const handleToggleRequiredDocument = (docId: string) => {
@@ -257,6 +267,11 @@ const TenderForm = ({ userId }: TenderFormProps) => {
       const signatureData = digitalSignature ? generateDigitalSignature() : null;
       const signatureTimestamp = digitalSignature ? new Date().toISOString() : null;
       
+      // Convert evaluation criteria to a plain object for database storage
+      const evaluationCriteriaObject = Object.fromEntries(
+        Object.entries(evaluationCriteria).filter(([_, value]) => value !== undefined)
+      );
+      
       // Insert tender data
       const { data, error } = await supabase
         .from('tenders')
@@ -271,7 +286,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
           status: 'draft',
           template_type: values.template_type,
           procurement_method: values.procurement_method,
-          evaluation_criteria: values.evaluation_criteria || evaluationCriteria,
+          evaluation_criteria: evaluationCriteriaObject,
           digital_signature: signatureData,
           signature_timestamp: signatureTimestamp,
           required_documents: values.required_documents,

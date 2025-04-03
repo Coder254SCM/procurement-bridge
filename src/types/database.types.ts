@@ -1,3 +1,4 @@
+
 export interface Profile {
   id: string;
   created_at: string;
@@ -13,6 +14,23 @@ export interface Profile {
   country: string;
   postal_code: string;
   bio: string;
+  position: string;
+  industry: string;
+  verified: boolean;
+  kyc_status: string;
+  kyc_documents: Record<string, any>;
+  verification_level: string;
+  verification_status: string;
+  business_type: string | null;
+  business_registration_number: string | null;
+  tax_pin: string | null;
+}
+
+export interface UserRoleRecord {
+  id: string;
+  user_id: string;
+  role: UserRole;
+  created_at: string;
 }
 
 export interface Tender {
@@ -45,8 +63,8 @@ export interface Bid {
   technical_details: string;
   documents: string[];
   status: string;
-  tender?: Tender;
-  supplier?: Profile;
+  tender?: Partial<Tender>;
+  supplier?: Partial<Profile>;
 }
 
 export interface Evaluation {
@@ -55,10 +73,13 @@ export interface Evaluation {
   bid_id: string;
   evaluator_id: string;
   score: number;
-  comments: string;
-  recommendation: string;
+  comments: string | null;
+  recommendation: string | null;
   criteria_scores: EvaluationCriteriaScores;
-  justification: string;
+  justification: string | null;
+  blockchain_hash: string | null;
+  updated_at: string;
+  evaluation_type: string;
 }
 
 export interface EvaluationCriteria {
@@ -70,6 +91,7 @@ export interface EvaluationCriteria {
   quality?: number;
   innovation?: number;
   support?: number;
+  [key: string]: number | undefined;
 }
 
 export interface EvaluationCriteriaScores {
@@ -81,6 +103,7 @@ export interface EvaluationCriteriaScores {
   quality?: number;
   innovation?: number;
   support?: number;
+  [key: string]: number | undefined;
 }
 
 export interface RequiredDocument {
@@ -99,6 +122,64 @@ export interface TenderReview {
   supply_chain_status: string;
   supply_chain_remarks: string;
   updated_at: string;
+}
+
+export interface BehaviorAnalysis {
+  id: string;
+  entity_id: string;
+  entity_type: string;
+  analysis_type: string;
+  risk_score: number;
+  analysis_data: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DigitalIdentityVerification {
+  id: string;
+  user_id: string;
+  verification_status: string;
+  verification_data: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+  verified_by: string | null;
+  verification_date: string | null;
+  business_id: string;
+  verification_type: string;
+  blockchain_hash: string | null;
+}
+
+export interface ComplianceCheck {
+  id: string;
+  user_id: string;
+  status: string;
+  result_data: Record<string, any>;
+  check_date: string;
+  next_check_date: string | null;
+  created_at: string;
+  updated_at: string;
+  check_type: string;
+}
+
+export interface VerificationResult {
+  success: boolean;
+  message: string;
+  data: Record<string, any> | null;
+  timestamp: string;
+}
+
+export enum UserRole {
+  ADMIN = 'admin',
+  BUYER = 'buyer',
+  SUPPLIER = 'supplier',
+  EVALUATOR_TECHNICAL = 'evaluator_technical',
+  EVALUATOR_FINANCIAL = 'evaluator_financial',
+  EVALUATOR_LEGAL = 'evaluator_legal',
+  EVALUATOR_PROCUREMENT = 'evaluator_procurement',
+  EVALUATOR_ENGINEERING = 'evaluator_engineering',
+  EVALUATOR_ACCOUNTING = 'evaluator_accounting',
+  SUPPLY_CHAIN_PROFESSIONAL = 'supply_chain_professional',
+  AUDITOR = 'auditor'
 }
 
 export enum TenderStatus {
@@ -137,15 +218,4 @@ export enum TenderTemplateType {
   SUPPLIES = 'supplies',
   MEDICAL = 'medical',
   CUSTOM = 'custom',
-}
-
-export enum UserRole {
-  ADMIN = 'admin',
-  BUYER = 'buyer',
-  SUPPLIER = 'supplier',
-  EVALUATOR_TECHNICAL = 'evaluator_technical',
-  EVALUATOR_FINANCIAL = 'evaluator_financial',
-  EVALUATOR_LEGAL = 'evaluator_legal',
-  SUPPLY_CHAIN_PROFESSIONAL = 'supply_chain_professional',
-  AUDITOR = 'auditor'
 }

@@ -67,7 +67,7 @@ const UserRolesManager = ({
               <SelectContent>
                 <SelectItem value={UserRole.BUYER}>Buyer</SelectItem>
                 <SelectItem value={UserRole.SUPPLIER}>Supplier</SelectItem>
-                <SelectItem value={UserRole.EVALUATOR_FINANCE}>Financial Evaluator</SelectItem>
+                <SelectItem value={UserRole.EVALUATOR_FINANCIAL}>Financial Evaluator</SelectItem>
                 <SelectItem value={UserRole.EVALUATOR_TECHNICAL}>Technical Evaluator</SelectItem>
                 <SelectItem value={UserRole.EVALUATOR_PROCUREMENT}>Procurement Evaluator</SelectItem>
                 <SelectItem value={UserRole.EVALUATOR_ENGINEERING}>Engineering Evaluator</SelectItem>

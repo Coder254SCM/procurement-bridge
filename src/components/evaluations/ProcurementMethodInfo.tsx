@@ -12,17 +12,18 @@ import { cn } from '@/lib/utils';
 
 interface ProcurementMethodInfoProps {
   method: string;
-  description: string;
-  riskLevel: 'low' | 'medium' | 'high';
+  description?: string;
+  riskLevel?: 'low' | 'medium' | 'high';
 }
 
 const ProcurementMethodInfo = ({
   method,
-  description,
-  riskLevel,
+  description = '',
+  riskLevel = 'medium',
 }: ProcurementMethodInfoProps) => {
   const getMethodDetails = (methodType: string) => {
     switch (methodType.toLowerCase()) {
+      case 'open_tender':
       case 'open tender':
         return {
           title: 'Open Tender',
@@ -38,6 +39,7 @@ const ProcurementMethodInfo = ({
           ],
         };
 
+      case 'restricted_tender':
       case 'restricted tender':
         return {
           title: 'Restricted Tender',
@@ -53,6 +55,7 @@ const ProcurementMethodInfo = ({
           ],
         };
 
+      case 'direct_procurement':
       case 'direct procurement':
         return {
           title: 'Direct Procurement',
@@ -68,6 +71,7 @@ const ProcurementMethodInfo = ({
           ],
         };
 
+      case 'request_for_proposal':
       case 'request for proposal':
         return {
           title: 'Request for Proposal (RFP)',
