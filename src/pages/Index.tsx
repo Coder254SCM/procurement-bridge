@@ -1,183 +1,113 @@
-
-import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { FileText, Shield, BarChart, Handshake, ArrowRight, Lock, FileCheck } from "lucide-react";
-import OnboardingAnimation from "@/components/onboarding/OnboardingAnimation";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const Index = () => {
-  const [showOnboarding, setShowOnboarding] = useState(false);
-
-  useEffect(() => {
-    // Check if the user has seen the onboarding animation before
-    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-    if (!hasSeenOnboarding) {
-      // If not, show the onboarding after a short delay
-      const timer = setTimeout(() => {
-        setShowOnboarding(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  const handleStartOnboarding = () => {
-    setShowOnboarding(true);
-  };
-
-  const handleCloseOnboarding = () => {
-    setShowOnboarding(false);
-    localStorage.setItem('hasSeenOnboarding', 'true');
-  };
-
   return (
-    <>
-      {showOnboarding && <OnboardingAnimation onClose={handleCloseOnboarding} />}
-      
-      <div className="min-h-screen">
-        {/* Hero Section */}
-        <section className="py-20 px-4 md:px-6 bg-gradient-to-b from-background to-secondary/20">
-          <div className="container mx-auto max-w-6xl">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <div className="flex items-center mb-6">
-                  <img 
-                    src="/lovable-uploads/2767cbb7-f0e0-4434-a008-9c44991b8a8b.png" 
-                    alt="ProcureChain Logo" 
-                    className="h-20 w-auto"
-                  />
-                </div>
-                <h1 className="text-balance font-bold">Revolutionizing Procurement Through Blockchain</h1>
-                <p className="text-xl text-muted-foreground">
-                  Transparent, secure, and efficient tendering on the blockchain.
-                  Eliminating corruption and streamlining the entire procurement process.
-                </p>
-                <div className="flex flex-wrap gap-4 pt-4">
-                  <Button size="lg" onClick={handleStartOnboarding}>
-                    Learn How It Works
-                  </Button>
-                  <Button size="lg" variant="outline" asChild>
-                    <Link to="/dashboard">
-                      Browse Tenders <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-              <div className="glass-card p-8 rounded-2xl">
-                <img 
-                  src="/lovable-uploads/c08e5583-71a0-475d-ba45-b7e39e7dc377.png" 
-                  alt="ProcureChain - Blockchain tender management" 
-                  className="w-full h-auto rounded-lg" 
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-20 px-4 md:px-6">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-16">
-              <h2 className="mb-4">Blockchain-Powered Procurement</h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Our platform transforms the entire tendering process using secure blockchain technology, 
-                ensuring transparency, efficiency, and accountability.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="glass-card p-6 rounded-xl hover-lift">
-                <FileText className="h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-medium mb-2">Digital Tenders</h3>
-                <p className="text-muted-foreground">
-                  Create, submit, and evaluate tenders digitally with immutable records
-                </p>
-              </div>
-              
-              <div className="glass-card p-6 rounded-xl hover-lift">
-                <Shield className="h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-medium mb-2">Tamper-Proof</h3>
-                <p className="text-muted-foreground">
-                  Blockchain security ensures all data remains authentic and unaltered
-                </p>
-              </div>
-              
-              <div className="glass-card p-6 rounded-xl hover-lift">
-                <BarChart className="h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-medium mb-2">Real-time Analytics</h3>
-                <p className="text-muted-foreground">
-                  Track and analyze procurement data for better decision making
-                </p>
-              </div>
-              
-              <div className="glass-card p-6 rounded-xl hover-lift">
-                <Handshake className="h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-medium mb-2">Supplier Marketplace</h3>
-                <p className="text-muted-foreground">
-                  Connect with verified suppliers for all your procurement needs
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Security Section */}
-        <section className="py-20 px-4 md:px-6 bg-primary/5">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <h2 className="mb-4">Enterprise-Grade Security</h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Your data security is our top priority. We implement multiple layers of protection to safeguard your sensitive procurement information.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="glass-card p-6 rounded-xl hover-lift">
-                <Lock className="h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-medium mb-2">End-to-End Encryption</h3>
-                <p className="text-muted-foreground">
-                  AES-256 encryption for data at rest and TLS 1.3 for data in transit ensures your tender documents remain private and secure
-                </p>
-              </div>
-
-              <div className="glass-card p-6 rounded-xl hover-lift">
-                <Shield className="h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-medium mb-2">Zero-Trust Security</h3>
-                <p className="text-muted-foreground">
-                  Multi-factor authentication, strict access controls, and continuous monitoring to prevent unauthorized access
-                </p>
-              </div>
-
-              <div className="glass-card p-6 rounded-xl hover-lift">
-                <FileCheck className="h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-medium mb-2">Compliance Ready</h3>
-                <p className="text-muted-foreground">
-                  Built to comply with Kenya's Data Protection Act, GDPR, and other relevant procurement regulations
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20 px-4 md:px-6 bg-gradient-to-b from-secondary/20 to-background">
-          <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="mb-6">Ready to Transform Your Procurement Process?</h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join organizations across Kenya that are eliminating corruption and inefficiency 
-              in procurement through our blockchain platform.
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section */}
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-3xl mx-auto">
+            <img 
+              src="/lovable-uploads/2767cbb7-f0e0-4434-a008-9c44991b8a8b.png" 
+              alt="ProcureChain Logo" 
+              className="h-20 w-auto mx-auto mb-8" 
+            />
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 gradient-text">
+              Blockchain-Powered Procurement Platform
+            </h1>
+            <p className="text-xl mb-8 text-foreground/80">
+              Secure, transparent, and efficient tender management with immutable blockchain verification.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" onClick={handleStartOnboarding}>
-                Explore How It Works
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="button-hover-effect" asChild>
+                <Link to="/tenders">
+                  Browse Tenders
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link to="/dashboard">Get Started <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10" asChild>
+                <Link to="/auth">
+                  Sign In / Register
+                </Link>
+              </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap justify-center mt-12 gap-x-8 gap-y-4">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mr-2 text-green-500"><path d="M20 7L9 18l-5-5"/></svg>
+                <span className="text-sm">Verified Tenders</span>
+              </div>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mr-2 text-blue-500"><path d="M2 3h6a4 4 0 0 1 4 4v14a2 2 0 0 0 2-2v-6a4 4 0 0 1 4-4h6"/></svg>
+                <span className="text-sm">Secure Transactions</span>
+              </div>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mr-2 text-yellow-500"><circle cx="12" cy="12" r="10"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-8.49a6 6 0 0 1 8.48 8.49"/></svg>
+                <span className="text-sm">Full Transparency</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-background"></div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Feature Card 1 */}
+            <div className="p-6 bg-secondary/10 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+              <h3 className="text-xl font-semibold mb-2">Blockchain Verification</h3>
+              <p className="text-foreground/80">Ensure every tender and transaction is immutably recorded on the blockchain for unparalleled transparency.</p>
+            </div>
+
+            {/* Feature Card 2 */}
+            <div className="p-6 bg-secondary/10 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+              <h3 className="text-xl font-semibold mb-2">Automated Compliance</h3>
+              <p className="text-foreground/80">Streamline compliance with built-in regulatory checks and automated reporting.</p>
+            </div>
+
+            {/* Feature Card 3 */}
+            <div className="p-6 bg-secondary/10 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+              <h3 className="text-xl font-semibold mb-2">Secure Transactions</h3>
+              <p className="text-foreground/80">Protect sensitive data with end-to-end encryption and multi-factor authentication.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* CTA Section */}
+      <section className="py-20 bg-primary/5">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Procurement Process?</h2>
+            <p className="text-lg mb-8 text-foreground/80">
+              Join organizations across Kenya already using ProcureChain to ensure compliance, transparency, and efficiency.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="button-hover-effect" asChild>
+                <Link to="/auth">
+                  Get Started Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10" asChild>
+                <Link to="/marketplace">
+                  Explore Marketplace
+                </Link>
               </Button>
             </div>
           </div>
-        </section>
-      </div>
-    </>
+        </div>
+      </section>
+    </div>
   );
 };
 

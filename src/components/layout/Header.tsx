@@ -1,14 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, Search, Bell, User } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, ChevronDown, Search, Bell, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +32,11 @@ const Header = () => {
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   const navigationItems = [
@@ -79,10 +95,39 @@ const Header = () => {
               <Bell size={20} />
             </Button>
             <div className="w-px h-6 bg-border mx-1"></div>
-            <Button variant="ghost" className="text-foreground/80">
-              <User size={18} className="mr-2" />
-              <span>Sign In</span>
-            </Button>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative rounded-full h-8 w-8 aspect-square">
+                    <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/10 text-primary">
+                      {user.email?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <span>Dashboard</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" className="text-foreground/80" onClick={() => navigate('/auth')}>
+                <User size={18} className="mr-2" />
+                <span>Sign In</span>
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -120,14 +165,31 @@ const Header = () => {
             </nav>
             
             <div className="flex justify-between pt-4 border-t border-border">
-              <Button variant="ghost" className="w-1/2 justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+              <Button variant="ghost" className="w-1/2 justify-start" onClick={() => {
+                setIsMobileMenuOpen(false);
+                navigate('/search');
+              }}>
                 <Search size={18} className="mr-2" />
                 <span>Search</span>
               </Button>
-              <Button variant="ghost" className="w-1/2 justify-start" onClick={() => setIsMobileMenuOpen(false)}>
-                <User size={18} className="mr-2" />
-                <span>Sign In</span>
-              </Button>
+              
+              {user ? (
+                <Button variant="ghost" className="w-1/2 justify-start" onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleSignOut();
+                }}>
+                  <LogOut size={18} className="mr-2" />
+                  <span>Sign Out</span>
+                </Button>
+              ) : (
+                <Button variant="ghost" className="w-1/2 justify-start" onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  navigate('/auth');
+                }}>
+                  <User size={18} className="mr-2" />
+                  <span>Sign In</span>
+                </Button>
+              )}
             </div>
           </div>
         </div>
