@@ -39,6 +39,13 @@ const Index = () => {
           <div className="container mx-auto max-w-6xl">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
+                <div className="flex items-center mb-6">
+                  <img 
+                    src="/lovable-uploads/2767cbb7-f0e0-4434-a008-9c44991b8a8b.png" 
+                    alt="ProcureChain Logo" 
+                    className="h-20 w-auto"
+                  />
+                </div>
                 <h1 className="text-balance font-bold">Revolutionizing Procurement Through Blockchain</h1>
                 <p className="text-xl text-muted-foreground">
                   Transparent, secure, and efficient tendering on the blockchain.
@@ -113,7 +120,7 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Security Section - New */}
+        {/* Security Section */}
         <section className="py-20 px-4 md:px-6 bg-primary/5">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">

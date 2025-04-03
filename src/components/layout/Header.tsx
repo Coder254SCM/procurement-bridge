@@ -43,6 +43,11 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
+              <img 
+                src="/lovable-uploads/2767cbb7-f0e0-4434-a008-9c44991b8a8b.png" 
+                alt="ProcureChain Logo" 
+                className="h-8 w-auto mr-2" 
+              />
               <span className="text-2xl font-semibold text-primary tracking-tight">ProcureChain</span>
             </Link>
           </div>
