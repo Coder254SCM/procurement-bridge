@@ -126,7 +126,8 @@ export async function encryptSensitiveData<T extends Record<string, any>>(
   
   for (const field of sensitiveFields) {
     if (encryptedData[field] && typeof encryptedData[field] === 'string') {
-      encryptedData[field] = await encryptData(encryptedData[field] as string, key);
+      // Type assertion to handle the TypeScript error
+      encryptedData[field] = await encryptData(encryptedData[field] as string, key) as unknown as T[typeof field];
     }
   }
   
@@ -144,7 +145,8 @@ export async function decryptSensitiveData<T extends Record<string, any>>(
   for (const field of sensitiveFields) {
     if (decryptedData[field] && typeof decryptedData[field] === 'string') {
       try {
-        decryptedData[field] = await decryptData(decryptedData[field] as string, key);
+        // Type assertion to handle the TypeScript error
+        decryptedData[field] = await decryptData(decryptedData[field] as string, key) as unknown as T[typeof field];
       } catch (error) {
         console.error(`Failed to decrypt field: ${String(field)}`, error);
       }

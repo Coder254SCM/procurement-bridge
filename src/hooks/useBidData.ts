@@ -34,8 +34,8 @@ export function useBidData(): BidDataResult {
       // Define the completed bid object we'll build
       let completeBid: Bid = {
         ...bidData,
-        technical_details: bidData.technical_details || {}, // Ensure it's an object, not a string
-        documents: bidData.documents || [],
+        technical_details: typeof bidData.technical_details === 'object' ? bidData.technical_details : {}, // Ensure it's an object
+        documents: Array.isArray(bidData.documents) ? bidData.documents : [], // Ensure it's an array
         tender: {
           id: bidData.tender_id,
           title: 'Untitled Tender',
