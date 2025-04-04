@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { UserRole, KycStatus, VerificationLevel } from '@/types/enums';
-import { Profile as ProfileType, UserRoleRecord } from '@/types/database.types';
+import { UserRole as EnumUserRole, KycStatus, VerificationLevel } from '@/types/enums';
+import { Profile as ProfileType, UserRole, UserRoleRecord } from '@/types/database.types';
 
 // Import the new components
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -48,16 +48,26 @@ const Profile = () => {
           // Create a complete Profile object with default values for missing fields
           const completeProfile: ProfileType = {
             id: profileData.id,
-            full_name: profileData.full_name || null,
-            company_name: profileData.company_name || null,
-            position: profileData.position || null,
-            industry: profileData.industry || null,
+            full_name: profileData.full_name || '',
+            company_name: profileData.company_name || '',
+            position: profileData.position || '',
+            industry: profileData.industry || '',
             verified: profileData.verified || false,
-            kyc_status: profileData.kyc_status as KycStatus || KycStatus.PENDING,
-            kyc_documents: profileData.kyc_documents || null,
+            kyc_status: profileData.kyc_status as string || KycStatus.PENDING,
+            kyc_documents: profileData.kyc_documents as Record<string, any> || {},
             created_at: profileData.created_at || new Date().toISOString(),
             updated_at: profileData.updated_at || new Date().toISOString(),
-            verification_level: VerificationLevel.NONE,
+            verification_level: profileData.verification_level as string || VerificationLevel.NONE,
+            verification_status: profileData.verification_status || 'pending',
+            avatar_url: '',
+            email: '',
+            website: '',
+            phone_number: '',
+            address: '',
+            city: '',
+            country: '',
+            postal_code: '',
+            bio: '',
             business_type: null,
             business_registration_number: null,
             tax_pin: null,
@@ -83,8 +93,10 @@ const Profile = () => {
           
           // Convert the roles from the database to match our UserRole enum
           const convertedRoles: UserRoleRecord[] = rolesData.map(role => ({
-            ...role,
-            role: role.role as UserRole
+            id: role.id,
+            user_id: role.user_id,
+            role: role.role as UserRole,
+            created_at: role.created_at || new Date().toISOString(),
           }));
           
           setUserRoles(convertedRoles);
@@ -163,7 +175,7 @@ const Profile = () => {
       // The UserRole enum in our code might have more values than in the database
       const validDbRoles = ['buyer', 'supplier', 'admin', 'evaluator_finance', 'evaluator_technical', 'evaluator_procurement'];
       
-      if (!validDbRoles.includes(selectedRole.toLowerCase())) {
+      if (!validDbRoles.includes(String(selectedRole).toLowerCase())) {
         toast({
           title: 'Invalid Role',
           description: `The role "${selectedRole}" is not supported in the database.`,
@@ -177,7 +189,7 @@ const Profile = () => {
         .from('user_roles')
         .insert({
           user_id: user.id,
-          role: selectedRole.toLowerCase() as any
+          role: String(selectedRole).toLowerCase() as any
         });
         
       if (error) throw error;
@@ -192,8 +204,10 @@ const Profile = () => {
       
       // Convert the roles from the database to match our UserRole enum
       const convertedRoles: UserRoleRecord[] = data.map(role => ({
-        ...role,
-        role: role.role as UserRole
+        id: role.id,
+        user_id: role.user_id,
+        role: role.role as UserRole,
+        created_at: role.created_at || new Date().toISOString(),
       }));
       
       setUserRoles(convertedRoles);

@@ -60,11 +60,13 @@ export interface Bid {
   tender_id: string;
   supplier_id: string;
   bid_amount: number;
-  technical_details: string;
+  technical_details: Record<string, any>;
   documents: string[];
   status: string;
   tender?: Partial<Tender>;
   supplier?: Partial<Profile>;
+  blockchain_hash?: string;
+  updated_at?: string | null;
 }
 
 export interface Evaluation {
@@ -174,6 +176,7 @@ export enum UserRole {
   SUPPLIER = 'supplier',
   EVALUATOR_TECHNICAL = 'evaluator_technical',
   EVALUATOR_FINANCIAL = 'evaluator_financial',
+  EVALUATOR_FINANCE = 'evaluator_finance', // Added to make compatible with enums.ts
   EVALUATOR_LEGAL = 'evaluator_legal',
   EVALUATOR_PROCUREMENT = 'evaluator_procurement',
   EVALUATOR_ENGINEERING = 'evaluator_engineering',
