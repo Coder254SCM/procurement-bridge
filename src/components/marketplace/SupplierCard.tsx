@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, ExternalLink } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import SupplierVerificationBadge, { VerificationDetails } from './SupplierVerificationBadge';
 
 export interface SupplierProps {
   id: string;
@@ -16,6 +17,7 @@ export interface SupplierProps {
   completedProjects: number;
   description: string;
   contact: string;
+  verification?: VerificationDetails;
 }
 
 interface SupplierCardProps {
@@ -23,6 +25,15 @@ interface SupplierCardProps {
 }
 
 const SupplierCard = ({ supplier }: SupplierCardProps) => {
+  // Create a default verification object if one isn't provided
+  const verification: VerificationDetails = supplier.verification || {
+    status: supplier.verified ? 'verified' : 'unverified',
+    level: supplier.verified ? 'standard' : 'basic',
+    lastVerified: supplier.verified ? new Date().toISOString() : undefined,
+    completedProjects: supplier.completedProjects,
+    performanceRating: supplier.rating
+  };
+  
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
@@ -39,11 +50,7 @@ const SupplierCard = ({ supplier }: SupplierCardProps) => {
               </div>
             </div>
           </div>
-          {supplier.verified && (
-            <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200">
-              Verified
-            </Badge>
-          )}
+          <SupplierVerificationBadge verification={verification} />
         </div>
       </CardHeader>
       <CardContent>
