@@ -5,6 +5,8 @@ import SupplierCard from './SupplierCard';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import SupplierVerificationDetails from './SupplierVerificationDetails';
 import { VerificationDetails } from './SupplierVerificationBadge';
+import { toast } from '@/components/ui/use-toast';
+import { fabricClient } from '@/integrations/blockchain/fabric-client';
 
 export interface SuppliersTabContentProps {
   filteredSuppliers: SupplierProps[];
@@ -20,21 +22,63 @@ const SuppliersTabContent = ({ filteredSuppliers = [] }: SuppliersTabContentProp
   };
 
   // Handle verification completion
-  const handleVerificationComplete = (supplierId: string, verification: VerificationDetails) => {
-    setSuppliers(currentSuppliers => 
-      currentSuppliers.map(supplier => 
-        supplier.id === supplierId 
-          ? { ...supplier, verification, verified: true } 
-          : supplier
-      )
-    );
-    
-    // Also update the selected supplier if it's currently shown
-    if (selectedSupplier && selectedSupplier.id === supplierId) {
-      setSelectedSupplier({ 
-        ...selectedSupplier, 
-        verification, 
-        verified: true 
+  const handleVerificationComplete = async (supplierId: string, verification: VerificationDetails) => {
+    try {
+      // Submit to blockchain
+      const result = await fabricClient.submitEvaluation(supplierId, {
+        entityType: 'supplier',
+        verificationDetails: verification,
+        timestamp: new Date().toISOString(),
+        verifiedBy: 'system', // In a real app, this would be the user's ID
+        action: 'supplier_verification'
+      });
+
+      if (result.success) {
+        // Update local state
+        setSuppliers(currentSuppliers => 
+          currentSuppliers.map(supplier => 
+            supplier.id === supplierId 
+              ? { 
+                  ...supplier, 
+                  verification: {
+                    ...verification,
+                    blockchainTxId: result.txId,
+                    lastVerified: new Date().toISOString()
+                  }, 
+                  verified: true 
+                } 
+              : supplier
+          )
+        );
+        
+        // Also update the selected supplier if it's currently shown
+        if (selectedSupplier && selectedSupplier.id === supplierId) {
+          setSelectedSupplier({ 
+            ...selectedSupplier, 
+            verification: {
+              ...verification,
+              blockchainTxId: result.txId,
+              lastVerified: new Date().toISOString()
+            }, 
+            verified: true 
+          });
+        }
+
+        // Show success notification
+        toast({
+          title: "Verification Successful",
+          description: `Supplier verification recorded on blockchain. Transaction: ${result.txId?.substring(0, 8)}...`,
+          variant: "success"
+        });
+      } else {
+        throw new Error(result.error || "Verification failed");
+      }
+    } catch (error) {
+      console.error("Error during blockchain verification:", error);
+      toast({
+        title: "Verification Error",
+        description: "There was an error recording the verification on the blockchain.",
+        variant: "destructive"
       });
     }
   };
@@ -42,7 +86,7 @@ const SuppliersTabContent = ({ filteredSuppliers = [] }: SuppliersTabContentProp
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredSuppliers && filteredSuppliers.length > 0 ? (
+        {suppliers && suppliers.length > 0 ? (
           suppliers.map((supplier) => (
             <div key={supplier.id} onClick={() => handleSupplierClick(supplier)} className="cursor-pointer">
               <SupplierCard key={supplier.id} supplier={supplier} />
