@@ -6,12 +6,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { TenderProps } from '@/components/tenders/TenderCard';
 import TenderCard from '@/components/tenders/TenderCard';
 
-interface TendersTabContentProps {
+export interface TendersTabContentProps {
   filteredTenders: TenderProps[];
   loading: boolean;
 }
 
-const TendersTabContent = ({ filteredTenders, loading }: TendersTabContentProps) => {
+const TendersTabContent = ({ filteredTenders = [], loading = false }: TendersTabContentProps) => {
   return (
     <Tabs defaultValue="all" className="mt-6">
       <TabsList className="grid grid-cols-4 mb-6">
@@ -35,7 +35,7 @@ const TendersTabContent = ({ filteredTenders, loading }: TendersTabContentProps)
                 </div>
               </Card>
             ))
-          ) : filteredTenders.length > 0 ? (
+          ) : filteredTenders && filteredTenders.length > 0 ? (
             filteredTenders.map((tender) => (
               <TenderCard key={tender.id} tender={tender} />
             ))
@@ -50,7 +50,7 @@ const TendersTabContent = ({ filteredTenders, loading }: TendersTabContentProps)
       
       <TabsContent value="open" className="mt-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTenders.filter(t => t.status === 'open').map((tender) => (
+          {filteredTenders && filteredTenders.filter(t => t.status === 'open').map((tender) => (
             <TenderCard key={tender.id} tender={tender} />
           ))}
         </div>
@@ -58,7 +58,7 @@ const TendersTabContent = ({ filteredTenders, loading }: TendersTabContentProps)
       
       <TabsContent value="awarded" className="mt-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTenders.filter(t => t.status === 'awarded').map((tender) => (
+          {filteredTenders && filteredTenders.filter(t => t.status === 'awarded').map((tender) => (
             <TenderCard key={tender.id} tender={tender} />
           ))}
         </div>
@@ -66,7 +66,7 @@ const TendersTabContent = ({ filteredTenders, loading }: TendersTabContentProps)
       
       <TabsContent value="closed" className="mt-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTenders.filter(t => t.status === 'closed').map((tender) => (
+          {filteredTenders && filteredTenders.filter(t => t.status === 'closed').map((tender) => (
             <TenderCard key={tender.id} tender={tender} />
           ))}
         </div>

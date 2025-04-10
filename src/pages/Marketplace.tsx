@@ -8,9 +8,13 @@ import MarketplaceHeader from '@/components/marketplace/MarketplaceHeader';
 import TendersTabContent from '@/components/marketplace/TendersTabContent';
 import SuppliersTabContent from '@/components/marketplace/SuppliersTabContent';
 import ChaincodeExplorer from '@/components/blockchain/ChaincodeExplorer';
+import { useTenders } from '@/hooks/useTenders';
+import { useSuppliers } from '@/hooks/useSuppliers';
 
 const Marketplace = () => {
   const [activeTab, setActiveTab] = useState<string>('tenders');
+  const { tenders, loading } = useTenders();
+  const { suppliers } = useSuppliers();
   
   return (
     <div className="container mx-auto py-6 px-4">
@@ -61,11 +65,11 @@ const Marketplace = () => {
         
         <div className="mt-6">
           <TabsContent value="tenders" className="mt-0">
-            <TendersTabContent />
+            <TendersTabContent filteredTenders={tenders} loading={loading} />
           </TabsContent>
           
           <TabsContent value="suppliers" className="mt-0">
-            <SuppliersTabContent />
+            <SuppliersTabContent filteredSuppliers={suppliers} />
           </TabsContent>
           
           <TabsContent value="blockchain" className="mt-0">

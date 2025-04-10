@@ -3,14 +3,14 @@ import React from 'react';
 import { SupplierProps } from './SupplierCard';
 import SupplierCard from './SupplierCard';
 
-interface SuppliersTabContentProps {
+export interface SuppliersTabContentProps {
   filteredSuppliers: SupplierProps[];
 }
 
-const SuppliersTabContent = ({ filteredSuppliers }: SuppliersTabContentProps) => {
+const SuppliersTabContent = ({ filteredSuppliers = [] }: SuppliersTabContentProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {filteredSuppliers.length > 0 ? (
+      {filteredSuppliers && filteredSuppliers.length > 0 ? (
         filteredSuppliers.map((supplier) => (
           <SupplierCard key={supplier.id} supplier={supplier} />
         ))
