@@ -15,3 +15,29 @@ export enum TransactionStatus {
   CONFIRMED = 'confirmed',
   FAILED = 'failed'
 }
+
+export interface BlockchainEndorsement {
+  endorser: string;
+  signature: string;
+  status: string;
+}
+
+export interface BlockchainResponse {
+  txId: string;
+  timestamp: string;
+  channelName: string;
+  chaincodeName: string;
+  endorsementStatus: string;
+  blockNumber: number;
+  contentHash: string;
+  network: string;
+  endorsements: BlockchainEndorsement[];
+  consensus: boolean;
+  verificationNodes?: string[];
+}
+
+export interface SmartContractFunction {
+  function: string;
+  description: string;
+  args?: string[];
+}
