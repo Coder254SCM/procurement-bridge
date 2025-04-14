@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SupplierProps } from './SupplierCard';
 import SupplierCard from './SupplierCard';
@@ -68,7 +67,7 @@ const SuppliersTabContent = ({ filteredSuppliers = [] }: SuppliersTabContentProp
         toast({
           title: "Verification Successful",
           description: `Supplier verification recorded on blockchain. Transaction: ${result.txId?.substring(0, 8)}...`,
-          variant: "success"
+          variant: "default" // Changed from "success" to "default"
         });
       } else {
         throw new Error(result.error || "Verification failed");
