@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SupplierProps } from './SupplierCard';
 import SupplierCard from './SupplierCard';
@@ -9,6 +8,7 @@ import { toast } from '@/components/ui/use-toast';
 import { fabricClient } from '@/integrations/blockchain/fabric-client';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button'; // Added missing Button import
 
 export interface SuppliersTabContentProps {
   filteredSuppliers: SupplierProps[];
