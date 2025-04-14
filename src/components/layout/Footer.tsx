@@ -1,10 +1,60 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Lock, BookOpen, HelpCircle, MailIcon, PhoneIcon } from 'lucide-react';
+import { Shield, Lock, BookOpen, HelpCircle, MailIcon, PhoneIcon, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  
+  const handleRoleClick = (role: string) => {
+    setSelectedRole(role);
+    setRoleDialogOpen(true);
+  };
+  
+  const getRoleDescription = () => {
+    switch(selectedRole) {
+      case 'suppliers':
+        return {
+          title: 'For Suppliers',
+          description: [
+            'Submit bids for tenders',
+            'Get verified with blockchain-backed identity verification',
+            'Track submitted proposals and bid statuses',
+            'View open tender opportunities in the marketplace',
+            'Complete profile verification to increase trust rating'
+          ]
+        };
+      case 'buyers':
+        return {
+          title: 'For Buyers',
+          description: [
+            'Create and publish tenders',
+            'Review and evaluate supplier bids',
+            'Award contracts to winning suppliers',
+            'Track procurement process through blockchain verification',
+            'View verified suppliers in the marketplace'
+          ]
+        };
+      case 'evaluators':
+        return {
+          title: 'For Evaluators',
+          description: [
+            'Review and score bid submissions based on expertise (technical, financial, legal, etc.)',
+            'Submit evaluations with custom scoring criteria',
+            'Provide recommendations and justifications for supplier selection',
+            'Monitor evaluation progress and status'
+          ]
+        };
+      default:
+        return {
+          title: '',
+          description: []
+        };
+    }
+  };
   
   return (
     <footer className="bg-secondary/50 pt-16 pb-8">
@@ -73,19 +123,28 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Platform</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/suppliers" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => handleRoleClick('suppliers')} 
+                  className="text-muted-foreground hover:text-primary transition-colors w-full text-left"
+                >
                   For Suppliers
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/buyers" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => handleRoleClick('buyers')} 
+                  className="text-muted-foreground hover:text-primary transition-colors w-full text-left"
+                >
                   For Buyers
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/evaluators" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => handleRoleClick('evaluators')} 
+                  className="text-muted-foreground hover:text-primary transition-colors w-full text-left"
+                >
                   For Evaluators
-                </Link>
+                </button>
               </li>
               <li>
                 <Link to="/pricing" className="text-muted-foreground hover:text-primary transition-colors">
@@ -145,6 +204,26 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{getRoleDescription().title}</DialogTitle>
+            <DialogClose className="absolute right-4 top-4 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+          </DialogHeader>
+          <ul className="mt-2 space-y-2">
+            {getRoleDescription().description.map((item, index) => (
+              <li key={index} className="flex items-start">
+                <span className="mr-2 mt-0.5 text-primary">•</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </DialogContent>
+      </Dialog>
     </footer>
   );
 };
