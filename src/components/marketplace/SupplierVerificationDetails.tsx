@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CheckCircle2, ShieldCheck, ExternalLink, Info, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, ExternalLink, Info, AlertTriangle, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,9 +12,16 @@ import SupplierVerificationDialog from './SupplierVerificationDialog';
 interface SupplierVerificationDetailsProps {
   supplier: SupplierProps;
   onVerificationComplete?: (verification: VerificationDetails) => void;
+  isProcessing?: boolean;
+  error?: string | null;
 }
 
-const SupplierVerificationDetails = ({ supplier, onVerificationComplete }: SupplierVerificationDetailsProps) => {
+const SupplierVerificationDetails = ({ 
+  supplier, 
+  onVerificationComplete, 
+  isProcessing = false, 
+  error = null 
+}: SupplierVerificationDetailsProps) => {
   const verification = supplier.verification || {
     status: 'unverified',
     level: 'basic',
@@ -62,19 +69,26 @@ const SupplierVerificationDetails = ({ supplier, onVerificationComplete }: Suppl
       <CardHeader className="pb-3">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Blockchain Verification</CardTitle>
-          <Badge 
-            variant={verification.status === 'verified' ? 'default' : 'outline'}
-            className={verification.status === 'verified' ? 'bg-green-100 text-green-800 hover:bg-green-200' : ''}
-          >
-            {verification.status === 'verified' ? (
-              <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
-            ) : verification.status === 'pending' ? (
-              <Info className="h-3.5 w-3.5 mr-1.5" />
-            ) : (
-              <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
-            )}
-            <span>{verification.status === 'verified' ? 'Blockchain Verified' : 'Not Verified'}</span>
-          </Badge>
+          {isProcessing ? (
+            <Badge variant="outline" className="bg-blue-100 text-blue-800 animate-pulse">
+              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              <span>Processing</span>
+            </Badge>
+          ) : (
+            <Badge 
+              variant={verification.status === 'verified' ? 'default' : 'outline'}
+              className={verification.status === 'verified' ? 'bg-green-100 text-green-800 hover:bg-green-200' : ''}
+            >
+              {verification.status === 'verified' ? (
+                <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+              ) : verification.status === 'pending' ? (
+                <Info className="h-3.5 w-3.5 mr-1.5" />
+              ) : (
+                <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              <span>{verification.status === 'verified' ? 'Blockchain Verified' : 'Not Verified'}</span>
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -148,7 +162,8 @@ const SupplierVerificationDetails = ({ supplier, onVerificationComplete }: Suppl
           <div className="pt-2">
             <SupplierVerificationDialog 
               supplier={supplier} 
-              onVerificationComplete={onVerificationComplete} 
+              onVerificationComplete={onVerificationComplete}
+              isDisabled={isProcessing}
             />
           </div>
         </div>

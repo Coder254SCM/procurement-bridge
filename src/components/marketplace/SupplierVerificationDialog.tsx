@@ -16,16 +16,19 @@ import { fabricClient } from '@/integrations/blockchain/fabric-client';
 import { useToast } from '@/hooks/use-toast';
 import { SupplierProps } from './SupplierCard';
 import { VerificationDetails } from './SupplierVerificationBadge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface SupplierVerificationDialogProps {
   supplier: SupplierProps;
   onVerificationComplete?: (verification: VerificationDetails) => void;
+  isDisabled?: boolean;
 }
 
-const SupplierVerificationDialog = ({ supplier, onVerificationComplete }: SupplierVerificationDialogProps) => {
+const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabled = false }: SupplierVerificationDialogProps) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [documentHash, setDocumentHash] = useState("");
+  const [verificationError, setVerificationError] = useState<string | null>(null);
   const { toast } = useToast();
   
   // Verification steps tracking
@@ -41,14 +44,20 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete }: Suppli
   const simulateVerification = async () => {
     setIsVerifying(true);
     setCurrentStep(0);
-    
-    // Simulate step-by-step verification with delays
-    for (let i = 0; i < steps.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setCurrentStep(i + 1);
-    }
+    setVerificationError(null);
     
     try {
+      // Simulate step-by-step verification with delays
+      for (let i = 0; i < steps.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setCurrentStep(i + 1);
+        
+        // Introduce a random error possibility for demo purposes
+        if (Math.random() < 0.1 && i < steps.length - 1) {
+          throw new Error(`Verification failed at step: ${steps[i]}`);
+        }
+      }
+      
       // Submit verification to blockchain
       const verificationData = {
         id: `verification_${supplier.id}`,
@@ -87,16 +96,26 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete }: Suppli
           setIsVerifying(false);
         }, 1000);
       } else {
-        throw new Error("Blockchain verification failed");
+        throw new Error(blockchainResult.error || "Blockchain verification failed");
       }
     } catch (error) {
+      console.error("Verification process error:", error);
+      setVerificationError(error.message || "Unknown verification error");
+      
       toast({
         title: "Verification Failed",
-        description: "There was an error during the verification process.",
+        description: error.message || "There was an error during the verification process.",
         variant: "destructive"
       });
       setIsVerifying(false);
     }
+  };
+  
+  const resetAndClose = () => {
+    setIsVerifying(false);
+    setVerificationError(null);
+    setCurrentStep(0);
+    setIsOpen(false);
   };
   
   // Helper function to generate a deterministic hash for demo purposes
@@ -113,7 +132,16 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete }: Suppli
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Verify on Blockchain</Button>
+        <Button disabled={isDisabled}>
+          {isDisabled ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            'Verify on Blockchain'
+          )}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -124,6 +152,13 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete }: Suppli
         </DialogHeader>
         
         <div className="py-4">
+          {verificationError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertTitle>Verification Failed</AlertTitle>
+              <AlertDescription>{verificationError}</AlertDescription>
+            </Alert>
+          )}
+          
           <div className="mb-4">
             <label className="text-sm font-medium block mb-1">Supplier</label>
             <Input value={supplier.name} disabled />
@@ -169,24 +204,35 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete }: Suppli
         <DialogFooter className="flex space-x-2 sm:justify-end">
           <Button 
             variant="outline" 
-            onClick={() => setIsOpen(false)}
-            disabled={isVerifying}
+            onClick={resetAndClose}
+            disabled={isVerifying && !verificationError}
           >
-            Cancel
+            {verificationError ? "Close" : "Cancel"}
           </Button>
-          <Button 
-            onClick={simulateVerification}
-            disabled={isVerifying}
-          >
-            {isVerifying ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Verifying...
-              </>
-            ) : (
-              'Start Verification'
-            )}
-          </Button>
+          {verificationError ? (
+            <Button 
+              onClick={() => {
+                setVerificationError(null);
+                simulateVerification();
+              }}
+            >
+              Retry Verification
+            </Button>
+          ) : (
+            <Button 
+              onClick={simulateVerification}
+              disabled={isVerifying}
+            >
+              {isVerifying ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                'Start Verification'
+              )}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
