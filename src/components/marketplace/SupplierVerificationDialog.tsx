@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { CheckCircle, Loader2, Info } from 'lucide-react';
+import { CheckCircle, Loader2, Info, FileText, AlertTriangle } from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 
@@ -12,11 +12,18 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { fabricClient } from '@/integrations/blockchain/fabric-client';
 import { useToast } from '@/hooks/use-toast';
 import { SupplierProps } from './SupplierCard';
 import { VerificationDetails } from './SupplierVerificationBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { 
+  useBlockchainVerification 
+} from '@/hooks/useBlockchainVerification';
+import { 
+  VerificationLevel 
+} from '@/services/BlockchainVerificationService';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface SupplierVerificationDialogProps {
   supplier: SupplierProps;
@@ -25,11 +32,21 @@ interface SupplierVerificationDialogProps {
 }
 
 const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabled = false }: SupplierVerificationDialogProps) => {
-  const [isVerifying, setIsVerifying] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [documentHash, setDocumentHash] = useState("");
-  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [verificationLevel, setVerificationLevel] = useState<VerificationLevel>(VerificationLevel.STANDARD);
   const { toast } = useToast();
+  
+  // Use our new blockchain verification hook
+  const { 
+    verifySupplier, 
+    isProcessing, 
+    verificationData, 
+    error, 
+    resetVerification 
+  } = useBlockchainVerification({
+    onVerificationComplete
+  });
   
   // Verification steps tracking
   const [currentStep, setCurrentStep] = useState(0);
@@ -41,79 +58,44 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
     "Recording verification on blockchain"
   ];
   
-  const simulateVerification = async () => {
-    setIsVerifying(true);
+  const handleVerification = async () => {
+    // Reset step tracker
     setCurrentStep(0);
-    setVerificationError(null);
+    
+    // Start tracking steps
+    const stepInterval = setInterval(() => {
+      setCurrentStep(current => {
+        // Don't go beyond number of steps
+        if (current < steps.length - 1) {
+          return current + 1;
+        }
+        return current;
+      });
+    }, 1500);
     
     try {
-      // Simulate step-by-step verification with delays
-      for (let i = 0; i < steps.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setCurrentStep(i + 1);
-        
-        // Introduce a random error possibility for demo purposes
-        if (Math.random() < 0.1 && i < steps.length - 1) {
-          throw new Error(`Verification failed at step: ${steps[i]}`);
-        }
-      }
+      // Call verification process
+      await verifySupplier(
+        supplier.id, 
+        supplier.name,
+        verificationLevel,
+        documentHash || undefined
+      );
       
-      // Submit verification to blockchain
-      const verificationData = {
-        id: `verification_${supplier.id}`,
-        supplierId: supplier.id,
-        name: supplier.name,
-        documentHash: documentHash || calculateDummyHash(supplier.id),
-        verificationDate: new Date().toISOString(),
-        verificationLevel: supplier.verification?.level || 'standard'
-      };
-      
-      const blockchainResult = await fabricClient.submitTender(`verification_${supplier.id}`, verificationData);
-      
-      if (blockchainResult.success) {
-        const newVerification: VerificationDetails = {
-          status: 'verified',
-          level: supplier.verification?.level || 'standard',
-          lastVerified: new Date().toISOString(),
-          blockchainTxId: blockchainResult.txId,
-          verificationScore: Math.round(supplier.rating * 20),
-          completedProjects: supplier.completedProjects,
-          performanceRating: supplier.rating
-        };
-        
-        if (onVerificationComplete) {
-          onVerificationComplete(newVerification);
-        }
-        
-        toast({
-          title: "Verification Complete",
-          description: "Supplier has been successfully verified on the blockchain.",
-          variant: "default"
-        });
-        
+      // If successful, close the dialog after a delay
+      if (!error) {
         setTimeout(() => {
           setIsOpen(false);
-          setIsVerifying(false);
-        }, 1000);
-      } else {
-        throw new Error(blockchainResult.error || "Blockchain verification failed");
+        }, 2000);
       }
-    } catch (error) {
-      console.error("Verification process error:", error);
-      setVerificationError(error.message || "Unknown verification error");
-      
-      toast({
-        title: "Verification Failed",
-        description: error.message || "There was an error during the verification process.",
-        variant: "destructive"
-      });
-      setIsVerifying(false);
+    } finally {
+      // Clear interval regardless of outcome
+      clearInterval(stepInterval);
     }
   };
   
   const resetAndClose = () => {
-    setIsVerifying(false);
-    setVerificationError(null);
+    resetVerification();
     setCurrentStep(0);
     setIsOpen(false);
   };
@@ -129,10 +111,40 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
     return '0x' + Math.abs(hash).toString(16).padStart(64, '0');
   };
   
+  // Generate document hash if empty
+  const handleGenerateHash = () => {
+    const generatedHash = calculateDummyHash(supplier.id + new Date().toISOString());
+    setDocumentHash(generatedHash);
+    
+    toast({
+      title: "Hash Generated",
+      description: "A document hash has been generated based on supplier credentials",
+      variant: "default"
+    });
+  };
+  
+  const getLevelDescription = (level: VerificationLevel) => {
+    switch (level) {
+      case VerificationLevel.BASIC:
+        return 'Basic identity and business registry checks';
+      case VerificationLevel.STANDARD:
+        return 'Standard verification including tax compliance';
+      case VerificationLevel.ADVANCED:
+        return 'Advanced verification with financial and performance history';
+      default:
+        return '';
+    }
+  };
+  
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open || !isProcessing) {
+        setIsOpen(open);
+        if (!open) resetVerification();
+      }
+    }}>
       <DialogTrigger asChild>
-        <Button disabled={isDisabled}>
+        <Button disabled={isDisabled} onClick={() => setIsOpen(true)}>
           {isDisabled ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -152,10 +164,11 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
         </DialogHeader>
         
         <div className="py-4">
-          {verificationError && (
+          {error && (
             <Alert variant="destructive" className="mb-4">
+              <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Verification Failed</AlertTitle>
-              <AlertDescription>{verificationError}</AlertDescription>
+              <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
           
@@ -165,22 +178,77 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
           </div>
           
           <div className="mb-4">
-            <label className="text-sm font-medium block mb-1">Document Hash (optional)</label>
-            <Input 
-              placeholder="Enter document hash or leave empty to generate" 
-              value={documentHash}
-              onChange={(e) => setDocumentHash(e.target.value)}
-              disabled={isVerifying}
-            />
+            <label className="text-sm font-medium block mb-1">Verification Level</label>
+            <Select
+              value={verificationLevel}
+              onValueChange={(value) => setVerificationLevel(value as VerificationLevel)}
+              disabled={isProcessing}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select verification level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={VerificationLevel.BASIC}>
+                  <div className="flex flex-col">
+                    <span>Basic</span>
+                    <span className="text-xs text-muted-foreground mt-1">{getLevelDescription(VerificationLevel.BASIC)}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value={VerificationLevel.STANDARD}>
+                  <div className="flex flex-col">
+                    <span>Standard</span>
+                    <span className="text-xs text-muted-foreground mt-1">{getLevelDescription(VerificationLevel.STANDARD)}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value={VerificationLevel.ADVANCED}>
+                  <div className="flex flex-col">
+                    <span>Advanced</span>
+                    <span className="text-xs text-muted-foreground mt-1">{getLevelDescription(VerificationLevel.ADVANCED)}</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
             <p className="text-xs text-muted-foreground mt-1">
               <Info className="h-3 w-3 inline mr-1" />
-              If left empty, a hash will be generated based on supplier credentials
+              Higher verification levels require more comprehensive checks
             </p>
           </div>
           
-          {isVerifying && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">Document Hash</label>
+              <Button
+                variant="outline" 
+                size="sm"
+                className="h-7 text-xs"
+                onClick={handleGenerateHash}
+                disabled={isProcessing}
+              >
+                <FileText className="h-3 w-3 mr-1" />
+                Generate
+              </Button>
+            </div>
+            <Input 
+              placeholder="Enter document hash or generate one" 
+              value={documentHash}
+              onChange={(e) => setDocumentHash(e.target.value)}
+              disabled={isProcessing}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              <Info className="h-3 w-3 inline mr-1" />
+              The hash represents the cryptographic fingerprint of supplier documents
+            </p>
+          </div>
+          
+          {isProcessing && (
             <div className="border rounded-md p-3 mt-6">
-              <h4 className="text-sm font-medium mb-2">Verification Progress</h4>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium">Verification Progress</h4>
+                <Badge variant="outline" className="bg-blue-100 text-blue-800 animate-pulse">
+                  <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                  Processing
+                </Badge>
+              </div>
               <div className="space-y-2">
                 {steps.map((step, index) => (
                   <div key={index} className="flex items-center">
@@ -199,35 +267,39 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
               </div>
             </div>
           )}
+          
+          {verificationData && verificationData.status === 'verified' && (
+            <Alert variant="default" className="bg-green-50 border-green-200 mt-4">
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <AlertTitle>Verification Successful</AlertTitle>
+              <AlertDescription>
+                <p>Supplier verified with score: {verificationData.overallScore}/100</p>
+                <p className="text-xs mt-1 font-mono">TX: {verificationData.blockchainTxId?.substring(0, 10)}...</p>
+              </AlertDescription>
+            </Alert>
+          )}
         </div>
         
         <DialogFooter className="flex space-x-2 sm:justify-end">
           <Button 
             variant="outline" 
             onClick={resetAndClose}
-            disabled={isVerifying && !verificationError}
+            disabled={isProcessing}
           >
-            {verificationError ? "Close" : "Cancel"}
+            {verificationData?.status === 'verified' ? "Close" : "Cancel"}
           </Button>
-          {verificationError ? (
+          {verificationData?.status !== 'verified' && (
             <Button 
-              onClick={() => {
-                setVerificationError(null);
-                simulateVerification();
-              }}
+              onClick={handleVerification}
+              disabled={isProcessing}
             >
-              Retry Verification
-            </Button>
-          ) : (
-            <Button 
-              onClick={simulateVerification}
-              disabled={isVerifying}
-            >
-              {isVerifying ? (
+              {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Verifying...
                 </>
+              ) : error ? (
+                'Retry Verification'
               ) : (
                 'Start Verification'
               )}
