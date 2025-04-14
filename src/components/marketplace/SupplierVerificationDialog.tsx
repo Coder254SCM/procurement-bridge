@@ -1,6 +1,17 @@
 
-import React, { useState } from 'react';
-import { CheckCircle, Loader2, Info, FileText, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { 
+  CheckCircle, 
+  Loader2, 
+  Info, 
+  FileText, 
+  AlertTriangle, 
+  RefreshCw,
+  Network,
+  Shield,
+  Database,
+  Clock
+} from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 
@@ -17,13 +28,15 @@ import { SupplierProps } from './SupplierCard';
 import { VerificationDetails } from './SupplierVerificationBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { 
-  useBlockchainVerification 
+  useBlockchainVerification,
+  VerificationStatus
 } from '@/hooks/useBlockchainVerification';
 import { 
   VerificationLevel 
 } from '@/services/BlockchainVerificationService';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
 
 interface SupplierVerificationDialogProps {
   supplier: SupplierProps;
@@ -37,18 +50,21 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
   const [verificationLevel, setVerificationLevel] = useState<VerificationLevel>(VerificationLevel.STANDARD);
   const { toast } = useToast();
   
-  // Use our new blockchain verification hook
+  // Use our blockchain verification hook with expanded features
   const { 
     verifySupplier, 
     isProcessing, 
     verificationData, 
     error, 
-    resetVerification 
+    resetVerification,
+    retryVerification,
+    currentStatus,
+    transactionDetails
   } = useBlockchainVerification({
     onVerificationComplete
   });
   
-  // Verification steps tracking
+  // Verification steps tracking with dynamic progress calculation
   const [currentStep, setCurrentStep] = useState(0);
   const steps = [
     "Validating business credentials",
@@ -57,21 +73,34 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
     "Validating digital identity",
     "Recording verification on blockchain"
   ];
+
+  // Use effect to auto-advance steps based on status changes
+  useEffect(() => {
+    if (isProcessing) {
+      // Calculate the appropriate step based on status
+      switch (currentStatus) {
+        case VerificationStatus.PROCESSING:
+          setCurrentStep(0);
+          break;
+        case VerificationStatus.VERIFYING:
+          setCurrentStep(Math.min(2, steps.length - 1));
+          break;
+        case VerificationStatus.SUBMITTING:
+          setCurrentStep(3);
+          break;
+        case VerificationStatus.CONFIRMED:
+          setCurrentStep(4);
+          break;
+        case VerificationStatus.COMPLETED:
+          setCurrentStep(steps.length - 1);
+          break;
+      }
+    }
+  }, [currentStatus, isProcessing, steps.length]);
   
   const handleVerification = async () => {
     // Reset step tracker
     setCurrentStep(0);
-    
-    // Start tracking steps
-    const stepInterval = setInterval(() => {
-      setCurrentStep(current => {
-        // Don't go beyond number of steps
-        if (current < steps.length - 1) {
-          return current + 1;
-        }
-        return current;
-      });
-    }, 1500);
     
     try {
       // Call verification process
@@ -83,15 +112,23 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
       );
       
       // If successful, close the dialog after a delay
-      if (!error) {
+      if (!error && currentStatus === VerificationStatus.COMPLETED) {
         setTimeout(() => {
           setIsOpen(false);
         }, 2000);
       }
-    } finally {
-      // Clear interval regardless of outcome
-      clearInterval(stepInterval);
+    } catch (error) {
+      console.error('Verification process error:', error);
     }
+  };
+  
+  const handleRetry = async () => {
+    await retryVerification(
+      supplier.id,
+      supplier.name,
+      verificationLevel,
+      documentHash || undefined
+    );
   };
   
   const resetAndClose = () => {
@@ -136,6 +173,58 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
     }
   };
   
+  // Get status badge based on current verification status
+  const renderStatusBadge = () => {
+    switch (currentStatus) {
+      case VerificationStatus.PROCESSING:
+      case VerificationStatus.VERIFYING:
+      case VerificationStatus.SUBMITTING:
+        return (
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 animate-pulse">
+            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+            <span>Processing</span>
+          </Badge>
+        );
+      case VerificationStatus.CONFIRMED:
+        return (
+          <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+            <Clock className="h-3.5 w-3.5 mr-1.5" />
+            <span>Confirming</span>
+          </Badge>
+        );
+      case VerificationStatus.COMPLETED:
+        return (
+          <Badge variant="outline" className="bg-green-100 text-green-800">
+            <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+            <span>Completed</span>
+          </Badge>
+        );
+      case VerificationStatus.FAILED:
+        return (
+          <Badge variant="outline" className="bg-red-100 text-red-800">
+            <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
+            <span>Failed</span>
+          </Badge>
+        );
+      default:
+        return (
+          <Badge variant="outline">
+            <Info className="h-3.5 w-3.5 mr-1.5" />
+            <span>Ready</span>
+          </Badge>
+        );
+    }
+  };
+  
+  // Calculate progress percentage for verification process
+  const getProgressPercentage = () => {
+    if (currentStatus === VerificationStatus.COMPLETED) return 100;
+    if (currentStatus === VerificationStatus.FAILED) return 0;
+    
+    // Calculate based on current step
+    return Math.min(Math.round((currentStep / (steps.length - 1)) * 100), 100);
+  };
+  
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open || !isProcessing) {
@@ -157,7 +246,10 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Blockchain Verification</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Blockchain Verification</DialogTitle>
+            {renderStatusBadge()}
+          </div>
           <DialogDescription>
             Verify supplier credentials and record them on the blockchain for immutable proof.
           </DialogDescription>
@@ -168,7 +260,12 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Verification Failed</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription>
+                {error}
+                {transactionDetails.attemptCount > 0 && (
+                  <div className="text-xs mt-1">Attempt: {transactionDetails.attemptCount}</div>
+                )}
+              </AlertDescription>
             </Alert>
           )}
           
@@ -242,14 +339,22 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
           
           {isProcessing && (
             <div className="border rounded-md p-3 mt-6">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium">Verification Progress</h4>
-                <Badge variant="outline" className="bg-blue-100 text-blue-800 animate-pulse">
-                  <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                  Processing
-                </Badge>
+                {renderStatusBadge()}
               </div>
-              <div className="space-y-2">
+              
+              {/* Progress bar */}
+              <div className="mb-3">
+                <Progress value={getProgressPercentage()} className="h-2" />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Initializing</span>
+                  <span>{getProgressPercentage()}%</span>
+                  <span>Complete</span>
+                </div>
+              </div>
+              
+              <div className="space-y-2 mt-3">
                 {steps.map((step, index) => (
                   <div key={index} className="flex items-center">
                     {index < currentStep ? (
@@ -265,9 +370,50 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
                   </div>
                 ))}
               </div>
+              
+              {/* Transaction details */}
+              {transactionDetails.txId && (
+                <div className="mt-4 pt-3 border-t border-gray-100">
+                  <h5 className="text-xs font-medium mb-2">Transaction Details</h5>
+                  <div className="grid grid-cols-2 gap-y-1 text-xs">
+                    <div className="text-muted-foreground flex items-center">
+                      <Database className="h-3 w-3 mr-1" /> TX ID:
+                    </div>
+                    <div className="font-mono truncate">
+                      {transactionDetails.txId.substring(0, 10)}...
+                    </div>
+                    
+                    <div className="text-muted-foreground flex items-center">
+                      <Network className="h-3 w-3 mr-1" /> Network:
+                    </div>
+                    <div>Hyperledger Fabric</div>
+                    
+                    <div className="text-muted-foreground flex items-center">
+                      <Shield className="h-3 w-3 mr-1" /> Status:
+                    </div>
+                    <div>
+                      {currentStatus === VerificationStatus.COMPLETED ? (
+                        <span className="text-green-600">Confirmed</span>
+                      ) : (
+                        <span className="text-amber-600">Pending</span>
+                      )}
+                    </div>
+                    
+                    {transactionDetails.attemptCount > 0 && (
+                      <>
+                        <div className="text-muted-foreground flex items-center">
+                          <RefreshCw className="h-3 w-3 mr-1" /> Attempts:
+                        </div>
+                        <div>{transactionDetails.attemptCount}</div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
           
+          {/* Success confirmation */}
           {verificationData && verificationData.status === 'verified' && (
             <Alert variant="default" className="bg-green-50 border-green-200 mt-4">
               <CheckCircle className="h-4 w-4 text-green-500" />
@@ -275,8 +421,25 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
               <AlertDescription>
                 <p>Supplier verified with score: {verificationData.overallScore}/100</p>
                 <p className="text-xs mt-1 font-mono">TX: {verificationData.blockchainTxId?.substring(0, 10)}...</p>
+                <p className="text-xs mt-1 text-green-600">All credentials cryptographically verified</p>
               </AlertDescription>
             </Alert>
+          )}
+          
+          {/* Failure with retry option */}
+          {currentStatus === VerificationStatus.FAILED && transactionDetails.attemptCount > 0 && (
+            <div className="mt-4 flex justify-end">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRetry}
+                className="text-xs"
+                disabled={isProcessing}
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Retry Verification
+              </Button>
+            </div>
           )}
         </div>
         
@@ -288,7 +451,7 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
           >
             {verificationData?.status === 'verified' ? "Close" : "Cancel"}
           </Button>
-          {verificationData?.status !== 'verified' && (
+          {verificationData?.status !== 'verified' && currentStatus !== VerificationStatus.PROCESSING && (
             <Button 
               onClick={handleVerification}
               disabled={isProcessing}
@@ -298,8 +461,11 @@ const SupplierVerificationDialog = ({ supplier, onVerificationComplete, isDisabl
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Verifying...
                 </>
-              ) : error ? (
-                'Retry Verification'
+              ) : currentStatus === VerificationStatus.FAILED ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Retry Verification
+                </>
               ) : (
                 'Start Verification'
               )}
