@@ -56,6 +56,33 @@ export function useBlockchainVerification({ onVerificationComplete }: UseBlockch
       lastAttempt: new Date()
     }));
   }, []);
+  
+  // Fetch transaction history for a supplier with enhanced error handling
+  const fetchTransactionHistory = useCallback(async (entityId: string) => {
+    try {
+      const transactions = await fabricClient.getEntityTransactions(entityId);
+      setTransactionHistory(transactions);
+      
+      // Notify about transaction history
+      if (transactions.length > 0) {
+        toast({
+          title: "Transaction History Retrieved",
+          description: `Found ${transactions.length} blockchain transactions for this entity.`,
+          variant: "default"
+        });
+      }
+      
+      return transactions;
+    } catch (error) {
+      console.error('Error fetching transaction history:', error);
+      toast({
+        title: "Transaction History Error",
+        description: "Could not retrieve blockchain transaction history.",
+        variant: "destructive"
+      });
+      return [];
+    }
+  }, [toast]);
 
   // Verify a supplier's identity on the blockchain with enhanced status tracking
   const verifySupplier = useCallback(async (
@@ -144,33 +171,6 @@ export function useBlockchainVerification({ onVerificationComplete }: UseBlockch
       setIsProcessing(false);
     }
   }, [toast, onVerificationComplete, updateTransactionStats, fetchTransactionHistory]);
-  
-  // Fetch transaction history for a supplier with enhanced error handling
-  const fetchTransactionHistory = useCallback(async (entityId: string) => {
-    try {
-      const transactions = await fabricClient.getEntityTransactions(entityId);
-      setTransactionHistory(transactions);
-      
-      // Notify about transaction history
-      if (transactions.length > 0) {
-        toast({
-          title: "Transaction History Retrieved",
-          description: `Found ${transactions.length} blockchain transactions for this entity.`,
-          variant: "default"
-        });
-      }
-      
-      return transactions;
-    } catch (error) {
-      console.error('Error fetching transaction history:', error);
-      toast({
-        title: "Transaction History Error",
-        description: "Could not retrieve blockchain transaction history.",
-        variant: "destructive"
-      });
-      return [];
-    }
-  }, [toast]);
   
   // Verify document authenticity with enhanced status tracking
   const verifyDocument = useCallback(async (documentHash: string) => {
