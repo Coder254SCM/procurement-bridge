@@ -7,6 +7,7 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Log 404 errors except for the blockchain-explorer special route
     if (location.pathname !== "/blockchain-explorer") {
       console.error(
         "404 Error: User attempted to access non-existent route:",

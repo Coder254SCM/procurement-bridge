@@ -18,6 +18,7 @@ import Auth from '@/pages/Auth';
 import SupplierDashboard from '@/pages/SupplierDashboard';
 import BuyerDashboard from '@/pages/BuyerDashboard';
 import EvaluatorDashboard from '@/pages/EvaluatorDashboard';
+import Documentation from '@/pages/Documentation';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -79,6 +80,7 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/verification-guide" element={<VerificationGuide />} />
+              <Route path="/documentation" element={<Documentation />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/tender/:id" element={<TenderDetail />} />
               <Route path="/analytics" element={<Analytics />} />
