@@ -19,6 +19,7 @@ import SupplierDashboard from '@/pages/SupplierDashboard';
 import BuyerDashboard from '@/pages/BuyerDashboard';
 import EvaluatorDashboard from '@/pages/EvaluatorDashboard';
 import Documentation from '@/pages/Documentation';
+import Contracts from '@/pages/Contracts';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -72,6 +73,11 @@ function App() {
               <Route path="/evaluations/:bidId" element={
                 <ProtectedRoute>
                   <EvaluationForm />
+                </ProtectedRoute>
+              } />
+              <Route path="/contracts" element={
+                <ProtectedRoute>
+                  <Contracts />
                 </ProtectedRoute>
               } />
               <Route path="/verification" element={

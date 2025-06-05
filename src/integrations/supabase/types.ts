@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          compliance_flags: Json | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          compliance_flags?: Json | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          compliance_flags?: Json | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       behavior_analysis: {
         Row: {
           analysis_data: Json | null
@@ -54,6 +96,7 @@ export type Database = {
           technical_details: Json | null
           tender_id: string
           updated_at: string | null
+          uploaded_documents: Json | null
         }
         Insert: {
           bid_amount: number
@@ -66,6 +109,7 @@ export type Database = {
           technical_details?: Json | null
           tender_id: string
           updated_at?: string | null
+          uploaded_documents?: Json | null
         }
         Update: {
           bid_amount?: number
@@ -78,6 +122,7 @@ export type Database = {
           technical_details?: Json | null
           tender_id?: string
           updated_at?: string | null
+          uploaded_documents?: Json | null
         }
         Relationships: [
           {
@@ -157,6 +202,117 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      compliance_frameworks: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string
+          name: string
+          penalties: Json | null
+          requirements: Json
+          type: string
+          updated_at: string | null
+          validation_rules: Json
+          version: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          name: string
+          penalties?: Json | null
+          requirements: Json
+          type: string
+          updated_at?: string | null
+          validation_rules: Json
+          version: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          penalties?: Json | null
+          requirements?: Json
+          type?: string
+          updated_at?: string | null
+          validation_rules?: Json
+          version?: string
+        }
+        Relationships: []
+      }
+      contracts: {
+        Row: {
+          blockchain_hash: string | null
+          buyer_id: string
+          contract_currency: string | null
+          contract_value: number
+          created_at: string | null
+          documents: Json | null
+          end_date: string | null
+          id: string
+          milestones: Json | null
+          start_date: string | null
+          status: string | null
+          supplier_id: string
+          tender_id: string
+          terms_conditions: Json | null
+          updated_at: string | null
+          winning_bid_id: string
+        }
+        Insert: {
+          blockchain_hash?: string | null
+          buyer_id: string
+          contract_currency?: string | null
+          contract_value: number
+          created_at?: string | null
+          documents?: Json | null
+          end_date?: string | null
+          id?: string
+          milestones?: Json | null
+          start_date?: string | null
+          status?: string | null
+          supplier_id: string
+          tender_id: string
+          terms_conditions?: Json | null
+          updated_at?: string | null
+          winning_bid_id: string
+        }
+        Update: {
+          blockchain_hash?: string | null
+          buyer_id?: string
+          contract_currency?: string | null
+          contract_value?: number
+          created_at?: string | null
+          documents?: Json | null
+          end_date?: string | null
+          id?: string
+          milestones?: Json | null
+          start_date?: string | null
+          status?: string | null
+          supplier_id?: string
+          tender_id?: string
+          terms_conditions?: Json | null
+          updated_at?: string | null
+          winning_bid_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_winning_bid_id_fkey"
+            columns: ["winning_bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       digital_identity_verification: {
         Row: {
@@ -253,10 +409,92 @@ export type Database = {
           },
         ]
       }
+      external_integrations: {
+        Row: {
+          api_key_name: string | null
+          configuration: Json | null
+          created_at: string | null
+          created_by: string
+          endpoint_url: string
+          id: string
+          last_sync: string | null
+          name: string
+          status: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          api_key_name?: string | null
+          configuration?: Json | null
+          created_at?: string | null
+          created_by: string
+          endpoint_url: string
+          id?: string
+          last_sync?: string | null
+          name: string
+          status?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          api_key_name?: string | null
+          configuration?: Json | null
+          created_at?: string | null
+          created_by?: string
+          endpoint_url?: string
+          id?: string
+          last_sync?: string | null
+          name?: string
+          status?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company_name: string | null
           created_at: string | null
+          documents_uploaded: Json | null
           full_name: string | null
           id: string
           industry: string | null
@@ -274,6 +512,7 @@ export type Database = {
         Insert: {
           company_name?: string | null
           created_at?: string | null
+          documents_uploaded?: Json | null
           full_name?: string | null
           id: string
           industry?: string | null
@@ -291,6 +530,7 @@ export type Database = {
         Update: {
           company_name?: string | null
           created_at?: string | null
+          documents_uploaded?: Json | null
           full_name?: string | null
           id?: string
           industry?: string | null
@@ -304,6 +544,42 @@ export type Database = {
             | Database["public"]["Enums"]["verification_status"]
             | null
           verified?: boolean | null
+        }
+        Relationships: []
+      }
+      supplier_lists: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          criteria: Json | null
+          description: string | null
+          id: string
+          name: string
+          status: string | null
+          suppliers: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          criteria?: Json | null
+          description?: string | null
+          id?: string
+          name: string
+          status?: string | null
+          suppliers?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          criteria?: Json | null
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string | null
+          suppliers?: Json
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -364,6 +640,7 @@ export type Database = {
           supply_chain_reviewer_id: string | null
           title: string
           updated_at: string | null
+          uploaded_documents: Json | null
         }
         Insert: {
           blockchain_hash?: string | null
@@ -383,6 +660,7 @@ export type Database = {
           supply_chain_reviewer_id?: string | null
           title: string
           updated_at?: string | null
+          uploaded_documents?: Json | null
         }
         Update: {
           blockchain_hash?: string | null
@@ -402,6 +680,7 @@ export type Database = {
           supply_chain_reviewer_id?: string | null
           title?: string
           updated_at?: string | null
+          uploaded_documents?: Json | null
         }
         Relationships: []
       }

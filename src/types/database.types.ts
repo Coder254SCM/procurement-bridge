@@ -1,4 +1,3 @@
-
 export interface Profile {
   id: string;
   created_at: string;
@@ -24,6 +23,7 @@ export interface Profile {
   business_type: string | null;
   business_registration_number: string | null;
   tax_pin: string | null;
+  documents_uploaded: Record<string, any>;
 }
 
 export interface UserRoleRecord {
@@ -52,6 +52,7 @@ export interface Tender {
   signature_timestamp: string;
   required_documents: string[];
   supply_chain_reviewer_id: string;
+  uploaded_documents: any[];
 }
 
 export interface Bid {
@@ -67,6 +68,7 @@ export interface Bid {
   supplier?: Partial<Profile>;
   blockchain_hash?: string;
   updated_at?: string | null;
+  uploaded_documents: any[];
 }
 
 export interface Evaluation {
@@ -170,13 +172,99 @@ export interface VerificationResult {
   timestamp: string;
 }
 
+// New interfaces for the added tables
+export interface Notification {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  entity_type: string | null;
+  entity_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Contract {
+  id: string;
+  tender_id: string;
+  winning_bid_id: string;
+  buyer_id: string;
+  supplier_id: string;
+  contract_value: number;
+  contract_currency: string;
+  start_date: string | null;
+  end_date: string | null;
+  status: string;
+  terms_conditions: Record<string, any> | null;
+  milestones: Record<string, any> | null;
+  documents: Record<string, any> | null;
+  blockchain_hash: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuditLog {
+  id: string;
+  user_id: string | null;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  old_values: Record<string, any> | null;
+  new_values: Record<string, any> | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  compliance_flags: Record<string, any> | null;
+  created_at: string;
+}
+
+export interface SupplierList {
+  id: string;
+  name: string;
+  description: string | null;
+  created_by: string;
+  suppliers: any[];
+  criteria: Record<string, any> | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ExternalIntegration {
+  id: string;
+  name: string;
+  type: string;
+  endpoint_url: string;
+  api_key_name: string | null;
+  configuration: Record<string, any> | null;
+  status: string;
+  last_sync: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ComplianceFramework {
+  id: string;
+  name: string;
+  type: string;
+  version: string;
+  requirements: Record<string, any>;
+  validation_rules: Record<string, any>;
+  penalties: Record<string, any> | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export enum UserRole {
   ADMIN = 'admin',
   BUYER = 'buyer',
   SUPPLIER = 'supplier',
   EVALUATOR_TECHNICAL = 'evaluator_technical',
   EVALUATOR_FINANCIAL = 'evaluator_financial',
-  EVALUATOR_FINANCE = 'evaluator_finance', // Added to make compatible with enums.ts
+  EVALUATOR_FINANCE = 'evaluator_finance',
   EVALUATOR_LEGAL = 'evaluator_legal',
   EVALUATOR_PROCUREMENT = 'evaluator_procurement',
   EVALUATOR_ENGINEERING = 'evaluator_engineering',
