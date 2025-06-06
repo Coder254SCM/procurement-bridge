@@ -58,6 +58,14 @@ export class ContractService {
 
       if (error) throw error;
 
+      // Type conversion for JSONB fields
+      const typedContract: Contract = {
+        ...contract,
+        terms_conditions: contract.terms_conditions as Record<string, any> | null,
+        milestones: contract.milestones as Record<string, any> | null,
+        documents: contract.documents as Record<string, any> | null
+      };
+
       // Notify both parties
       await notificationService.createNotification({
         user_id: data.buyer_id,
@@ -77,7 +85,7 @@ export class ContractService {
         entity_id: contract.id
       });
 
-      return contract;
+      return typedContract;
     } catch (error) {
       console.error('Create contract error:', error);
       throw error;
@@ -102,6 +110,14 @@ export class ContractService {
 
       if (error) throw error;
 
+      // Type conversion for JSONB fields
+      const typedContract: Contract = {
+        ...contract,
+        terms_conditions: contract.terms_conditions as Record<string, any> | null,
+        milestones: contract.milestones as Record<string, any> | null,
+        documents: contract.documents as Record<string, any> | null
+      };
+
       // Notify the other party
       const otherParty = contract.buyer_id === userId ? contract.supplier_id : contract.buyer_id;
       
@@ -114,7 +130,7 @@ export class ContractService {
         entity_id: contractId
       });
 
-      return contract;
+      return typedContract;
     } catch (error) {
       console.error('Update contract status error:', error);
       throw error;
@@ -134,7 +150,14 @@ export class ContractService {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Type conversion for JSONB fields
+      return (data || []).map(contract => ({
+        ...contract,
+        terms_conditions: contract.terms_conditions as Record<string, any> | null,
+        milestones: contract.milestones as Record<string, any> | null,
+        documents: contract.documents as Record<string, any> | null
+      }));
     } catch (error) {
       console.error('Get user contracts error:', error);
       throw error;

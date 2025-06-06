@@ -108,15 +108,21 @@ export class DocumentStorageService {
 
       if (error) throw error;
 
-      return data.map(file => ({
-        id: file.name,
-        name: file.name,
-        path: `${folder}/${file.name}`,
-        url: this.getDocumentUrl(bucket, `${folder}/${file.name}`),
-        type: file.metadata?.mimetype || 'unknown',
-        size: file.metadata?.size || 0,
-        uploaded_at: file.created_at || new Date().toISOString()
-      })) as UploadedDocument[];
+      // Process the files and await URL generation
+      const documentsPromises = data.map(async (file) => {
+        const url = await this.getDocumentUrl(bucket, `${folder}/${file.name}`);
+        return {
+          id: file.name,
+          name: file.name,
+          path: `${folder}/${file.name}`,
+          url: url,
+          type: file.metadata?.mimetype || 'unknown',
+          size: file.metadata?.size || 0,
+          uploaded_at: file.created_at || new Date().toISOString()
+        };
+      });
+
+      return await Promise.all(documentsPromises);
     } catch (error) {
       console.error('List documents error:', error);
       throw error;

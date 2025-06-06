@@ -29,7 +29,14 @@ export class ComplianceService {
         .eq('active', true);
 
       if (error) throw error;
-      this.frameworks = data || [];
+      
+      // Type assertion to handle Json to Record<string, any> conversion
+      this.frameworks = (data || []).map(framework => ({
+        ...framework,
+        requirements: framework.requirements as Record<string, any>,
+        validation_rules: framework.validation_rules as Record<string, any>,
+        penalties: framework.penalties as Record<string, any> | null
+      }));
     } catch (error) {
       console.error('Load frameworks error:', error);
       throw error;
@@ -230,13 +237,18 @@ export class ComplianceService {
           user_id: userId,
           check_type: checkType,
           status: validationResult.isCompliant ? 'verified' : 'flagged',
-          result_data: validationResult
+          result_data: validationResult as any
         })
         .select()
         .single();
 
       if (error) throw error;
-      return complianceCheck;
+      
+      // Type assertion for the returned data
+      return {
+        ...complianceCheck,
+        result_data: complianceCheck.result_data as Record<string, any> | null
+      };
     } catch (error) {
       console.error('Compliance check error:', error);
       throw error;

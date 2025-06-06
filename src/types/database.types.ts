@@ -1,3 +1,4 @@
+
 export interface Profile {
   id: string;
   created_at: string;
@@ -157,7 +158,7 @@ export interface ComplianceCheck {
   id: string;
   user_id: string;
   status: string;
-  result_data: Record<string, any>;
+  result_data: Record<string, any> | null;
   check_date: string;
   next_check_date: string | null;
   created_at: string;

@@ -34,10 +34,13 @@ export function useBidData(): BidDataResult {
       // Define the completed bid object we'll build
       let completeBid: Bid = {
         ...bidData,
-        technical_details: typeof bidData.technical_details === 'object' ? bidData.technical_details : {}, // Ensure it's an object
+        technical_details: typeof bidData.technical_details === 'object' ? bidData.technical_details as Record<string, any> : {}, 
         documents: Array.isArray(bidData.documents) 
-          ? bidData.documents.map(doc => String(doc)) // Convert all elements to strings
-          : [], // Ensure it's an array of strings
+          ? bidData.documents.map(doc => String(doc)) 
+          : [], 
+        uploaded_documents: Array.isArray(bidData.uploaded_documents) 
+          ? bidData.uploaded_documents 
+          : [],
         tender: {
           id: bidData.tender_id,
           title: 'Untitled Tender',
@@ -62,7 +65,8 @@ export function useBidData(): BidDataResult {
             experience: 0,
             compliance: 0,
             delivery: 0
-          }
+          },
+          uploaded_documents: []
         },
         supplier: {
           id: bidData.supplier_id,
@@ -88,7 +92,8 @@ export function useBidData(): BidDataResult {
           verification_status: '',
           business_type: null,
           business_registration_number: null,
-          tax_pin: null
+          tax_pin: null,
+          documents_uploaded: {}
         }
       };
 
