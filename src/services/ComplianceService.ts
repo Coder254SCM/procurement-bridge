@@ -1,6 +1,10 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { ComplianceFramework, ComplianceCheck } from '@/types/database.types';
+import { EthicsComplianceValidator } from './compliance/EthicsComplianceValidator';
+import { ProcurementComplianceValidator } from './compliance/ProcurementComplianceValidator';
+import { FinancialComplianceValidator } from './compliance/FinancialComplianceValidator';
+import { ConstructionComplianceValidator } from './compliance/ConstructionComplianceValidator';
 
 export interface ComplianceValidationResult {
   isCompliant: boolean;
@@ -48,41 +52,7 @@ export class ComplianceService {
     if (!framework) {
       throw new Error('Ethics framework not found');
     }
-
-    const violations: string[] = [];
-    const warnings: string[] = [];
-    let score = 100;
-
-    // Check conflict of interest
-    if (data.has_conflict_of_interest) {
-      violations.push('Conflict of interest declared - requires disclosure');
-      score -= 30;
-    }
-
-    // Check gift policy compliance
-    if (data.gifts_received && data.gifts_received.length > 0) {
-      const maxGiftValue = framework.validation_rules.max_gift_value;
-      const totalGifts = data.gifts_received.reduce((sum: number, gift: any) => sum + gift.value, 0);
-      
-      if (totalGifts > maxGiftValue) {
-        violations.push(`Total gifts exceed allowed limit of ${maxGiftValue}`);
-        score -= 25;
-      }
-    }
-
-    // Check transparency requirements
-    if (data.requires_disclosure && !data.disclosure_submitted) {
-      violations.push('Required disclosure not submitted');
-      score -= 20;
-    }
-
-    return {
-      isCompliant: violations.length === 0,
-      violations,
-      warnings,
-      score: Math.max(0, score),
-      framework: framework.name
-    };
+    return EthicsComplianceValidator.validate(data, framework);
   }
 
   async validateProcurementCompliance(tenderData: any): Promise<ComplianceValidationResult> {
@@ -90,40 +60,7 @@ export class ComplianceService {
     if (!framework) {
       throw new Error('Procurement framework not found');
     }
-
-    const violations: string[] = [];
-    const warnings: string[] = [];
-    let score = 100;
-
-    // Check minimum bid period
-    const submissionDate = new Date(tenderData.submission_deadline);
-    const publishDate = new Date(tenderData.created_at);
-    const bidPeriodDays = Math.floor((submissionDate.getTime() - publishDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (bidPeriodDays < framework.validation_rules.minimum_bid_period) {
-      violations.push(`Bid period of ${bidPeriodDays} days is below minimum of ${framework.validation_rules.minimum_bid_period} days`);
-      score -= 30;
-    }
-
-    // Check evaluation criteria
-    if (!tenderData.evaluation_criteria || Object.keys(tenderData.evaluation_criteria).length === 0) {
-      violations.push('Evaluation criteria not defined');
-      score -= 25;
-    }
-
-    // Check required documents
-    if (!tenderData.required_documents || tenderData.required_documents.length === 0) {
-      warnings.push('No required documents specified');
-      score -= 10;
-    }
-
-    return {
-      isCompliant: violations.length === 0,
-      violations,
-      warnings,
-      score: Math.max(0, score),
-      framework: framework.name
-    };
+    return ProcurementComplianceValidator.validate(tenderData, framework);
   }
 
   async validateFinancialCompliance(data: any): Promise<ComplianceValidationResult> {
@@ -131,42 +68,7 @@ export class ComplianceService {
     if (!framework) {
       throw new Error('Financial framework not found');
     }
-
-    const violations: string[] = [];
-    const warnings: string[] = [];
-    let score = 100;
-
-    // Check approval levels
-    const amount = data.budget_amount || data.contract_value || 0;
-    const approvalLevels = framework.validation_rules.approval_levels;
-
-    let requiredApproval = '';
-    if (amount < 1000000) {
-      requiredApproval = 'department';
-    } else if (amount <= 10000000) {
-      requiredApproval = 'accounting_officer';
-    } else {
-      requiredApproval = 'treasury';
-    }
-
-    if (!data.approval_level || data.approval_level !== requiredApproval) {
-      violations.push(`Amount of ${amount} requires ${requiredApproval} approval`);
-      score -= 40;
-    }
-
-    // Check budget availability
-    if (!data.budget_confirmed) {
-      warnings.push('Budget availability not confirmed');
-      score -= 15;
-    }
-
-    return {
-      isCompliant: violations.length === 0,
-      violations,
-      warnings,
-      score: Math.max(0, score),
-      framework: framework.name
-    };
+    return FinancialComplianceValidator.validate(data, framework);
   }
 
   async validateConstructionCompliance(data: any): Promise<ComplianceValidationResult> {
@@ -174,36 +76,7 @@ export class ComplianceService {
     if (!framework) {
       throw new Error('Construction framework not found');
     }
-
-    const violations: string[] = [];
-    const warnings: string[] = [];
-    let score = 100;
-
-    // Check building permits
-    if (data.requires_building_permit && !data.building_permit_submitted) {
-      violations.push('Building permit required but not submitted');
-      score -= 35;
-    }
-
-    // Check safety standards
-    if (!data.safety_compliance_confirmed) {
-      violations.push('Safety standards compliance not confirmed');
-      score -= 30;
-    }
-
-    // Check environmental compliance
-    if (data.requires_environmental_impact_assessment && !data.eia_submitted) {
-      violations.push('Environmental Impact Assessment required');
-      score -= 25;
-    }
-
-    return {
-      isCompliant: violations.length === 0,
-      violations,
-      warnings,
-      score: Math.max(0, score),
-      framework: framework.name
-    };
+    return ConstructionComplianceValidator.validate(data, framework);
   }
 
   async runComplianceCheck(
