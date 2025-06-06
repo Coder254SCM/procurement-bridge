@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -55,6 +54,7 @@ const Profile = () => {
             verified: profileData.verified || false,
             kyc_status: profileData.kyc_status as string || KycStatus.PENDING,
             kyc_documents: profileData.kyc_documents as Record<string, any> || {},
+            documents_uploaded: profileData.documents_uploaded as Record<string, any> || {},
             created_at: profileData.created_at || new Date().toISOString(),
             updated_at: profileData.updated_at || new Date().toISOString(),
             verification_level: profileData.verification_level as string || VerificationLevel.NONE,

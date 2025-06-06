@@ -20,6 +20,7 @@ import BuyerDashboard from '@/pages/BuyerDashboard';
 import EvaluatorDashboard from '@/pages/EvaluatorDashboard';
 import Documentation from '@/pages/Documentation';
 import Contracts from '@/pages/Contracts';
+import Pricing from '@/pages/Pricing';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -34,6 +35,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
