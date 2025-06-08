@@ -1,4 +1,3 @@
-
 export enum UserRole {
   BUYER = 'buyer',
   SUPPLIER = 'supplier',
@@ -10,7 +9,8 @@ export enum UserRole {
   EVALUATOR_ENGINEERING = 'evaluator_engineering',
   EVALUATOR_LEGAL = 'evaluator_legal',
   EVALUATOR_ACCOUNTING = 'evaluator_accounting',
-  SUPPLY_CHAIN_PROFESSIONAL = 'supply_chain_professional'
+  SUPPLY_CHAIN_PROFESSIONAL = 'supply_chain_professional',
+  AUDITOR = 'auditor'
 }
 
 export enum KycStatus {

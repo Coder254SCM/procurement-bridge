@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Evaluation, EvaluationCriteriaScores } from '@/types/database.types';
-import { UserRole } from '@/types/enums';
 
 interface EvaluationFormData {
   submitting: boolean;
@@ -138,9 +137,9 @@ export function useEvaluationForm(): EvaluationFormData {
         return;
       }
       
-      // Convert the string evaluatorType to the UserRole enum type
-      // This ensures proper type compatibility with Supabase
-      const evaluatorRole = evaluatorType as UserRole;
+      // Convert the evaluatorType to match database expected values
+      // The database expects specific string values, so we use the string directly
+      const evaluatorRole = evaluatorType as string;
       
       if (existingEvaluation) {
         // Update existing evaluation
@@ -169,7 +168,7 @@ export function useEvaluationForm(): EvaluationFormData {
           .insert({
             bid_id: bidId,
             evaluator_id: session.user.id,
-            evaluation_type: evaluatorRole,
+            evaluation_type: evaluatorRole as any, // Use type assertion to handle the string/enum mismatch
             score: score,
             comments: comments,
             recommendation: recommendation,
