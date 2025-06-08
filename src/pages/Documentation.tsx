@@ -12,375 +12,78 @@ import {
   Search,
   Code,
   BarChart4,
-  ShieldCheck
+  ShieldCheck,
+  Users,
+  Gavel,
+  ClipboardCheck,
+  TrendingUp
 } from 'lucide-react';
 
 const Documentation = () => {
   return (
     <div className="container py-8 px-4 md:px-6 mt-16">
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold">Documentation</h1>
+        <h1 className="text-3xl font-semibold">ProcureChain Documentation</h1>
         <p className="text-muted-foreground mt-1">
-          Comprehensive guides and resources for using the ProcureChain platform
+          Complete guide to Kenya's blockchain-powered procurement platform with advanced verification and compliance features
         </p>
       </div>
 
-      <Tabs defaultValue="guides">
-        <TabsList className="mb-6">
-          <TabsTrigger value="guides">User Guides</TabsTrigger>
-          <TabsTrigger value="api">API References</TabsTrigger>
-          <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="mb-6 flex-wrap h-auto">
+          <TabsTrigger value="overview">Platform Overview</TabsTrigger>
+          <TabsTrigger value="roles">User Roles</TabsTrigger>
+          <TabsTrigger value="verification">Verification System</TabsTrigger>
+          <TabsTrigger value="evaluation">Evaluation Process</TabsTrigger>
+          <TabsTrigger value="compliance">Compliance Framework</TabsTrigger>
+          <TabsTrigger value="blockchain">Blockchain Integration</TabsTrigger>
+          <TabsTrigger value="api">API Reference</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="guides" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-full bg-primary/10">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">Getting Started</CardTitle>
-                </div>
-                <CardDescription>
-                  New to ProcureChain? Start here to learn the basics.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Platform Overview
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Creating Your Account
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      User Role Setup
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Navigation Guide
-                    </a>
-                  </li>
-                </ul>
-                <Button variant="outline" size="sm" className="w-full mt-4">
-                  View All
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-full bg-primary/10">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">For Suppliers</CardTitle>
-                </div>
-                <CardDescription>
-                  Learn how to bid on tenders and get verified.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Finding Tenders
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Submitting Bids
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Verification Process
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Managing Your Profile
-                    </a>
-                  </li>
-                </ul>
-                <Button variant="outline" size="sm" className="w-full mt-4">
-                  View All
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-full bg-primary/10">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">For Buyers</CardTitle>
-                </div>
-                <CardDescription>
-                  Create tenders and manage procurement processes.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Creating Tenders
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Evaluating Bids
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Awarding Contracts
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Managing Suppliers
-                    </a>
-                  </li>
-                </ul>
-                <Button variant="outline" size="sm" className="w-full mt-4">
-                  View All
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-full bg-primary/10">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">For Evaluators</CardTitle>
-                </div>
-                <CardDescription>
-                  Review and score bids with expert criteria.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Evaluation Process
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Scoring Criteria
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Providing Recommendations
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Documentation Standards
-                    </a>
-                  </li>
-                </ul>
-                <Button variant="outline" size="sm" className="w-full mt-4">
-                  View All
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-full bg-primary/10">
-                    <Search className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">Marketplace Guide</CardTitle>
-                </div>
-                <CardDescription>
-                  How to use the ProcureChain marketplace effectively.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Browsing Tenders
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Finding Suppliers
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Understanding Verification
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Filtering and Search
-                    </a>
-                  </li>
-                </ul>
-                <Button variant="outline" size="sm" className="w-full mt-4">
-                  View All
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-full bg-primary/10">
-                    <Download className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">Downloadable Resources</CardTitle>
-                </div>
-                <CardDescription>
-                  Templates, forms, and other useful documents.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Bid Template <Badge variant="outline" className="ml-1">PDF</Badge>
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Evaluation Form <Badge variant="outline" className="ml-1">XLSX</Badge>
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      Contract Template <Badge variant="outline" className="ml-1">DOCX</Badge>
-                    </a>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                      User Manual <Badge variant="outline" className="ml-1">PDF</Badge>
-                    </a>
-                  </li>
-                </ul>
-                <Button variant="outline" size="sm" className="w-full mt-4">
-                  View All
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="api" className="space-y-6">
-          <Card className="mb-6">
+        <TabsContent value="overview" className="space-y-6">
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-full bg-primary/10">
-                  <Code className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle>API Documentation</CardTitle>
-              </div>
-              <CardDescription>
-                Integrate with the ProcureChain platform using our secure API endpoints.
-              </CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+                System Architecture
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p>
-                  Our RESTful API allows you to integrate ProcureChain functionality into your own systems.
-                  All API requests require authentication and are secured with industry-standard encryption.
-                </p>
-                
-                <div className="space-y-2 mt-4">
-                  <h3 className="font-medium">Available Endpoints:</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="border border-border">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">GET</Badge>
-                          <span className="text-sm text-muted-foreground">/api/v1/tenders</span>
-                        </div>
-                        <p className="text-sm mt-2">List all available tenders with pagination support.</p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className="border border-border">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">POST</Badge>
-                          <span className="text-sm text-muted-foreground">/api/v1/bids</span>
-                        </div>
-                        <p className="text-sm mt-2">Submit a new bid for a specific tender.</p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className="border border-border">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">GET</Badge>
-                          <span className="text-sm text-muted-foreground">/api/v1/suppliers</span>
-                        </div>
-                        <p className="text-sm mt-2">List verified suppliers with filtering options.</p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className="border border-border">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">PUT</Badge>
-                          <span className="text-sm text-muted-foreground">/api/v1/evaluations/:id</span>
-                        </div>
-                        <p className="text-sm mt-2">Update an evaluation for a specific bid.</p>
-                      </CardContent>
-                    </Card>
-                  </div>
+            <CardContent className="space-y-4">
+              <p>
+                ProcureChain is a comprehensive blockchain-based procurement platform built specifically for the Kenyan market. 
+                It integrates with local regulatory frameworks and provides advanced verification capabilities.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    Multi-Role System
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Support for 12 distinct user roles including buyers, suppliers, evaluators, and auditors
+                  </p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                  <Button className="flex items-center gap-2">
-                    <Code className="h-4 w-4" />
-                    API Reference
-                  </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Interactive Docs
-                  </Button>
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-primary" />
+                    Advanced Verification
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    4-level verification system with blockchain-backed certificates and KYC integration
+                  </p>
+                </div>
+                
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Gavel className="h-4 w-4 text-primary" />
+                    Smart Procurement
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    14 procurement methods with automated evaluation and compliance checking
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -388,25 +91,418 @@ const Documentation = () => {
           
           <Card>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-full bg-primary/10">
-                  <Code className="h-5 w-5 text-primary" />
+              <CardTitle>Key Features</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-3">For Suppliers</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Multi-level verification (None, Basic, Intermediate, Advanced)</li>
+                    <li>• Document upload with blockchain hashing</li>
+                    <li>• Real-time bid tracking and notifications</li>
+                    <li>• Digital identity verification with PPIP integration</li>
+                    <li>• Performance analytics and risk scoring</li>
+                  </ul>
                 </div>
-                <CardTitle>Webhooks</CardTitle>
+                
+                <div>
+                  <h4 className="font-semibold mb-3">For Buyers</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Template-based tender creation</li>
+                    <li>• Advanced evaluation criteria configuration</li>
+                    <li>• Supplier list management and filtering</li>
+                    <li>• Contract lifecycle management</li>
+                    <li>• Supply chain professional reviews</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold mb-3">For Evaluators</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Specialized evaluation by expertise (Finance, Technical, Legal, etc.)</li>
+                    <li>• Comprehensive scoring with 35+ criteria categories</li>
+                    <li>• Blockchain-recorded evaluation trails</li>
+                    <li>• Collaborative evaluation workflows</li>
+                    <li>• Automated compliance checking</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold mb-3">Platform Features</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Hyperledger Fabric blockchain integration</li>
+                    <li>• Advanced behavior analysis and fraud detection</li>
+                    <li>• Comprehensive audit logging</li>
+                    <li>• Real-time notifications and alerts</li>
+                    <li>• Analytics dashboard with insights</li>
+                  </ul>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="roles" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Primary Roles</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <h4 className="font-semibold text-blue-900">Buyer</h4>
+                    <p className="text-sm text-blue-700">Creates tenders, manages procurement processes, awards contracts</p>
+                  </div>
+                  <div className="p-3 bg-green-50 rounded-lg">
+                    <h4 className="font-semibold text-green-900">Supplier</h4>
+                    <p className="text-sm text-green-700">Submits bids, completes verification, delivers contracted services</p>
+                  </div>
+                  <div className="p-3 bg-purple-50 rounded-lg">
+                    <h4 className="font-semibold text-purple-900">Admin</h4>
+                    <p className="text-sm text-purple-700">Platform administration, user management, system configuration</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Evaluator Roles</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">Finance Evaluator</span>
+                    <Badge variant="outline">Financial</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">Technical Evaluator</span>
+                    <Badge variant="outline">Technical</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">Legal Evaluator</span>
+                    <Badge variant="outline">Legal</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">Procurement Evaluator</span>
+                    <Badge variant="outline">Process</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">Engineering Evaluator</span>
+                    <Badge variant="outline">Technical</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">Accounting Evaluator</span>
+                    <Badge variant="outline">Financial</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Specialized Roles</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-3 bg-orange-50 rounded-lg">
+                    <h4 className="font-semibold text-orange-900">Supply Chain Professional</h4>
+                    <p className="text-sm text-orange-700">Reviews tender requirements, validates supply chain feasibility</p>
+                  </div>
+                  <div className="p-3 bg-red-50 rounded-lg">
+                    <h4 className="font-semibold text-red-900">Auditor</h4>
+                    <p className="text-sm text-red-700">Conducts compliance audits, reviews blockchain records</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="verification" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Verification Levels</CardTitle>
               <CardDescription>
-                Receive real-time updates about events on the ProcureChain platform.
+                ProcureChain implements a comprehensive 4-level verification system
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="mb-4">
-                Set up webhooks to get notifications about tender updates, bid submissions, evaluation completions, and more.
-              </p>
-              
-              <Button variant="outline" className="flex items-center gap-2">
-                <ExternalLink className="h-4 w-4" />
-                Webhook Documentation
-              </Button>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 border rounded-lg bg-gray-50">
+                  <Badge className="mb-2">None</Badge>
+                  <h4 className="font-semibold mb-2">Unverified</h4>
+                  <p className="text-sm text-muted-foreground">Basic registration only. Limited platform access.</p>
+                </div>
+                
+                <div className="p-4 border rounded-lg bg-blue-50">
+                  <Badge className="mb-2 bg-blue-100 text-blue-800">Basic</Badge>
+                  <h4 className="font-semibold mb-2">Basic Verification</h4>
+                  <p className="text-sm text-muted-foreground">Identity verification, business registration check.</p>
+                </div>
+                
+                <div className="p-4 border rounded-lg bg-green-50">
+                  <Badge className="mb-2 bg-green-100 text-green-800">Intermediate</Badge>
+                  <h4 className="font-semibold mb-2">Intermediate Verification</h4>
+                  <p className="text-sm text-muted-foreground">Financial records, tax compliance, operational capacity.</p>
+                </div>
+                
+                <div className="p-4 border rounded-lg bg-purple-50">
+                  <Badge className="mb-2 bg-purple-100 text-purple-800">Advanced</Badge>
+                  <h4 className="font-semibold mb-2">Advanced Verification</h4>
+                  <p className="text-sm text-muted-foreground">Full compliance, performance history, blockchain certificates.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Verification Types</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-semibold">Identity & Business</h4>
+                  <ul className="text-sm space-y-1">
+                    <li>• Business Registry Verification</li>
+                    <li>• Identity Document Verification</li>
+                    <li>• Regulatory Compliance Check</li>
+                    <li>• Operational Capacity Assessment</li>
+                  </ul>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-semibold">Financial & Tax</h4>
+                  <ul className="text-sm space-y-1">
+                    <li>• Financial Statement Review</li>
+                    <li>• Tax Compliance Verification</li>
+                    <li>• Credit Rating Assessment</li>
+                    <li>• Banking Reference Check</li>
+                  </ul>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-semibold">Blockchain & Digital</h4>
+                  <ul className="text-sm space-y-1">
+                    <li>• Blockchain Certificate Issuance</li>
+                    <li>• Digital Identity Creation</li>
+                    <li>• Immutable Record Storage</li>
+                    <li>• Smart Contract Integration</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="evaluation" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Evaluation Process</CardTitle>
+              <CardDescription>
+                Comprehensive multi-stage evaluation with specialized evaluator roles
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-blue-800 font-semibold">1</span>
+                    </div>
+                    <h4 className="font-semibold text-sm">Bid Submission</h4>
+                    <p className="text-xs text-muted-foreground">Suppliers submit bids with required documents</p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-green-800 font-semibold">2</span>
+                    </div>
+                    <h4 className="font-semibold text-sm">Initial Review</h4>
+                    <p className="text-xs text-muted-foreground">Compliance and eligibility check</p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-purple-800 font-semibold">3</span>
+                    </div>
+                    <h4 className="font-semibold text-sm">Expert Evaluation</h4>
+                    <p className="text-xs text-muted-foreground">Specialized evaluators score bids</p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-orange-800 font-semibold">4</span>
+                    </div>
+                    <h4 className="font-semibold text-sm">Final Review</h4>
+                    <p className="text-xs text-muted-foreground">Consolidated scoring and ranking</p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-red-800 font-semibold">5</span>
+                    </div>
+                    <h4 className="font-semibold text-sm">Award Decision</h4>
+                    <p className="text-xs text-muted-foreground">Contract award and notification</p>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-6">
+                  <h4 className="font-semibold mb-3">Evaluation Criteria Categories (35+ Categories)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                      <h5 className="font-medium text-blue-800 mb-2">Financial (5 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Price Competitiveness</li>
+                        <li>• Financial Stability</li>
+                        <li>• Cost Effectiveness</li>
+                        <li>• Lifecycle Costs</li>
+                        <li>• Payment Terms</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-green-800 mb-2">Technical (5 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Technical Capability</li>
+                        <li>• Methodology</li>
+                        <li>• Innovation</li>
+                        <li>• Quality Standards</li>
+                        <li>• Technical Compliance</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-purple-800 mb-2">Experience (6 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Relevant Experience</li>
+                        <li>• Past Performance</li>
+                        <li>• Qualifications</li>
+                        <li>• Industry Expertise</li>
+                        <li>• Key Personnel</li>
+                        <li>• Project Management</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-orange-800 mb-2">Operational (5 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Delivery Timeframe</li>
+                        <li>• Implementation Plan</li>
+                        <li>• Operational Capacity</li>
+                        <li>• Quality Assurance</li>
+                        <li>• Service Level Agreements</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-red-800 mb-2">Compliance (5 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Legal Compliance</li>
+                        <li>• Regulatory Compliance</li>
+                        <li>• Risk Management</li>
+                        <li>• Insurance Coverage</li>
+                        <li>• Security Measures</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-teal-800 mb-2">Sustainability (5 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Environmental Sustainability</li>
+                        <li>• Social Responsibility</li>
+                        <li>• Local Content</li>
+                        <li>• Diversity & Inclusion</li>
+                        <li>• Community Impact</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="compliance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Compliance Framework</CardTitle>
+              <CardDescription>
+                Multi-layered compliance system with automated checking and blockchain verification
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-semibold mb-2">KYC Compliance</h4>
+                    <p className="text-sm text-muted-foreground">Know Your Customer verification with document validation</p>
+                  </div>
+                  
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-semibold mb-2">AML Checks</h4>
+                    <p className="text-sm text-muted-foreground">Anti-Money Laundering screening and monitoring</p>
+                  </div>
+                  
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-semibold mb-2">Tax Compliance</h4>
+                    <p className="text-sm text-muted-foreground">Kenya Revenue Authority integration and verification</p>
+                  </div>
+                  
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-semibold mb-2">Regulatory Checks</h4>
+                    <p className="text-sm text-muted-foreground">Industry-specific regulatory compliance verification</p>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-6">
+                  <h4 className="font-semibold mb-3">Specialized Compliance Validators</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h5 className="font-medium mb-3">Construction Compliance</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Building permit verification</li>
+                        <li>• Safety standards compliance</li>
+                        <li>• Environmental impact assessment</li>
+                        <li>• Professional certification checks</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium mb-3">Financial Compliance</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Financial statement validation</li>
+                        <li>• Credit rating verification</li>
+                        <li>• Banking reference checks</li>
+                        <li>• Insurance coverage validation</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium mb-3">Ethics Compliance</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Conflict of interest checks</li>
+                        <li>• Anti-corruption verification</li>
+                        <li>• Code of conduct compliance</li>
+                        <li>• Transparency requirements</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium mb-3">Procurement Compliance</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• PPRA regulations compliance</li>
+                        <li>• Procurement method validation</li>
+                        <li>• Document requirement checks</li>
+                        <li>• Process adherence monitoring</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -414,108 +510,199 @@ const Documentation = () => {
         <TabsContent value="blockchain" className="space-y-6">
           <Card>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-full bg-primary/10">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle>Blockchain Technology</CardTitle>
-              </div>
+              <CardTitle className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+                Hyperledger Fabric Integration
+              </CardTitle>
               <CardDescription>
-                Learn about the blockchain infrastructure powering ProcureChain.
+                Enterprise-grade blockchain infrastructure for transparent and secure procurement
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <h3 className="font-medium">Why Blockchain?</h3>
-                  <p className="text-muted-foreground">
-                    ProcureChain leverages blockchain technology to ensure transparency, immutability, and security
-                    throughout the procurement process. Every transaction and verification is recorded on the blockchain,
-                    creating an audit trail that cannot be altered.
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="p-4 border rounded-md">
-                    <h4 className="font-medium mb-2">Immutable Records</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-semibold mb-2">Immutable Records</h4>
                     <p className="text-sm text-muted-foreground">
-                      All verification certificates, tender awards, and contract details are stored permanently on the blockchain.
+                      All verification certificates, tender awards, and contract details are permanently stored on blockchain
                     </p>
                   </div>
                   
-                  <div className="p-4 border rounded-md">
-                    <h4 className="font-medium mb-2">Transparent Process</h4>
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-semibold mb-2">Smart Contracts</h4>
                     <p className="text-sm text-muted-foreground">
-                      The evaluation and award process is transparent and can be audited by all stakeholders.
+                      Automated contract execution with milestone-based payments and compliance triggers
                     </p>
                   </div>
                   
-                  <div className="p-4 border rounded-md">
-                    <h4 className="font-medium mb-2">Smart Contracts</h4>
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-semibold mb-2">Audit Trail</h4>
                     <p className="text-sm text-muted-foreground">
-                      Automated contract execution ensures all parties fulfill their obligations.
+                      Complete audit trail for all transactions with cryptographic proof of integrity
                     </p>
                   </div>
                 </div>
                 
-                <div className="mt-6">
-                  <Button className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Blockchain Explorer
-                  </Button>
+                <div className="border-t pt-6">
+                  <h4 className="font-semibold mb-3">Blockchain Features</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h5 className="font-medium mb-2">Document Verification</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• SHA-256 hashing of all documents</li>
+                        <li>• Blockchain storage of document hashes</li>
+                        <li>• Tamper-proof verification certificates</li>
+                        <li>• Real-time integrity checking</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium mb-2">Transaction Recording</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• All bid submissions recorded</li>
+                        <li>• Evaluation scores immutably stored</li>
+                        <li>• Contract awards with timestamps</li>
+                        <li>• Payment milestone tracking</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-          
+        </TabsContent>
+        
+        <TabsContent value="api" className="space-y-6">
           <Card>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-full bg-primary/10">
-                  <BarChart4 className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle>Verification Process</CardTitle>
-              </div>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="h-5 w-5 text-primary" />
+                API Documentation
+              </CardTitle>
               <CardDescription>
-                How blockchain ensures secure and reliable supplier verification.
+                RESTful API endpoints for system integration and automation
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <p className="text-muted-foreground">
-                  When a supplier completes verification, their credentials are hashed and stored on the blockchain.
-                  This creates a tamper-proof record that buyers can trust.
-                </p>
-                
-                <div className="p-4 bg-secondary/50 rounded-md">
-                  <h4 className="font-medium mb-2">Verification Flow</h4>
-                  <ol className="space-y-2 text-sm">
-                    <li className="flex items-start gap-2">
-                      <span className="bg-primary/20 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0">1</span>
-                      <span>Supplier submits documentation</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="bg-primary/20 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0">2</span>
-                      <span>ProcureChain verifies with official sources</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="bg-primary/20 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0">3</span>
-                      <span>Documents are hashed and recorded on blockchain</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="bg-primary/20 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0">4</span>
-                      <span>Verification certificate issued with blockchain reference</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="bg-primary/20 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0">5</span>
-                      <span>Buyers can verify certificate authenticity via blockchain</span>
-                    </li>
-                  </ol>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold mb-3">Authentication Endpoints</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/auth/login</span>
+                        <Badge className="bg-blue-100 text-blue-800">POST</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/auth/logout</span>
+                        <Badge className="bg-red-100 text-red-800">POST</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/auth/refresh</span>
+                        <Badge className="bg-green-100 text-green-800">POST</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold mb-3">Tender Management</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/tenders</span>
+                        <Badge className="bg-green-100 text-green-800">GET</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/tenders</span>
+                        <Badge className="bg-blue-100 text-blue-800">POST</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/tenders/:id</span>
+                        <Badge className="bg-yellow-100 text-yellow-800">PUT</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold mb-3">Bid Management</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/bids</span>
+                        <Badge className="bg-blue-100 text-blue-800">POST</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/bids/:id</span>
+                        <Badge className="bg-green-100 text-green-800">GET</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/bids/:id/status</span>
+                        <Badge className="bg-yellow-100 text-yellow-800">PATCH</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold mb-3">Verification</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/verification/start</span>
+                        <Badge className="bg-blue-100 text-blue-800">POST</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/verification/status</span>
+                        <Badge className="bg-green-100 text-green-800">GET</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm font-mono">/api/verification/blockchain</span>
+                        <Badge className="bg-purple-100 text-purple-800">GET</Badge>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
-                <Button variant="outline" className="mt-4">
-                  <a href="/verification-guide">Learn More about Verification</a>
-                </Button>
+                <div className="border-t pt-6">
+                  <h4 className="font-semibold mb-3">Webhook Events</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 border rounded-lg">
+                      <h5 className="font-medium mb-2">Tender Events</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• tender.created</li>
+                        <li>• tender.published</li>
+                        <li>• tender.deadline_approaching</li>
+                        <li>• tender.closed</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg">
+                      <h5 className="font-medium mb-2">Bid Events</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• bid.submitted</li>
+                        <li>• bid.evaluated</li>
+                        <li>• bid.awarded</li>
+                        <li>• bid.rejected</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg">
+                      <h5 className="font-medium mb-2">Verification Events</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• verification.started</li>
+                        <li>• verification.completed</li>
+                        <li>• verification.failed</li>
+                        <li>• certificate.issued</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg">
+                      <h5 className="font-medium mb-2">Compliance Events</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• compliance.check_started</li>
+                        <li>• compliance.violation_detected</li>
+                        <li>• compliance.status_updated</li>
+                        <li>• audit.trail_created</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -526,63 +713,92 @@ const Documentation = () => {
             <CardContent className="pt-6">
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-medium text-lg mb-2">What is ProcureChain?</h3>
+                  <h3 className="font-medium text-lg mb-2">How does the verification system work?</h3>
                   <p className="text-muted-foreground">
-                    ProcureChain is a blockchain-based procurement platform designed for transparency and efficiency 
-                    in tender processes. It serves multiple user roles including suppliers, buyers, and evaluators, 
-                    providing features tailored to each role's needs.
+                    ProcureChain uses a 4-level verification system (None, Basic, Intermediate, Advanced). Each level requires 
+                    progressively more documentation and compliance checks. All verifications are recorded on the blockchain 
+                    for immutable proof. Basic verification includes identity and business registration checks, while Advanced 
+                    verification includes comprehensive financial, operational, and performance assessments.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium text-lg mb-2">How do I sign up as a supplier?</h3>
+                  <h3 className="font-medium text-lg mb-2">What procurement methods are supported?</h3>
                   <p className="text-muted-foreground">
-                    You can sign up by clicking on the "Sign In" button and selecting "Create an account". 
-                    During registration, you'll be asked to specify your role as a supplier. You'll then 
-                    need to complete your profile and verification process to access all features.
+                    The platform supports 14 procurement methods including Open Tender, Restricted Tender, Direct Procurement, 
+                    Request for Proposal (RFP), Request for Quotation (RFQ), Framework Agreement, Electronic Reverse Auction, 
+                    Forward Auction, Dutch Auction, Design Contest, Competitive Dialogue, Innovation Partnership, 
+                    Two-Stage Tendering, and Design Competition.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium text-lg mb-2">How does the verification process work?</h3>
+                  <h3 className="font-medium text-lg mb-2">How are evaluations conducted?</h3>
                   <p className="text-muted-foreground">
-                    Our verification process has multiple levels. Basic verification involves confirming your business 
-                    identity. Standard verification adds compliance checks. Advanced verification includes financial and 
-                    performance history. Each level increases your trust score and opens up more opportunities.
+                    Evaluations are conducted by specialized evaluators (Finance, Technical, Legal, Procurement, Engineering, 
+                    Accounting) using 35+ criteria categories. Each evaluator scores bids in their area of expertise using 
+                    standardized criteria. All evaluations are recorded on the blockchain for transparency and audit purposes. 
+                    The system supports both individual and collaborative evaluation workflows.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium text-lg mb-2">Can I be both a supplier and a buyer?</h3>
+                  <h3 className="font-medium text-lg mb-2">What compliance frameworks are implemented?</h3>
                   <p className="text-muted-foreground">
-                    Yes, you can have multiple roles in the system. During registration, you can select all applicable 
-                    roles, and your dashboard will show features relevant to each role you have.
+                    The platform implements multiple compliance frameworks including KYC (Know Your Customer), AML (Anti-Money 
+                    Laundering), Tax compliance with Kenya Revenue Authority integration, PPRA (Public Procurement Regulatory 
+                    Authority) regulations, and industry-specific compliance checks. Specialized validators handle Construction, 
+                    Financial, Ethics, and Procurement compliance.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium text-lg mb-2">How secure is my data on ProcureChain?</h3>
+                  <h3 className="font-medium text-lg mb-2">How does blockchain integration work?</h3>
                   <p className="text-muted-foreground">
-                    We take security very seriously. All data is encrypted both in transit and at rest. Sensitive documents 
-                    are stored with additional encryption. Our blockchain implementation ensures that verification records 
-                    cannot be tampered with, creating an immutable audit trail.
+                    ProcureChain uses Hyperledger Fabric, an enterprise-grade blockchain platform. All critical data including 
+                    verification certificates, bid submissions, evaluation scores, and contract awards are hashed and stored 
+                    on the blockchain. This creates an immutable audit trail that cannot be tampered with. Smart contracts 
+                    automate certain processes like milestone payments and compliance checking.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium text-lg mb-2">What happens after I submit a bid?</h3>
+                  <h3 className="font-medium text-lg mb-2">Can I have multiple roles on the platform?</h3>
                   <p className="text-muted-foreground">
-                    After submission, your bid enters the evaluation phase. You'll receive notifications as your bid 
-                    progresses through the evaluation stages. You can track the status of all your bids from your 
-                    supplier dashboard.
+                    Yes, users can have multiple roles. For example, a company can be both a supplier and a buyer, or an 
+                    individual can be an evaluator in multiple specializations. The dashboard adapts to show features 
+                    relevant to each role you have. Role assignments are managed through the user profile and may require 
+                    additional verification depending on the role.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium text-lg mb-2">How are evaluators selected?</h3>
+                  <h3 className="font-medium text-lg mb-2">How secure is the platform?</h3>
                   <p className="text-muted-foreground">
-                    Evaluators are typically experts in relevant fields who are appointed by the buyer. They must register 
-                    as evaluators and may need to declare any conflicts of interest before evaluating bids.
+                    Security is implemented at multiple levels: end-to-end encryption for data transmission, blockchain 
+                    immutability for critical records, multi-factor authentication, role-based access control, comprehensive 
+                    audit logging, and regular security audits. All sensitive documents are encrypted before storage, and 
+                    access is logged for accountability.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium text-lg mb-2">What happens after a contract is awarded?</h3>
+                  <p className="text-muted-foreground">
+                    After contract award, the system supports full contract lifecycle management including milestone tracking, 
+                    payment processing, performance monitoring, and compliance checking. Smart contracts can automate certain 
+                    aspects like milestone-based payments. All contract activities are recorded on the blockchain for 
+                    transparency and audit purposes.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium text-lg mb-2">How does the behavior analysis work?</h3>
+                  <p className="text-muted-foreground">
+                    The platform includes advanced behavior analysis that monitors patterns in bidding, pricing, timing, and 
+                    other activities to detect potential fraud or anomalies. This includes risk scoring based on historical 
+                    performance, pattern matching against known fraud indicators, and anomaly detection algorithms. All 
+                    analysis is performed automatically and helps maintain platform integrity.
                   </p>
                 </div>
               </div>
