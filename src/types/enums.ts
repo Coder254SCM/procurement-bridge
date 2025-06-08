@@ -4,6 +4,7 @@ export enum UserRole {
   SUPPLIER = 'supplier',
   ADMIN = 'admin',
   EVALUATOR_FINANCE = 'evaluator_finance',
+  EVALUATOR_FINANCIAL = 'evaluator_financial',
   EVALUATOR_TECHNICAL = 'evaluator_technical',
   EVALUATOR_PROCUREMENT = 'evaluator_procurement',
   EVALUATOR_ENGINEERING = 'evaluator_engineering',

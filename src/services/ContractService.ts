@@ -1,4 +1,3 @@
-
 import { ContractCreator, CreateContractData } from './contracts/ContractCreator';
 import { ContractUpdater } from './contracts/ContractUpdater';
 import { ContractRetriever } from './contracts/ContractRetriever';
@@ -14,7 +13,7 @@ export interface ContractMilestone {
   amount?: number;
 }
 
-export { CreateContractData };
+export type { CreateContractData };
 
 export class ContractService {
   private static instance: ContractService;
