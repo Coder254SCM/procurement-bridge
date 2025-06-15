@@ -26,19 +26,31 @@ const Guides = () => {
               <AccordionItem value="item-1">
                 <AccordionTrigger>Getting Started</AccordionTrigger>
                 <AccordionContent>
-                  Learn how to create your supplier account, complete your profile, and get verified on the platform to start bidding on tenders.
+                  <strong>1. Account Creation:</strong> Sign up using your business email.
+                  <br />
+                  <strong>2. Profile Completion:</strong> Fill out your company details, including areas of expertise and operational capacity. A complete profile increases your visibility.
+                  <br />
+                  <strong>3. Verification:</strong> Upload required documents like your business registration and tax compliance certificates. Our team will review them to verify your account, which is crucial for building trust with buyers.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger>Finding Tenders</AccordionTrigger>
                 <AccordionContent>
-                  Discover how to browse the marketplace, set up alerts for relevant tenders, and understand tender requirements.
+                  <strong>1. Browse Marketplace:</strong> Use our advanced search filters to find tenders by category, location, or value.
+                  <br />
+                  <strong>2. Set Up Alerts:</strong> Save your searches and enable email notifications to get alerts for new tenders that match your criteria.
+                  <br />
+                  <strong>3. Understand Requirements:</strong> Carefully read the tender documents, paying close attention to the scope of work, eligibility criteria, and submission deadlines.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
                 <AccordionTrigger>Submitting Bids</AccordionTrigger>
                 <AccordionContent>
-                  A step-by-step guide on preparing your bid documents, submitting your proposal securely, and tracking its status.
+                  <strong>1. Prepare Documents:</strong> Compile all required documents for your proposal.
+                  <br />
+                  <strong>2. Secure Submission:</strong> Use our submission portal to upload your bid. All submissions are encrypted and recorded on the blockchain, making them tamper-proof.
+                  <br />
+                  <strong>3. Track Status:</strong> Monitor the status of your bid—from "Submitted" to "Under Evaluation" and "Awarded"—right from your dashboard.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -56,19 +68,19 @@ const Guides = () => {
               <AccordionItem value="item-1">
                 <AccordionTrigger>Creating a Tender</AccordionTrigger>
                 <AccordionContent>
-                  Follow our guide to create, configure, and publish a new tender, including setting evaluation criteria and required documents.
+                  Our step-by-step wizard makes it easy to create a tender. You'll define the scope, set a budget and timeline, specify weighted evaluation criteria, and list all required documents for suppliers to submit.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger>Evaluating Bids</AccordionTrigger>
                 <AccordionContent>
-                  Understand the evaluation process, how to review submitted bids, and use our tools to compare proposals effectively.
+                  Access submitted bids securely. Our platform supports a multi-evaluator workflow and hides supplier identities during the initial review to prevent bias. Use our tools to score and compare proposals side-by-side.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
                 <AccordionTrigger>Awarding Contracts</AccordionTrigger>
                 <AccordionContent>
-                  Learn the process for awarding a contract to the winning supplier and initiating the next steps on the platform.
+                  After evaluations are complete, generate a final report. You can then notify both the winning and unsuccessful suppliers through the platform and proceed to create and digitally sign the contract with the selected supplier.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -86,19 +98,19 @@ const Guides = () => {
               <AccordionItem value="item-1">
                 <AccordionTrigger>Evaluation Workflow</AccordionTrigger>
                 <AccordionContent>
-                  A guide on your role in the procurement process, how to access assigned bids, and the workflow for submitting your evaluations.
+                  Once assigned to a tender, you'll see it on your dashboard. You can then access all relevant bids and documents for your review. Be mindful of the evaluation deadlines set by the buyer.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger>Scoring Bids</AccordionTrigger>
                 <AccordionContent>
-                  Learn how to use the platform's scoring tools, provide justifications for your scores, and ensure a fair and transparent evaluation.
+                  Use the provided scoring rubric to evaluate each bid against the pre-defined criteria. It is essential to provide clear, concise comments to justify your scores for transparency and auditing purposes.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
                 <AccordionTrigger>Maintaining Impartiality</AccordionTrigger>
                 <AccordionContent>
-                  Understand the importance of impartiality and how our blockchain-based platform helps ensure the integrity of the evaluation process.
+                  Before starting, you must declare any potential conflicts of interest. The platform helps ensure impartiality by keeping supplier identities anonymous during evaluation. Every action you take is recorded on an immutable blockchain ledger to guarantee process integrity.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -110,4 +122,3 @@ const Guides = () => {
 };
 
 export default Guides;
-
