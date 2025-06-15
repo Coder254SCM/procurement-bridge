@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMarketTrends, useSuppliers, useSupplierPerformance, useRiskAssessment } from '@/hooks/useAnalytics';
 
 import AnalyticsHeader from '@/components/analytics/AnalyticsHeader';
-import KpiCards from '@/components/analytics/KpiCards';
+import KpiCards, { KpiMetric } from '@/components/analytics/KpiCards';
 import OverviewTab from '@/components/analytics/OverviewTab';
 import SupplierAnalyticsTab from '@/components/analytics/SupplierAnalyticsTab';
 import SupplyChainTab from '@/components/analytics/SupplyChainTab';
@@ -21,7 +21,7 @@ const Analytics = () => {
   const { data: supplierPerformance, isLoading: isLoadingPerformance } = useSupplierPerformance(selectedSupplier);
   const { data: riskAssessment, isLoading: isLoadingRisk } = useRiskAssessment(selectedSupplier);
 
-  const kpiMetrics = [
+  const kpiMetrics: KpiMetric[] = [
     { id: 1, name: 'Active Tenders', value: 42, change: 12, status: 'increase' },
     { id: 2, name: 'Suppliers', value: 156, change: 8, status: 'increase' },
     { id: 3, name: 'Avg Evaluation Time', value: '5.2 days', change: 1.2, status: 'decrease' },
