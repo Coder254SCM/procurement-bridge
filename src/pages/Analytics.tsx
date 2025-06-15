@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,29 +11,29 @@ import {
 import { 
   ArrowUp, ArrowDown, Download, BarChart2, 
   PieChart as PieChartIcon, TrendingUp, Calendar, 
-  Filter, Users, DollarSign, Activity, FileText, Award
+  Filter, Users, DollarSign, Activity, FileText, Award, AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMarketTrends, useSuppliers, useSupplierPerformance, useRiskAssessment } from '@/hooks/useAnalytics';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Analytics = () => {
   const { user } = useAuth();
   const [period, setPeriod] = useState('month');
   const [department, setDepartment] = useState('all');
+  const [selectedSupplier, setSelectedSupplier] = useState<string | undefined>();
   
-  // Sample data for demonstration
+  const { data: marketTrends, isLoading: isLoadingTrends } = useMarketTrends();
+  const { data: suppliers, isLoading: isLoadingSuppliers } = useSuppliers();
+  const { data: supplierPerformance, isLoading: isLoadingPerformance } = useSupplierPerformance(selectedSupplier);
+  const { data: riskAssessment, isLoading: isLoadingRisk } = useRiskAssessment(selectedSupplier);
+
+  // Sample data for demonstration (will be replaced as APIs become available)
   const tenderStatusData = [
     { name: 'Open', value: 15, color: '#7C3AED' },
     { name: 'Under Evaluation', value: 8, color: '#F59E0B' },
     { name: 'Awarded', value: 12, color: '#10B981' },
     { name: 'Closed', value: 6, color: '#6B7280' }
-  ];
-  
-  const procurementByDepartmentData = [
-    { name: 'ICT', value: 35 },
-    { name: 'Infrastructure', value: 25 },
-    { name: 'Health', value: 18 },
-    { name: 'Education', value: 15 },
-    { name: 'Security', value: 7 }
   ];
   
   const procurementTrendsData = [
@@ -50,14 +49,6 @@ const Analytics = () => {
     { month: 'Oct', tenders: 16, value: 35 },
     { month: 'Nov', tenders: 12, value: 28 },
     { month: 'Dec', tenders: 10, value: 24 }
-  ];
-  
-  const supplierPerformanceData = [
-    { name: 'Supplier A', performance: 92, completionRate: 95, responseTime: 24 },
-    { name: 'Supplier B', performance: 88, completionRate: 90, responseTime: 36 },
-    { name: 'Supplier C', performance: 95, completionRate: 98, responseTime: 18 },
-    { name: 'Supplier D', performance: 78, completionRate: 85, responseTime: 48 },
-    { name: 'Supplier E', performance: 85, completionRate: 88, responseTime: 30 }
   ];
   
   const complianceRiskData = [
@@ -118,7 +109,23 @@ const Analytics = () => {
     { id: 5, name: 'Compliance Rate', value: '94%', change: 3, status: 'increase' },
     { id: 6, name: 'E-Tendering Rate', value: '87%', change: 5, status: 'increase' }
   ];
-  
+
+  const procurementByDepartmentData = useMemo(() => {
+    if (!marketTrends?.trends) return [];
+    return marketTrends.trends.map(t => ({ name: t.category, value: t.tenderCount, budget: t.averageBudget }));
+  }, [marketTrends]);
+
+  const supplierPerformanceBreakdown = useMemo(() => {
+    if (!supplierPerformance) return [];
+    const { winRate, avgEvaluationScore, totalBids, awardedBids } = supplierPerformance.breakdown;
+    return [
+      { name: 'Win Rate', value: `${(winRate * 100).toFixed(1)}%` },
+      { name: 'Avg. Eval Score', value: avgEvaluationScore.toFixed(1) },
+      { name: 'Total Bids', value: totalBids },
+      { name: 'Awarded Contracts', value: awardedBids },
+    ];
+  }, [supplierPerformance]);
+
   return (
     <div className="container py-8 px-4 md:px-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
@@ -242,19 +249,21 @@ const Analytics = () => {
                 <CardTitle className="flex items-center text-base">
                   <PieChartIcon className="h-5 w-5 mr-2" /> Procurement by Department
                 </CardTitle>
-                <CardDescription>Distribution across different departments</CardDescription>
+                <CardDescription>Tender distribution across different categories</CardDescription>
               </CardHeader>
               <CardContent className="h-80">
+                {isLoadingTrends ? <Skeleton className="w-full h-full" /> : 
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={procurementByDepartmentData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip />
+                    <Tooltip formatter={(value, name) => [value, name === 'value' ? 'Tender Count' : name]}/>
                     <Legend />
-                    <Bar dataKey="value" fill="#8884d8" name="Value (%)" />
+                    <Bar dataKey="value" fill="#8884d8" name="Tender Count" />
                   </BarChart>
                 </ResponsiveContainer>
+                }
               </CardContent>
             </Card>
             
@@ -291,38 +300,92 @@ const Analytics = () => {
         </TabsContent>
         
         <TabsContent value="supplier">
+           <div className="mb-6 flex justify-end">
+            <Select onValueChange={setSelectedSupplier} value={selectedSupplier}>
+              <SelectTrigger className="w-[300px]">
+                <SelectValue placeholder="Select a supplier" />
+              </SelectTrigger>
+              <SelectContent>
+                {isLoadingSuppliers ? (
+                  <SelectItem value="loading" disabled>Loading suppliers...</SelectItem>
+                ) : (
+                  suppliers?.map(s => <SelectItem key={s.id} value={s.id}>{s.company_name}</SelectItem>)
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {!selectedSupplier ? (
+            <div className="flex flex-col items-center justify-center text-center text-muted-foreground bg-muted/50 rounded-lg h-96">
+                <Users className="h-12 w-12 mb-4" />
+                <h3 className="text-lg font-semibold">Select a Supplier</h3>
+                <p>Choose a supplier from the dropdown to view their detailed analytics.</p>
+            </div>
+           ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center text-base">
-                  <Award className="h-5 w-5 mr-2" /> Supplier Performance Ratings
+                  <Award className="h-5 w-5 mr-2" /> Supplier Performance
                 </CardTitle>
-                <CardDescription>Performance metrics for top suppliers</CardDescription>
+                <CardDescription>Overall score and breakdown for the selected supplier</CardDescription>
               </CardHeader>
               <CardContent className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={supplierPerformanceData}
-                    layout="vertical"
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={80} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="performance" fill="#8884d8" name="Performance Score" />
-                    <Bar dataKey="completionRate" fill="#82ca9d" name="Completion Rate" />
-                  </BarChart>
-                </ResponsiveContainer>
+                {isLoadingPerformance ? <Skeleton className="w-full h-full" /> : supplierPerformance && (
+                  <div className="flex flex-col h-full">
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                       <p className="text-muted-foreground text-sm">Overall Score</p>
+                       <p className="text-6xl font-bold text-primary">{supplierPerformance.performance_score}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                      {supplierPerformanceBreakdown.map(item => (
+                        <div key={item.name}>
+                          <p className="text-muted-foreground text-sm">{item.name}</p>
+                          <p className="font-semibold text-lg">{item.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center text-base">
+                  <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" /> Supplier Risk Assessment
+                </CardTitle>
+                <CardDescription>Risk analysis for the selected supplier</CardDescription>
+              </CardHeader>
+              <CardContent className="h-80">
+                {isLoadingRisk ? <Skeleton className="w-full h-full" /> : riskAssessment && (
+                  <div className="flex flex-col h-full">
+                     <div className="flex-1 flex flex-col items-center justify-center">
+                       <p className="text-muted-foreground text-sm">Risk Score</p>
+                       <p className="text-6xl font-bold text-destructive">{riskAssessment.risk_score}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Key Risk Factors:</h4>
+                      <ul className="space-y-1 text-sm">
+                        {riskAssessment.risk_factors.map((factor, i) => (
+                           <li key={i} className="flex justify-between">
+                             <span>{factor.factor}: <span className="text-muted-foreground">{factor.value}</span></span>
+                             <span className="font-mono text-destructive">+{factor.risk}</span>
+                           </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center text-base">
                   <DollarSign className="h-5 w-5 mr-2" /> Cost Savings Analysis
                 </CardTitle>
-                <CardDescription>Target vs actual procurement savings</CardDescription>
+                <CardDescription>Target vs actual procurement savings (Static Demo)</CardDescription>
               </CardHeader>
               <CardContent className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -339,58 +402,8 @@ const Analytics = () => {
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center text-base">
-                  <Users className="h-5 w-5 mr-2" /> Supplier Diversity
-                </CardTitle>
-                <CardDescription>Distribution across supplier categories</CardDescription>
-              </CardHeader>
-              <CardContent className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={supplierDiversityData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {supplierDiversityData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center text-base">
-                  <Calendar className="h-5 w-5 mr-2" /> Response Time Analysis
-                </CardTitle>
-                <CardDescription>Supplier response time in hours</CardDescription>
-              </CardHeader>
-              <CardContent className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart>
-                    <CartesianGrid />
-                    <XAxis type="category" dataKey="name" name="Supplier" />
-                    <YAxis type="number" dataKey="responseTime" name="Hours" />
-                    <ZAxis type="number" range={[50, 500]} />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                    <Legend />
-                    <Scatter name="Response Time" data={supplierPerformanceData} fill="#8884d8" />
-                  </ScatterChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
           </div>
+          )}
         </TabsContent>
         
         <TabsContent value="supply-chain">
