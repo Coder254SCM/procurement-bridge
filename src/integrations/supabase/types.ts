@@ -500,6 +500,7 @@ export type Database = {
           industry: string | null
           kyc_documents: Json | null
           kyc_status: string | null
+          performance_score: number | null
           position: string | null
           risk_score: number | null
           updated_at: string | null
@@ -518,6 +519,7 @@ export type Database = {
           industry?: string | null
           kyc_documents?: Json | null
           kyc_status?: string | null
+          performance_score?: number | null
           position?: string | null
           risk_score?: number | null
           updated_at?: string | null
@@ -536,6 +538,7 @@ export type Database = {
           industry?: string | null
           kyc_documents?: Json | null
           kyc_status?: string | null
+          performance_score?: number | null
           position?: string | null
           risk_score?: number | null
           updated_at?: string | null

@@ -25,6 +25,7 @@ export interface Profile {
   business_registration_number: string | null;
   tax_pin: string | null;
   documents_uploaded: Record<string, any>;
+  performance_score: number | null;
 }
 
 export interface UserRoleRecord {
