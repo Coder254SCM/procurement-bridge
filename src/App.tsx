@@ -25,80 +25,85 @@ import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="min-h-screen bg-background">
-      <BrowserRouter>
-        <AuthProvider>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/supplier-dashboard" element={
-                <ProtectedRoute>
-                  <SupplierDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/buyer-dashboard" element={
-                <ProtectedRoute>
-                  <BuyerDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/evaluator-dashboard" element={
-                <ProtectedRoute>
-                  <EvaluatorDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              } />
-              <Route path="/tenders" element={<Tenders />} />
-              <Route path="/tenders/create" element={
-                <ProtectedRoute>
-                  <CreateTender />
-                </ProtectedRoute>
-              } />
-              <Route path="/evaluations" element={
-                <ProtectedRoute>
-                  <Evaluations />
-                </ProtectedRoute>
-              } />
-              <Route path="/evaluations/:bidId" element={
-                <ProtectedRoute>
-                  <EvaluationForm />
-                </ProtectedRoute>
-              } />
-              <Route path="/contracts" element={
-                <ProtectedRoute>
-                  <Contracts />
-                </ProtectedRoute>
-              } />
-              <Route path="/verification" element={
-                <ProtectedRoute>
-                  <Verification />
-                </ProtectedRoute>
-              } />
-              <Route path="/verification-guide" element={<VerificationGuide />} />
-              <Route path="/documentation" element={<Documentation />} />
-              <Route path="/marketplace" element={<Marketplace />} />
-              <Route path="/tender/:id" element={<TenderDetail />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-          <Toaster />
-        </AuthProvider>
-      </BrowserRouter>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-background">
+        <BrowserRouter>
+          <AuthProvider>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/supplier-dashboard" element={
+                  <ProtectedRoute>
+                    <SupplierDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/buyer-dashboard" element={
+                  <ProtectedRoute>
+                    <BuyerDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/evaluator-dashboard" element={
+                  <ProtectedRoute>
+                    <EvaluatorDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/tenders" element={<Tenders />} />
+                <Route path="/tenders/create" element={
+                  <ProtectedRoute>
+                    <CreateTender />
+                  </ProtectedRoute>
+                } />
+                <Route path="/evaluations" element={
+                  <ProtectedRoute>
+                    <Evaluations />
+                  </ProtectedRoute>
+                } />
+                <Route path="/evaluations/:bidId" element={
+                  <ProtectedRoute>
+                    <EvaluationForm />
+                  </ProtectedRoute>
+                } />
+                <Route path="/contracts" element={
+                  <ProtectedRoute>
+                    <Contracts />
+                  </ProtectedRoute>
+                } />
+                <Route path="/verification" element={
+                  <ProtectedRoute>
+                    <Verification />
+                  </ProtectedRoute>
+                } />
+                <Route path="/verification-guide" element={<VerificationGuide />} />
+                <Route path="/documentation" element={<Documentation />} />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/tender/:id" element={<TenderDetail />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+            <Toaster />
+          </AuthProvider>
+        </BrowserRouter>
+      </div>
+    </QueryClientProvider>
   );
 }
 
