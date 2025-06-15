@@ -64,6 +64,7 @@ export const useProfileData = () => {
             business_type: null,
             business_registration_number: null,
             tax_pin: null,
+            performance_score: profileData.performance_score || null,
           };
           
           setProfile(completeProfile);
