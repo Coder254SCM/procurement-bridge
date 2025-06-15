@@ -21,6 +21,8 @@ import EvaluatorDashboard from '@/pages/EvaluatorDashboard';
 import Documentation from '@/pages/Documentation';
 import Contracts from '@/pages/Contracts';
 import Pricing from '@/pages/Pricing';
+import Guides from '@/pages/Guides';
+import Privacy from '@/pages/Privacy';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -40,6 +42,8 @@ function App() {
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/guides" element={<Guides />} />
+                <Route path="/privacy" element={<Privacy />} />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
                     <Dashboard />
