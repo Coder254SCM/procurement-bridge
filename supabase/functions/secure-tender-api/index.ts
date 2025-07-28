@@ -1,6 +1,30 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { SQLInjectionProtector } from "../../../src/utils/sqlInjectionProtection.ts";
+
+// Security validation utilities
+const validateInput = (input: string): boolean => {
+  if (!input || typeof input !== 'string') return false;
+  
+  const sqlInjectionPatterns = [
+    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/i,
+    /(--|\/\*|\*\/|;|\bOR\b|\bAND\b)/i,
+    /('|(\\x)|(char\s*\()|(sp_)|(xp_))/i
+  ];
+  
+  const xssPatterns = [
+    /<script[^>]*>.*?<\/script>/gi,
+    /<iframe[^>]*>.*?<\/iframe>/gi,
+    /javascript:/gi,
+    /on\w+\s*=/gi
+  ];
+  
+  return !sqlInjectionPatterns.some(pattern => pattern.test(input)) &&
+         !xssPatterns.some(pattern => pattern.test(input));
+};
+
+const logSecurityEvent = (event: string, details: any, risk: string) => {
+  console.warn(`[SECURITY-${risk.toUpperCase()}] ${event}:`, details);
+};
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -54,20 +78,14 @@ serve(async (req) => {
     logData = { ...logData, user_id: user.id, action, trialMode };
 
     // Security validation
-    if (action) {
-      const actionValidation = SQLInjectionProtector.validateInput(action, 'query');
-      if (!actionValidation.isValid) {
-        SQLInjectionProtector.logSecurityEvent('Invalid action parameter', { action, issues: actionValidation.issues }, 'high');
-        throw new Error('Invalid action parameter');
-      }
+    if (action && !validateInput(action)) {
+      logSecurityEvent('Invalid action parameter', { action }, 'high');
+      throw new Error('Invalid action parameter');
     }
 
-    if (tenderId) {
-      const idValidation = SQLInjectionProtector.validateInput(tenderId, 'query');
-      if (!idValidation.isValid) {
-        SQLInjectionProtector.logSecurityEvent('Invalid tender ID', { tenderId, issues: idValidation.issues }, 'high');
-        throw new Error('Invalid tender ID');
-      }
+    if (tenderId && !validateInput(tenderId)) {
+      logSecurityEvent('Invalid tender ID', { tenderId }, 'high');
+      throw new Error('Invalid tender ID');
     }
 
     // Check subscription status and trial eligibility
@@ -109,10 +127,8 @@ serve(async (req) => {
       case 'create':
         // Validate tender data
         if (data) {
-          const titleValidation = SQLInjectionProtector.validateInput(data.title || '', 'user_input');
-          const descValidation = SQLInjectionProtector.validateInput(data.description || '', 'user_input');
-          
-          if (!titleValidation.isValid || !descValidation.isValid) {
+          if ((data.title && !validateInput(data.title)) || 
+              (data.description && !validateInput(data.description))) {
             throw new Error('Invalid tender data');
           }
         }
@@ -176,11 +192,8 @@ serve(async (req) => {
         
         if (filters) {
           Object.entries(filters).forEach(([key, value]) => {
-            if (typeof value === 'string') {
-              const filterValidation = SQLInjectionProtector.validateInput(value, 'query');
-              if (filterValidation.isValid) {
-                query = query.eq(key, value);
-              }
+            if (typeof value === 'string' && validateInput(value)) {
+              query = query.eq(key, value);
             }
           });
         }
