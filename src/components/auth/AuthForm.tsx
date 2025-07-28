@@ -7,11 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowRight, Mail, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
+import { ArrowRight, Mail, Eye, EyeOff, ShieldCheck, Loader2, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/enums';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const AuthForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,8 +28,10 @@ const AuthForm = () => {
   const [signupPassword, setSignupPassword] = useState('');
   const [accountType, setAccountType] = useState<string>('');
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [magicLinkEmail, setMagicLinkEmail] = useState('');
   
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithMagicLink } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -124,6 +126,78 @@ const AuthForm = () => {
       setIsLoading(false);
     }
   };
+
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter your email address",
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const { error } = await signInWithMagicLink(email);
+      
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Magic link failed",
+          description: error.message || "Failed to send magic link. Please try again.",
+        });
+      } else {
+        setMagicLinkSent(true);
+        setMagicLinkEmail(email);
+        toast({
+          title: "Magic link sent",
+          description: "Check your email for the sign-in link",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Magic link failed",
+        description: "An unexpected error occurred. Please try again later.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  if (magicLinkSent) {
+    return (
+      <Card className="w-full max-w-md mx-auto glass-card">
+        <CardHeader className="text-center">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Mail className="h-8 w-8 text-blue-600" />
+          </div>
+          <CardTitle className="text-2xl font-semibold">Check your email</CardTitle>
+          <CardDescription>
+            We've sent a magic link to <strong>{magicLinkEmail}</strong>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-center text-sm text-muted-foreground">
+            <p>Click the link in your email to sign in instantly.</p>
+            <p className="mt-2">Didn't receive the email? Check your spam folder.</p>
+          </div>
+          
+          <Button 
+            variant="outline" 
+            onClick={() => setMagicLinkSent(false)}
+            className="w-full"
+          >
+            Try a different email
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
   
   return (
     <Card className="w-full max-w-md mx-auto glass-card">
@@ -161,9 +235,9 @@ const AuthForm = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <a href="#" className="text-xs text-primary hover:underline">
+                  <Link to="/auth/reset-password" className="text-xs text-primary hover:underline">
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Button
@@ -206,6 +280,35 @@ const AuthForm = () => {
                   <>
                     Sign In
                     <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or</span>
+                </div>
+              </div>
+
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full"
+                onClick={handleMagicLink}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending magic link...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="mr-2 h-4 w-4" />
+                    Sign in with Magic Link
                   </>
                 )}
               </Button>

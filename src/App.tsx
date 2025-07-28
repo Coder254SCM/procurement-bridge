@@ -23,6 +23,8 @@ import Contracts from '@/pages/Contracts';
 import Pricing from '@/pages/Pricing';
 import Guides from '@/pages/Guides';
 import Privacy from '@/pages/Privacy';
+import ResetPassword from '@/pages/ResetPassword';
+import UpdatePassword from '@/pages/UpdatePassword';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -41,6 +43,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/auth/reset-password" element={<ResetPassword />} />
+                <Route path="/auth/update-password" element={<UpdatePassword />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/guides" element={<Guides />} />
                 <Route path="/privacy" element={<Privacy />} />
