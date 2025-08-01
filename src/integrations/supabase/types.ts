@@ -56,6 +56,130 @@ export type Database = {
         }
         Relationships: []
       }
+      approval_instances: {
+        Row: {
+          approver_actions: Json | null
+          completed_at: string | null
+          created_at: string | null
+          current_step: number | null
+          entity_id: string
+          entity_type: string
+          id: string
+          started_at: string | null
+          status: string | null
+          workflow_id: string
+        }
+        Insert: {
+          approver_actions?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_step?: number | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          started_at?: string | null
+          status?: string | null
+          workflow_id: string
+        }
+        Update: {
+          approver_actions?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_step?: number | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          started_at?: string | null
+          status?: string | null
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_instances_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "approval_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      approval_workflows: {
+        Row: {
+          active: boolean | null
+          conditions: Json
+          created_at: string | null
+          description: string | null
+          entity_type: string
+          id: string
+          name: string
+          steps: Json
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          conditions: Json
+          created_at?: string | null
+          description?: string | null
+          entity_type: string
+          id?: string
+          name: string
+          steps: Json
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          conditions?: Json
+          created_at?: string | null
+          description?: string | null
+          entity_type?: string
+          id?: string
+          name?: string
+          steps?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      auction_bids: {
+        Row: {
+          auction_id: string
+          bid_amount: number
+          bid_time: string | null
+          bidder_id: string
+          created_at: string | null
+          id: string
+          is_automatic: boolean | null
+          rank_at_time: number | null
+        }
+        Insert: {
+          auction_id: string
+          bid_amount: number
+          bid_time?: string | null
+          bidder_id: string
+          created_at?: string | null
+          id?: string
+          is_automatic?: boolean | null
+          rank_at_time?: number | null
+        }
+        Update: {
+          auction_id?: string
+          bid_amount?: number
+          bid_time?: string | null
+          bidder_id?: string
+          created_at?: string | null
+          id?: string
+          is_automatic?: boolean | null
+          rank_at_time?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_bids_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "reverse_auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -214,6 +338,124 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_allocations: {
+        Row: {
+          available_amount: number | null
+          budget_code: string
+          budget_name: string
+          category_id: string | null
+          committed_amount: number | null
+          created_at: string | null
+          currency: string | null
+          department: string
+          financial_year: string
+          id: string
+          spent_amount: number | null
+          status: string | null
+          total_allocation: number
+          updated_at: string | null
+        }
+        Insert: {
+          available_amount?: number | null
+          budget_code: string
+          budget_name: string
+          category_id?: string | null
+          committed_amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          department: string
+          financial_year: string
+          id?: string
+          spent_amount?: number | null
+          status?: string | null
+          total_allocation: number
+          updated_at?: string | null
+        }
+        Update: {
+          available_amount?: number | null
+          budget_code?: string
+          budget_name?: string
+          category_id?: string | null
+          committed_amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          department?: string
+          financial_year?: string
+          id?: string
+          spent_amount?: number | null
+          status?: string | null
+          total_allocation?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_allocations_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_items: {
+        Row: {
+          base_price: number | null
+          category_id: string
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          images: Json | null
+          name: string
+          sku: string
+          specifications: Json | null
+          status: string | null
+          supplier_id: string | null
+          unit_of_measure: string
+          updated_at: string | null
+        }
+        Insert: {
+          base_price?: number | null
+          category_id: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          images?: Json | null
+          name: string
+          sku: string
+          specifications?: Json | null
+          status?: string | null
+          supplier_id?: string | null
+          unit_of_measure: string
+          updated_at?: string | null
+        }
+        Update: {
+          base_price?: number | null
+          category_id?: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          images?: Json | null
+          name?: string
+          sku?: string
+          specifications?: Json | null
+          status?: string | null
+          supplier_id?: string | null
+          unit_of_measure?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compliance_checks: {
         Row: {
           check_date: string
@@ -288,6 +530,59 @@ export type Database = {
           version?: string
         }
         Relationships: []
+      }
+      contract_milestones: {
+        Row: {
+          completion_date: string | null
+          contract_id: string
+          created_at: string | null
+          deliverables: Json | null
+          description: string | null
+          due_date: string
+          id: string
+          milestone_name: string
+          payment_percentage: number | null
+          status: string | null
+          updated_at: string | null
+          verification_documents: Json | null
+        }
+        Insert: {
+          completion_date?: string | null
+          contract_id: string
+          created_at?: string | null
+          deliverables?: Json | null
+          description?: string | null
+          due_date: string
+          id?: string
+          milestone_name: string
+          payment_percentage?: number | null
+          status?: string | null
+          updated_at?: string | null
+          verification_documents?: Json | null
+        }
+        Update: {
+          completion_date?: string | null
+          contract_id?: string
+          created_at?: string | null
+          deliverables?: Json | null
+          description?: string | null
+          due_date?: string
+          id?: string
+          milestone_name?: string
+          payment_percentage?: number | null
+          status?: string | null
+          updated_at?: string | null
+          verification_documents?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_milestones_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contracts: {
         Row: {
@@ -403,6 +698,104 @@ export type Database = {
         }
         Relationships: []
       }
+      erp_connections: {
+        Row: {
+          api_version: string | null
+          authentication_method: string | null
+          connection_config: Json | null
+          connection_name: string
+          created_at: string | null
+          endpoint_url: string | null
+          erp_system: string
+          id: string
+          last_sync: string | null
+          organization_id: string
+          sync_frequency: string | null
+          sync_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          api_version?: string | null
+          authentication_method?: string | null
+          connection_config?: Json | null
+          connection_name: string
+          created_at?: string | null
+          endpoint_url?: string | null
+          erp_system: string
+          id?: string
+          last_sync?: string | null
+          organization_id: string
+          sync_frequency?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          api_version?: string | null
+          authentication_method?: string | null
+          connection_config?: Json | null
+          connection_name?: string
+          created_at?: string | null
+          endpoint_url?: string | null
+          erp_system?: string
+          id?: string
+          last_sync?: string | null
+          organization_id?: string
+          sync_frequency?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      erp_sync_logs: {
+        Row: {
+          completed_at: string | null
+          connection_id: string
+          entity_count: number | null
+          entity_type: string
+          error_count: number | null
+          error_details: Json | null
+          id: string
+          started_at: string | null
+          success_count: number | null
+          sync_duration: unknown | null
+          sync_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          connection_id: string
+          entity_count?: number | null
+          entity_type: string
+          error_count?: number | null
+          error_details?: Json | null
+          id?: string
+          started_at?: string | null
+          success_count?: number | null
+          sync_duration?: unknown | null
+          sync_type: string
+        }
+        Update: {
+          completed_at?: string | null
+          connection_id?: string
+          entity_count?: number | null
+          entity_type?: string
+          error_count?: number | null
+          error_details?: Json | null
+          id?: string
+          started_at?: string | null
+          success_count?: number | null
+          sync_duration?: unknown | null
+          sync_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "erp_sync_logs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "erp_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evaluations: {
         Row: {
           bid_id: string
@@ -498,6 +891,154 @@ export type Database = {
         }
         Relationships: []
       }
+      framework_agreements: {
+        Row: {
+          agreement_number: string
+          buyer_organization: string
+          category_id: string
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          end_date: string
+          evaluation_criteria: Json | null
+          id: string
+          max_value: number | null
+          start_date: string
+          status: string | null
+          suppliers: Json | null
+          terms_conditions: Json | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          agreement_number: string
+          buyer_organization: string
+          category_id: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          end_date: string
+          evaluation_criteria?: Json | null
+          id?: string
+          max_value?: number | null
+          start_date: string
+          status?: string | null
+          suppliers?: Json | null
+          terms_conditions?: Json | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          agreement_number?: string
+          buyer_organization?: string
+          category_id?: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          end_date?: string
+          evaluation_criteria?: Json | null
+          id?: string
+          max_value?: number | null
+          start_date?: string
+          status?: string | null
+          suppliers?: Json | null
+          terms_conditions?: Json | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_agreements_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generated_reports: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          file_path: string | null
+          file_size: number | null
+          generated_by: string
+          generation_time: unknown | null
+          id: string
+          parameters_used: Json | null
+          status: string | null
+          template_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          generated_by: string
+          generation_time?: unknown | null
+          id?: string
+          parameters_used?: Json | null
+          status?: string | null
+          template_id: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          generated_by?: string
+          generation_time?: unknown | null
+          id?: string
+          parameters_used?: Json | null
+          status?: string | null
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_reports_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "report_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mobile_sessions: {
+        Row: {
+          app_version: string
+          created_at: string | null
+          device_id: string
+          device_info: Json | null
+          device_type: string
+          id: string
+          last_active: string | null
+          push_token: string | null
+          user_id: string
+        }
+        Insert: {
+          app_version: string
+          created_at?: string | null
+          device_id: string
+          device_info?: Json | null
+          device_type: string
+          id?: string
+          last_active?: string | null
+          push_token?: string | null
+          user_id: string
+        }
+        Update: {
+          app_version?: string
+          created_at?: string | null
+          device_id?: string
+          device_info?: Json | null
+          device_type?: string
+          id?: string
+          last_active?: string | null
+          push_token?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -536,6 +1077,169 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      payment_schedules: {
+        Row: {
+          amount: number
+          contract_id: string
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          due_date: string
+          id: string
+          milestone_id: string | null
+          paid_date: string | null
+          payment_method: string | null
+          payment_number: number
+          reference_number: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          contract_id: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          due_date: string
+          id?: string
+          milestone_id?: string | null
+          paid_date?: string | null
+          payment_method?: string | null
+          payment_number: number
+          reference_number?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          contract_id?: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          due_date?: string
+          id?: string
+          milestone_id?: string | null
+          paid_date?: string | null
+          payment_method?: string | null
+          payment_number?: number
+          reference_number?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_schedules_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_schedules_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "contract_milestones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_evaluations: {
+        Row: {
+          comments: string | null
+          compliance_score: number | null
+          contract_id: string
+          created_at: string | null
+          evaluation_period_end: string
+          evaluation_period_start: string
+          evaluator_id: string
+          id: string
+          overall_score: number | null
+          quality_score: number | null
+          recommendations: string | null
+          timeliness_score: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          comments?: string | null
+          compliance_score?: number | null
+          contract_id: string
+          created_at?: string | null
+          evaluation_period_end: string
+          evaluation_period_start: string
+          evaluator_id: string
+          id?: string
+          overall_score?: number | null
+          quality_score?: number | null
+          recommendations?: string | null
+          timeliness_score?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          comments?: string | null
+          compliance_score?: number | null
+          contract_id?: string
+          created_at?: string | null
+          evaluation_period_end?: string
+          evaluation_period_start?: string
+          evaluator_id?: string
+          id?: string
+          overall_score?: number | null
+          quality_score?: number | null
+          recommendations?: string | null
+          timeliness_score?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_evaluations_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_categories: {
+        Row: {
+          active: boolean | null
+          code: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          code: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -594,6 +1298,269 @@ export type Database = {
             | Database["public"]["Enums"]["verification_status"]
             | null
           verified?: boolean | null
+        }
+        Relationships: []
+      }
+      purchase_requisitions: {
+        Row: {
+          approval_status: string | null
+          approval_workflow: Json | null
+          approvers: Json | null
+          budget_code: string | null
+          created_at: string | null
+          currency: string | null
+          department: string
+          description: string | null
+          estimated_value: number
+          id: string
+          items: Json | null
+          justification: string
+          priority: string | null
+          requester_id: string
+          required_date: string
+          requisition_number: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          approval_status?: string | null
+          approval_workflow?: Json | null
+          approvers?: Json | null
+          budget_code?: string | null
+          created_at?: string | null
+          currency?: string | null
+          department: string
+          description?: string | null
+          estimated_value: number
+          id?: string
+          items?: Json | null
+          justification: string
+          priority?: string | null
+          requester_id: string
+          required_date: string
+          requisition_number: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          approval_status?: string | null
+          approval_workflow?: Json | null
+          approvers?: Json | null
+          budget_code?: string | null
+          created_at?: string | null
+          currency?: string | null
+          department?: string
+          description?: string | null
+          estimated_value?: number
+          id?: string
+          items?: Json | null
+          justification?: string
+          priority?: string | null
+          requester_id?: string
+          required_date?: string
+          requisition_number?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      push_notifications: {
+        Row: {
+          body: string
+          created_at: string | null
+          data: Json | null
+          delivery_status: string | null
+          error_message: string | null
+          id: string
+          scheduled_for: string | null
+          sent_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          data?: Json | null
+          delivery_status?: string | null
+          error_message?: string | null
+          id?: string
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          data?: Json | null
+          delivery_status?: string | null
+          error_message?: string | null
+          id?: string
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      report_templates: {
+        Row: {
+          access_roles: Json | null
+          active: boolean | null
+          category: string
+          created_at: string | null
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          output_format: string | null
+          parameters: Json | null
+          query_template: Json
+          report_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_roles?: Json | null
+          active?: boolean | null
+          category: string
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          output_format?: string | null
+          parameters?: Json | null
+          query_template: Json
+          report_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_roles?: Json | null
+          active?: boolean | null
+          category?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          output_format?: string | null
+          parameters?: Json | null
+          query_template?: Json
+          report_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      reverse_auctions: {
+        Row: {
+          auction_name: string
+          bid_extension_time: number | null
+          created_at: string | null
+          current_leader_id: string | null
+          current_lowest_bid: number | null
+          end_time: string
+          id: string
+          minimum_bid_decrement: number | null
+          reserve_price: number | null
+          settings: Json | null
+          start_time: string
+          status: string | null
+          tender_id: string
+          total_bids: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          auction_name: string
+          bid_extension_time?: number | null
+          created_at?: string | null
+          current_leader_id?: string | null
+          current_lowest_bid?: number | null
+          end_time: string
+          id?: string
+          minimum_bid_decrement?: number | null
+          reserve_price?: number | null
+          settings?: Json | null
+          start_time: string
+          status?: string | null
+          tender_id: string
+          total_bids?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          auction_name?: string
+          bid_extension_time?: number | null
+          created_at?: string | null
+          current_leader_id?: string | null
+          current_lowest_bid?: number | null
+          end_time?: string
+          id?: string
+          minimum_bid_decrement?: number | null
+          reserve_price?: number | null
+          settings?: Json | null
+          start_time?: string
+          status?: string | null
+          tender_id?: string
+          total_bids?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reverse_auctions_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      risk_assessments: {
+        Row: {
+          assessment_criteria: Json
+          assessment_date: string | null
+          assessment_type: string
+          assessor_id: string
+          created_at: string | null
+          findings: Json | null
+          id: string
+          mitigation_actions: Json | null
+          next_assessment_date: string | null
+          recommendations: Json | null
+          risk_level: string | null
+          risk_score: number | null
+          supplier_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          assessment_criteria: Json
+          assessment_date?: string | null
+          assessment_type: string
+          assessor_id: string
+          created_at?: string | null
+          findings?: Json | null
+          id?: string
+          mitigation_actions?: Json | null
+          next_assessment_date?: string | null
+          recommendations?: Json | null
+          risk_level?: string | null
+          risk_score?: number | null
+          supplier_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          assessment_criteria?: Json
+          assessment_date?: string | null
+          assessment_type?: string
+          assessor_id?: string
+          created_at?: string | null
+          findings?: Json | null
+          id?: string
+          mitigation_actions?: Json | null
+          next_assessment_date?: string | null
+          recommendations?: Json | null
+          risk_level?: string | null
+          risk_score?: number | null
+          supplier_id?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -668,6 +1635,62 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      supplier_qualifications: {
+        Row: {
+          category_id: string
+          certification_documents: Json | null
+          compliance_score: number | null
+          created_at: string | null
+          financial_capacity: number | null
+          id: string
+          qualification_level: string | null
+          quality_rating: number | null
+          status: string | null
+          supplier_id: string
+          technical_capacity: Json | null
+          updated_at: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          category_id: string
+          certification_documents?: Json | null
+          compliance_score?: number | null
+          created_at?: string | null
+          financial_capacity?: number | null
+          id?: string
+          qualification_level?: string | null
+          quality_rating?: number | null
+          status?: string | null
+          supplier_id: string
+          technical_capacity?: Json | null
+          updated_at?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          category_id?: string
+          certification_documents?: Json | null
+          compliance_score?: number | null
+          created_at?: string | null
+          financial_capacity?: number | null
+          id?: string
+          qualification_level?: string | null
+          quality_rating?: number | null
+          status?: string | null
+          supplier_id?: string
+          technical_capacity?: Json | null
+          updated_at?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_qualifications_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tender_reviews: {
         Row: {
@@ -767,6 +1790,36 @@ export type Database = {
           title?: string
           updated_at?: string | null
           uploaded_documents?: Json | null
+        }
+        Relationships: []
+      }
+      translations: {
+        Row: {
+          context: string | null
+          created_at: string | null
+          id: string
+          language_code: string
+          translation_key: string
+          translation_value: string
+          updated_at: string | null
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          language_code: string
+          translation_key: string
+          translation_value: string
+          updated_at?: string | null
+        }
+        Update: {
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          language_code?: string
+          translation_key?: string
+          translation_value?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
