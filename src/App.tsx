@@ -5,6 +5,8 @@ import Index from '@/pages/Index';
 import Dashboard from '@/pages/Dashboard';
 import Profile from '@/pages/Profile';
 import CreateTender from '@/pages/CreateTender';
+import ECatalog from '@/pages/ECatalog';
+import Requisitions from '@/pages/Requisitions';
 import Evaluations from '@/pages/Evaluations';
 import EvaluationForm from '@/pages/EvaluationForm';
 import NotFound from '@/pages/NotFound';
@@ -71,6 +73,16 @@ function App() {
                 <Route path="/profile" element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/catalog" element={
+                  <ProtectedRoute>
+                    <ECatalog />
+                  </ProtectedRoute>
+                } />
+                <Route path="/requisitions" element={
+                  <ProtectedRoute>
+                    <Requisitions />
                   </ProtectedRoute>
                 } />
                 <Route path="/tenders" element={<Tenders />} />
