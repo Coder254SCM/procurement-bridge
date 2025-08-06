@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { SQLInjectionProtector } from "../../../src/utils/sqlInjectionProtection.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -55,12 +54,9 @@ serve(async (req) => {
     logData = { ...logData, user_id: user.id, action, trialMode };
 
     // Security validation
-    if (action) {
-      const actionValidation = SQLInjectionProtector.validateInput(action, 'query');
-      if (!actionValidation.isValid) {
-        SQLInjectionProtector.logSecurityEvent('Invalid action parameter', { action, issues: actionValidation.issues }, 'high');
-        throw new Error('Invalid action parameter');
-      }
+    const allowedActions = ['create', 'update', 'get', 'list'];
+    if (!allowedActions.includes(action)) {
+      throw new Error('Invalid action parameter');
     }
 
     // Check user role - only evaluators can access this API
@@ -177,12 +173,10 @@ serve(async (req) => {
         let query = supabaseClient.from('evaluations').select('*');
         
         if (filters) {
+          const allowedFilterKeys = ['evaluator_id', 'bid_id', 'status', 'evaluation_type'];
           Object.entries(filters).forEach(([key, value]) => {
-            if (typeof value === 'string') {
-              const filterValidation = SQLInjectionProtector.validateInput(value, 'query');
-              if (filterValidation.isValid) {
-                query = query.eq(key, value);
-              }
+            if (allowedFilterKeys.includes(key) && (typeof value === 'string' || typeof value === 'number')) {
+              query = query.eq(key, value);
             }
           });
         }
