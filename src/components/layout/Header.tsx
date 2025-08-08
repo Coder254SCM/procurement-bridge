@@ -31,6 +31,10 @@ const Header = () => {
     { name: 'Tenders', href: '/tenders' },
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Analytics', href: '/analytics' },
+    { name: 'Budgets', href: '/budgets' },
+    { name: 'Qualifications', href: '/qualifications' },
+    { name: 'Frameworks', href: '/framework-agreements' },
+    { name: 'Performance', href: '/contract-performance' },
     { name: 'Contracts', href: '/contracts' },
   ];
 

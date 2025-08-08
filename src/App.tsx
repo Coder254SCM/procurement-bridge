@@ -27,6 +27,10 @@ import Guides from '@/pages/Guides';
 import Privacy from '@/pages/Privacy';
 import ResetPassword from '@/pages/ResetPassword';
 import UpdatePassword from '@/pages/UpdatePassword';
+import Budgets from '@/pages/Budgets';
+import Qualifications from '@/pages/Qualifications';
+import FrameworkAgreements from '@/pages/FrameworkAgreements';
+import ContractPerformance from '@/pages/ContractPerformance';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -116,6 +120,26 @@ function App() {
                 <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/tender/:id" element={<TenderDetail />} />
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/budgets" element={
+                  <ProtectedRoute>
+                    <Budgets />
+                  </ProtectedRoute>
+                } />
+                <Route path="/qualifications" element={
+                  <ProtectedRoute>
+                    <Qualifications />
+                  </ProtectedRoute>
+                } />
+                <Route path="/framework-agreements" element={
+                  <ProtectedRoute>
+                    <FrameworkAgreements />
+                  </ProtectedRoute>
+                } />
+                <Route path="/contract-performance" element={
+                  <ProtectedRoute>
+                    <ContractPerformance />
+                  </ProtectedRoute>
+                } />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
