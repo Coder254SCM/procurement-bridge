@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -695,6 +695,45 @@ export type Database = {
           verification_status?: Database["public"]["Enums"]["verification_status"]
           verification_type?: string
           verified_by?: string | null
+        }
+        Relationships: []
+      }
+      document_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          created_by: string
+          id: string
+          is_active: boolean | null
+          template_content: Json
+          template_name: string
+          template_type: string
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          created_by: string
+          id?: string
+          is_active?: boolean | null
+          template_content?: Json
+          template_name: string
+          template_type: string
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          is_active?: boolean | null
+          template_content?: Json
+          template_name?: string
+          template_type?: string
+          updated_at?: string | null
+          version?: string | null
         }
         Relationships: []
       }
@@ -1636,6 +1675,54 @@ export type Database = {
         }
         Relationships: []
       }
+      supplier_performance_history: {
+        Row: {
+          contract_id: string
+          created_at: string | null
+          delivery_score: number | null
+          evaluation_notes: string | null
+          evaluation_period_end: string
+          evaluation_period_start: string
+          evaluator_id: string
+          id: string
+          overall_score: number | null
+          performance_data: Json | null
+          quality_score: number | null
+          service_score: number | null
+          supplier_id: string
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string | null
+          delivery_score?: number | null
+          evaluation_notes?: string | null
+          evaluation_period_end: string
+          evaluation_period_start: string
+          evaluator_id: string
+          id?: string
+          overall_score?: number | null
+          performance_data?: Json | null
+          quality_score?: number | null
+          service_score?: number | null
+          supplier_id: string
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string | null
+          delivery_score?: number | null
+          evaluation_notes?: string | null
+          evaluation_period_end?: string
+          evaluation_period_start?: string
+          evaluator_id?: string
+          id?: string
+          overall_score?: number | null
+          performance_data?: Json | null
+          quality_score?: number | null
+          service_score?: number | null
+          supplier_id?: string
+        }
+        Relationships: []
+      }
       supplier_qualifications: {
         Row: {
           category_id: string
@@ -1691,6 +1778,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      system_settings: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          setting_key: string
+          setting_type: string
+          setting_value: Json
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          setting_key: string
+          setting_type: string
+          setting_value: Json
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          setting_key?: string
+          setting_type?: string
+          setting_value?: Json
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
       }
       tender_reviews: {
         Row: {
@@ -1924,13 +2047,52 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_blacklist: {
+        Row: {
+          blacklist_date: string
+          blacklist_reason: string
+          blacklisted_by: string
+          created_at: string | null
+          expiry_date: string | null
+          id: string
+          is_active: boolean | null
+          supplier_id: string
+          supporting_documents: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          blacklist_date?: string
+          blacklist_reason: string
+          blacklisted_by: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          supplier_id: string
+          supporting_documents?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          blacklist_date?: string
+          blacklist_reason?: string
+          blacklisted_by?: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          supplier_id?: string
+          supporting_documents?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       check_trial_eligibility: {
-        Args: { user_id_param: string; trial_type_param: string }
+        Args: { trial_type_param: string; user_id_param: string }
         Returns: boolean
       }
       get_user_subscription_status: {
@@ -1944,8 +2106,8 @@ export type Database = {
       }
       has_role: {
         Args: {
-          user_id: string
           required_role: Database["public"]["Enums"]["user_role"]
+          user_id: string
         }
         Returns: boolean
       }
