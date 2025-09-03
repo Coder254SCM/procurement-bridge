@@ -4,15 +4,17 @@ export interface PaymentSchedule {
   id: string;
   contract_id: string;
   milestone_id?: string;
-  payment_method: string;
-  payment_amount: number;
+  payment_method?: string;
+  amount: number;
   due_date: string;
-  currency: string;
-  payment_status: 'pending' | 'approved' | 'paid' | 'overdue' | 'cancelled';
-  payment_reference?: string;
-  payment_date?: string;
-  created_at: string;
-  updated_at: string;
+  currency?: string;
+  status?: 'pending' | 'approved' | 'paid' | 'overdue' | 'cancelled';
+  reference_number?: string;
+  paid_date?: string;
+  payment_number: number;
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export class PaymentService {
@@ -25,7 +27,7 @@ export class PaymentService {
     return PaymentService.instance;
   }
 
-  async createPaymentSchedule(paymentData: Partial<PaymentSchedule>) {
+  async createPaymentSchedule(paymentData: Omit<PaymentSchedule, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await supabase
       .from('payment_schedules')
       .insert([paymentData])
@@ -53,7 +55,7 @@ export class PaymentService {
     const { data, error } = await supabase
       .from('payment_schedules')
       .update({ 
-        payment_status: status,
+        status: status,
         updated_at: new Date().toISOString()
       })
       .eq('id', paymentId)
