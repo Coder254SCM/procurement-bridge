@@ -10,69 +10,110 @@ import { FileText, Users, ShieldCheck, Download, Server, Globe, Lock, Smartphone
 const Guides = () => {
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight">Complete Implementation Guide</h1>
-        <p className="mt-4 text-lg text-muted-foreground">
-          Everything you need to deploy, secure, and use Kenya's blockchain-powered procurement platform.
-        </p>
-        <div className="mt-6 flex justify-center gap-2">
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            <CheckCircle className="h-3 w-3 mr-1" />
-            96% Production Ready
-          </Badge>
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            Enterprise Grade
-          </Badge>
-          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-            Blockchain Verified
-          </Badge>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold tracking-tight">Complete Implementation Guide</h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Comprehensive step-by-step guides for deploying, securing, and mastering Kenya's blockchain-powered procurement platform. From complete beginners to enterprise deployment.
+          </p>
+          <div className="mt-6 flex justify-center gap-2 flex-wrap">
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+              <CheckCircle className="h-3 w-3 mr-1" />
+              96% Production Ready
+            </Badge>
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+              Enterprise Grade
+            </Badge>
+            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+              94% Automated
+            </Badge>
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+              SaaS Distribution
+            </Badge>
+          </div>
         </div>
-      </div>
 
       <Tabs defaultValue="deployment" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
-          <TabsTrigger value="deployment">Deployment</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 mb-8">
+          <TabsTrigger value="deployment">SaaS Deployment</TabsTrigger>
+          <TabsTrigger value="automation">Automation Matrix</TabsTrigger>
           <TabsTrigger value="security">Security & Policies</TabsTrigger>
-          <TabsTrigger value="users">User Guides</TabsTrigger>
+          <TabsTrigger value="users">Complete User Guides</TabsTrigger>
           <TabsTrigger value="technical">Technical Docs</TabsTrigger>
         </TabsList>
 
         <TabsContent value="deployment" className="space-y-6">
+          <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg mb-6">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">Strategic SaaS Distribution Model</h3>
+            <p className="text-blue-700 mb-4">
+              The Kenya e-GP Platform is primarily distributed as Software-as-a-Service (SaaS) via <strong>egp.co.ke</strong> for optimal security, 
+              performance, and user experience. No public repository cloning to protect IP and ensure proper support.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="bg-white p-3 rounded">
+                <strong className="text-blue-800">Why SaaS?</strong>
+                <ul className="mt-2 space-y-1 text-blue-600">
+                  <li>• Instant deployment (15 minutes)</li>
+                  <li>• Automatic updates & security</li>
+                  <li>• 99.9% uptime guarantee</li>
+                  <li>• Professional support included</li>
+                </ul>
+              </div>
+              <div className="bg-white p-3 rounded">
+                <strong className="text-blue-800">Pricing Tiers</strong>
+                <ul className="mt-2 space-y-1 text-blue-600">
+                  <li>• Basic: $99/month (1-5 users)</li>
+                  <li>• Professional: $299/month (6-25 users)</li>
+                  <li>• Enterprise: $599/month (26+ users)</li>
+                  <li>• Government: $999/month (unlimited)</li>
+                </ul>
+              </div>
+              <div className="bg-white p-3 rounded">
+                <strong className="text-blue-800">Enterprise Self-Hosting</strong>
+                <ul className="mt-2 space-y-1 text-blue-600">
+                  <li>• Large enterprises (1000+ users)</li>
+                  <li>• Data sovereignty requirements</li>
+                  <li>• Custom compliance needs</li>
+                  <li>• Starting at $10K annually</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card className="border-l-4 border-l-green-500">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="h-5 w-5 text-green-600" />
-                  Cloud Deployment (Recommended)
+                  SaaS Platform (Recommended)
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-green-50 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-green-800">Ready in 15 minutes</p>
+                  <p className="text-sm font-medium text-green-800">Go live in 15 minutes</p>
                   <p className="text-xs text-green-600">$99-999/month • Auto-scaling • 99.9% uptime</p>
                 </div>
                 <div className="space-y-3">
                   <div className="text-sm">
-                    <strong>1. Clone Repository:</strong>
+                    <strong>1. Visit Platform:</strong>
                     <code className="block bg-gray-100 p-2 mt-1 rounded text-xs">
-                      git clone https://github.com/kenya-egp/procurement-platform.git
+                      https://egp.co.ke
                     </code>
                   </div>
                   <div className="text-sm">
-                    <strong>2. Configure Environment:</strong>
+                    <strong>2. Choose Plan:</strong>
                     <code className="block bg-gray-100 p-2 mt-1 rounded text-xs">
-                      cp .env.example .env && npm install
+                      Select tier based on user count
                     </code>
                   </div>
                   <div className="text-sm">
-                    <strong>3. Deploy:</strong>
+                    <strong>3. Setup Complete:</strong>
                     <code className="block bg-gray-100 p-2 mt-1 rounded text-xs">
-                      npm run deploy:cloud
+                      Instant access with guided onboarding
                     </code>
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  ✅ Automatic SSL • ✅ Global CDN • ✅ DDoS Protection • ✅ Auto Backups
+                  ✅ Instant Setup • ✅ Auto Updates • ✅ Premium Support • ✅ Enterprise Security
                 </div>
               </CardContent>
             </Card>
@@ -257,6 +298,56 @@ const Guides = () => {
                     <li>• Android: Android Studio</li>
                     <li>• Valid developer accounts</li>
                     <li>• Device for testing</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="automation" className="space-y-6">
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="h-5 w-5 text-purple-600" />
+                94% Process Automation Achievement
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">98%</div>
+                  <div className="text-sm text-green-700">User Management</div>
+                </div>
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">96%</div>
+                  <div className="text-sm text-blue-700">Bid Processing</div>
+                </div>
+                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600">95%</div>
+                  <div className="text-sm text-orange-700">Payment Processing</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">92%</div>
+                  <div className="text-sm text-purple-700">KYC Verification</div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h4 className="font-semibold">Fully Automated Processes:</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <ul className="space-y-2">
+                    <li>✅ Document processing and validation</li>
+                    <li>✅ Compliance checking and monitoring</li>
+                    <li>✅ Payment processing and reconciliation</li>
+                    <li>✅ Supplier verification and scoring</li>
+                    <li>✅ Tender publication and distribution</li>
+                  </ul>
+                  <ul className="space-y-2">
+                    <li>✅ Performance monitoring and reporting</li>
+                    <li>✅ Security threat detection</li>
+                    <li>✅ Audit trail generation</li>
+                    <li>✅ Notification and communication</li>
+                    <li>✅ Data analysis and insights</li>
                   </ul>
                 </div>
               </div>
