@@ -12,90 +12,51 @@ export function useTenders() {
     const fetchTenders = async () => {
       try {
         setLoading(true);
-        // In a real app, this would fetch from Supabase
-        // For now we're using static data
-        const fakeTenders: TenderProps[] = [
-          {
-            id: "T1001",
-            title: "Supply and Installation of IT Equipment for County Offices",
-            organization: "Ministry of ICT",
-            location: "Nairobi County",
-            category: "IT & Telecommunications",
-            description: "Provision of desktop computers, laptops, printers and networking equipment for county government offices across Nairobi county.",
-            deadline: "Jul 15, 2023",
-            daysLeft: 12,
-            submissions: 8,
-            value: "KES 12,500,000",
-            status: 'open'
-          },
-          {
-            id: "T1002",
-            title: "Construction of Health Center in Kiambu County",
-            organization: "Ministry of Health",
-            location: "Kiambu County",
-            category: "Construction",
-            description: "Construction of a new health center including outpatient facilities, maternity ward, laboratory and pharmacy services.",
-            deadline: "Jul 22, 2023",
-            daysLeft: 19,
-            submissions: 5,
-            value: "KES 35,800,000",
-            status: 'open'
-          },
-          {
-            id: "T1003",
-            title: "Supply of School Textbooks and Learning Materials",
-            organization: "Ministry of Education",
-            location: "Countrywide",
-            category: "Education",
-            description: "Supply and delivery of approved curriculum textbooks and learning materials for primary and secondary schools across Kenya.",
-            deadline: "Jul 10, 2023",
-            daysLeft: 7,
-            submissions: 12,
-            value: "KES 28,000,000",
-            status: 'open'
-          },
-          {
-            id: "T1004",
-            title: "Renovation of Government Office Buildings",
-            organization: "Ministry of Public Works",
-            location: "Mombasa County",
-            category: "Construction",
-            description: "Renovation and refurbishment of government office buildings in Mombasa including painting, electrical repairs, plumbing and general renovations.",
-            deadline: "Jun 25, 2023",
-            daysLeft: 0,
-            submissions: 9,
-            value: "KES 15,750,000",
-            status: 'evaluation'
-          },
-          {
-            id: "T1005",
-            title: "Supply of Medical Equipment and Supplies",
-            organization: "Ministry of Health",
-            location: "Kisumu County",
-            category: "Medical",
-            description: "Supply of medical equipment, pharmaceutical products and general hospital supplies for public hospitals in Kisumu county.",
-            deadline: "Jun 18, 2023",
-            daysLeft: 0,
-            submissions: 15,
-            value: "KES 22,300,000",
-            status: 'awarded'
-          },
-          {
-            id: "T1006",
-            title: "Agricultural Irrigation Systems Installation",
-            organization: "Ministry of Agriculture",
-            location: "Nakuru County",
-            category: "Agriculture",
-            description: "Design and installation of irrigation systems for agricultural demonstration farms in Nakuru county.",
-            deadline: "Jun 15, 2023",
-            daysLeft: 0,
-            submissions: 7,
-            value: "KES 18,450,000",
-            status: 'closed'
-          }
-        ];
+        
+        // Fetch real tenders from Supabase
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data: tendersData, error } = await supabase
+          .from('tenders')
+          .select(`
+            id,
+            title,
+            description,
+            category,
+            budget_amount,
+            budget_currency,
+            submission_deadline,
+            status,
+            procurement_method,
+            buyer_id,
+            profiles!tenders_buyer_id_fkey(company_name)
+          `)
+          .eq('status', 'published')
+          .order('created_at', { ascending: false });
 
-        setTenders(fakeTenders);
+        if (error) throw error;
+
+        // Transform Supabase data to TenderProps format
+        const formattedTenders: TenderProps[] = (tendersData || []).map(tender => {
+          const deadline = new Date(tender.submission_deadline);
+          const today = new Date();
+          const daysLeft = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+          
+          return {
+            id: tender.id,
+            title: tender.title,
+            organization: (tender.profiles as any)?.company_name || 'Government Entity',
+            location: 'Kenya', // Can be added to database if needed
+            category: tender.category,
+            description: tender.description,
+            deadline: deadline.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+            daysLeft: Math.max(0, daysLeft),
+            submissions: 0, // Can be calculated from bids table
+            value: `${tender.budget_currency} ${tender.budget_amount?.toLocaleString()}`,
+            status: daysLeft > 0 ? 'open' : (tender.status === 'published' ? 'evaluation' : tender.status)
+          };
+        });
+
+        setTenders(formattedTenders);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching tenders:', error);

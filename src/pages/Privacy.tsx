@@ -2,7 +2,7 @@
 import React from 'react';
 
 const Privacy = () => {
-  const lastUpdated = "June 15, 2025";
+  const lastUpdated = "October 1, 2025";
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
@@ -67,14 +67,84 @@ const Privacy = () => {
             <li>The right to erasure – You have the right to request that we erase your personal data, under certain conditions.</li>
         </ul>
         
-        <h2 className="mt-8 text-2xl font-semibold">6. Contact Us</h2>
+        <h2 className="mt-8 text-2xl font-semibold">6. Data Retention and Deletion</h2>
         <p>
-          If you have questions or comments about this Privacy Policy, please contact us at:
+          We retain your personal data for as long as necessary to provide our services and comply with legal obligations:
         </p>
+        <ul>
+          <li><strong>Procurement Records:</strong> 7 years from contract completion (as required by Kenya PPRA regulations)</li>
+          <li><strong>Blockchain Transactions:</strong> Immutable records stored indefinitely for audit and transparency purposes</li>
+          <li><strong>Account Data:</strong> Until account deletion or 2 years after last activity</li>
+          <li><strong>Audit Logs:</strong> 10 years for compliance and legal requirements</li>
+        </ul>
+
+        <h2 className="mt-8 text-2xl font-semibold">7. Blockchain and Data Immutability</h2>
         <p>
-          ProcureChain Support<br />
-          Email: support@procurechain.co.ke
+          ProcureChain uses Hyperledger Fabric blockchain technology to ensure transparency and immutability of procurement transactions. You acknowledge that:
         </p>
+        <ul>
+          <li>Transaction hashes and metadata recorded on the blockchain cannot be altered or deleted</li>
+          <li>Blockchain records serve as permanent, tamper-proof audit trails</li>
+          <li>Personal identifiable information is not directly stored on the blockchain</li>
+          <li>Document hashes (not the documents themselves) are recorded for integrity verification</li>
+        </ul>
+
+        <h2 className="mt-8 text-2xl font-semibold">8. International Data Transfers</h2>
+        <p>
+          Your data may be processed and stored in Kenya or other countries where our service providers operate. We ensure appropriate safeguards are in place for international data transfers in accordance with applicable data protection laws.
+        </p>
+
+        <h2 className="mt-8 text-2xl font-semibold">9. Cookies and Tracking Technologies</h2>
+        <p>
+          We use cookies and similar technologies to enhance user experience, analyze platform usage, and provide personalized content. You can control cookie preferences through your browser settings.
+        </p>
+
+        <h2 className="mt-8 text-2xl font-semibold">10. Third-Party Services</h2>
+        <p>
+          Our Platform may integrate with third-party services for payment processing, identity verification, and analytics. These third parties have their own privacy policies, and we are not responsible for their data practices.
+        </p>
+
+        <h2 className="mt-8 text-2xl font-semibold">11. Children's Privacy</h2>
+        <p>
+          The Platform is not intended for use by individuals under 18 years of age. We do not knowingly collect personal data from children.
+        </p>
+
+        <h2 className="mt-8 text-2xl font-semibold">12. Changes to This Privacy Policy</h2>
+        <p>
+          We may update this Privacy Policy from time to time. We will notify you of material changes by posting the updated policy on our Platform and updating the "Last Updated" date. Your continued use of the Platform after changes constitutes acceptance of the updated policy.
+        </p>
+
+        <h2 className="mt-8 text-2xl font-semibold">13. Legal Compliance</h2>
+        <p>
+          This Privacy Policy complies with:
+        </p>
+        <ul>
+          <li>Kenya Data Protection Act, 2019</li>
+          <li>Public Procurement and Asset Disposal Act, 2015</li>
+          <li>General Data Protection Regulation (GDPR) principles</li>
+          <li>International data protection standards</li>
+        </ul>
+
+        <h2 className="mt-8 text-2xl font-semibold">14. Contact Us</h2>
+        <p>
+          If you have questions or concerns about this Privacy Policy or our data practices, please contact us at:
+        </p>
+        <div className="bg-secondary/20 p-4 rounded-lg">
+          <p className="mb-2">
+            <strong>ProcureChain Data Protection Officer</strong>
+          </p>
+          <p>Email: privacy@procurechain.co.ke</p>
+          <p>Support: support@procurechain.co.ke</p>
+          <p>Phone: +254 700 000 000</p>
+          <p>Address: Nairobi, Kenya</p>
+        </div>
+
+        <div className="mt-8 p-6 bg-blue-50 border-l-4 border-l-blue-500 rounded">
+          <p className="font-semibold mb-2">Your Rights Matter</p>
+          <p className="text-sm">
+            We are committed to protecting your privacy and ensuring transparent data practices. If you believe your rights have been violated, you may lodge a complaint with the Office of the Data Protection Commissioner (Kenya) at www.odpc.go.ke
+          </p>
+        </div>
       </div>
     </div>
   );
