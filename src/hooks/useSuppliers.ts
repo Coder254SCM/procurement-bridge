@@ -28,15 +28,9 @@ export function useSuppliers() {
           .select(`
             id,
             company_name,
-            business_type,
-            phone_number,
+            industry,
             verification_level,
-            verification_status,
-            digital_identity_verification(
-              verification_status,
-              blockchain_hash,
-              verification_date
-            )
+            verification_status
           `)
           .in('id', supplierIds)
           .not('company_name', 'is', null);
@@ -45,23 +39,25 @@ export function useSuppliers() {
 
         // Transform to SupplierProps format
         const formattedSuppliers: SupplierProps[] = (profilesData || []).map(profile => {
-          const verification = profile.digital_identity_verification?.[0];
+          
+          // Map verification_level to VerificationLevel type
+          const verificationLevel: 'basic' | 'standard' | 'advanced' = 
+            profile.verification_level === 'standard' ? 'standard' :
+            profile.verification_level === 'advanced' ? 'advanced' : 'basic';
           
           return {
             id: profile.id,
             name: profile.company_name || 'Unnamed Supplier',
-            category: profile.business_type || 'General',
+            category: profile.industry || 'General',
             location: 'Kenya',
             verified: profile.verification_status === 'verified',
             rating: 0, // Can be calculated from evaluations
             completedProjects: 0, // Can be calculated from contracts
             description: `${profile.company_name} - Verified supplier on the platform`,
-            contact: profile.phone_number || '',
+            contact: '',
             verification: {
-              status: verification?.verification_status || profile.verification_status || 'pending',
-              level: profile.verification_level || 'none',
-              lastVerified: verification?.verification_date,
-              blockchainTxId: verification?.blockchain_hash,
+              status: (profile.verification_status as 'verified' | 'pending' | 'unverified' | 'rejected') || 'pending',
+              level: verificationLevel,
               verificationScore: profile.verification_status === 'verified' ? 85 : 65,
               completedProjects: 0,
               performanceRating: 0

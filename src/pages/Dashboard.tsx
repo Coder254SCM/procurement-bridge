@@ -58,7 +58,8 @@ const Dashboard = () => {
       // Fetch user roles from the user_roles table
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
-        .select('role');
+        .select('role')
+        .eq('user_id', data.session.user.id);
         
       if (rolesError) {
         console.error("Error fetching user roles:", rolesError);

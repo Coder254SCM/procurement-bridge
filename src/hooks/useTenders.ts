@@ -52,7 +52,7 @@ export function useTenders() {
             daysLeft: Math.max(0, daysLeft),
             submissions: 0, // Can be calculated from bids table
             value: `${tender.budget_currency} ${tender.budget_amount?.toLocaleString()}`,
-            status: daysLeft > 0 ? 'open' : (tender.status === 'published' ? 'evaluation' : tender.status)
+            status: (daysLeft > 0 ? 'open' : 'evaluation') as 'open' | 'closed' | 'evaluation' | 'awarded'
           };
         });
 
