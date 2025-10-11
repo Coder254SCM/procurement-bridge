@@ -13,7 +13,7 @@ const Guides = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold tracking-tight">Complete Implementation Guide</h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Comprehensive step-by-step guides for deploying, securing, and mastering Kenya's blockchain-powered procurement platform. From complete beginners to enterprise deployment.
+            Comprehensive step-by-step guides for deploying, securing, and mastering ProcureChain - Kenya's blockchain-powered procurement platform. From complete beginners to enterprise deployment.
           </p>
           <div className="mt-6 flex justify-center gap-2 flex-wrap">
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
@@ -45,7 +45,7 @@ const Guides = () => {
           <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg mb-6">
             <h3 className="text-xl font-semibold text-blue-800 mb-3">Strategic SaaS Distribution Model</h3>
             <p className="text-blue-700 mb-4">
-              The Kenya e-GP Platform is primarily distributed as Software-as-a-Service (SaaS) via <strong>egp.co.ke</strong> for optimal security, 
+              ProcureChain is primarily distributed as Software-as-a-Service (SaaS) via <strong>procurechain.co.ke</strong> for optimal security, 
               performance, and user experience. No public repository cloning to protect IP and ensure proper support.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
