@@ -541,7 +541,10 @@ export type Database = {
           due_date: string
           id: string
           milestone_name: string
+          payment_method: string | null
           payment_percentage: number | null
+          payment_received_date: string | null
+          payment_reference: string | null
           status: string | null
           updated_at: string | null
           verification_documents: Json | null
@@ -555,7 +558,10 @@ export type Database = {
           due_date: string
           id?: string
           milestone_name: string
+          payment_method?: string | null
           payment_percentage?: number | null
+          payment_received_date?: string | null
+          payment_reference?: string | null
           status?: string | null
           updated_at?: string | null
           verification_documents?: Json | null
@@ -569,7 +575,10 @@ export type Database = {
           due_date?: string
           id?: string
           milestone_name?: string
+          payment_method?: string | null
           payment_percentage?: number | null
+          payment_received_date?: string | null
+          payment_reference?: string | null
           status?: string | null
           updated_at?: string | null
           verification_documents?: Json | null
@@ -656,6 +665,45 @@ export type Database = {
           },
         ]
       }
+      data_access_logs: {
+        Row: {
+          access_type: string
+          created_at: string | null
+          data_accessed: string
+          endpoint: string
+          id: string
+          ip_address: unknown | null
+          query_parameters: Json | null
+          record_count: number | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          access_type: string
+          created_at?: string | null
+          data_accessed: string
+          endpoint: string
+          id?: string
+          ip_address?: unknown | null
+          query_parameters?: Json | null
+          record_count?: number | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          access_type?: string
+          created_at?: string | null
+          data_accessed?: string
+          endpoint?: string
+          id?: string
+          ip_address?: unknown | null
+          query_parameters?: Json | null
+          record_count?: number | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       digital_identity_verification: {
         Row: {
           blockchain_hash: string | null
@@ -697,6 +745,84 @@ export type Database = {
           verified_by?: string | null
         }
         Relationships: []
+      }
+      dispute_resolution: {
+        Row: {
+          amount_disputed: number | null
+          contract_id: string
+          created_at: string | null
+          description: string
+          dispute_date: string
+          dispute_type: string
+          id: string
+          mediator_id: string | null
+          outcome: string | null
+          raised_against: string
+          raised_by: string
+          resolution_date: string | null
+          resolution_details: string | null
+          resolution_method: string | null
+          status: string
+          supporting_documents: Json | null
+          tender_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount_disputed?: number | null
+          contract_id: string
+          created_at?: string | null
+          description: string
+          dispute_date?: string
+          dispute_type: string
+          id?: string
+          mediator_id?: string | null
+          outcome?: string | null
+          raised_against: string
+          raised_by: string
+          resolution_date?: string | null
+          resolution_details?: string | null
+          resolution_method?: string | null
+          status?: string
+          supporting_documents?: Json | null
+          tender_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount_disputed?: number | null
+          contract_id?: string
+          created_at?: string | null
+          description?: string
+          dispute_date?: string
+          dispute_type?: string
+          id?: string
+          mediator_id?: string | null
+          outcome?: string | null
+          raised_against?: string
+          raised_by?: string
+          resolution_date?: string | null
+          resolution_details?: string | null
+          resolution_method?: string | null
+          status?: string
+          supporting_documents?: Json | null
+          tender_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispute_resolution_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dispute_resolution_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       document_templates: {
         Row: {
@@ -1282,14 +1408,18 @@ export type Database = {
       }
       profiles: {
         Row: {
+          annual_revenue_range: string | null
           company_name: string | null
+          company_size: string | null
           created_at: string | null
           documents_uploaded: Json | null
+          employee_count: number | null
           full_name: string | null
           id: string
           industry: string | null
           kyc_documents: Json | null
           kyc_status: string | null
+          organization_type: string | null
           performance_score: number | null
           position: string | null
           risk_score: number | null
@@ -1301,14 +1431,18 @@ export type Database = {
           verified: boolean | null
         }
         Insert: {
+          annual_revenue_range?: string | null
           company_name?: string | null
+          company_size?: string | null
           created_at?: string | null
           documents_uploaded?: Json | null
+          employee_count?: number | null
           full_name?: string | null
           id: string
           industry?: string | null
           kyc_documents?: Json | null
           kyc_status?: string | null
+          organization_type?: string | null
           performance_score?: number | null
           position?: string | null
           risk_score?: number | null
@@ -1320,14 +1454,18 @@ export type Database = {
           verified?: boolean | null
         }
         Update: {
+          annual_revenue_range?: string | null
           company_name?: string | null
+          company_size?: string | null
           created_at?: string | null
           documents_uploaded?: Json | null
+          employee_count?: number | null
           full_name?: string | null
           id?: string
           industry?: string | null
           kyc_documents?: Json | null
           kyc_status?: string | null
+          organization_type?: string | null
           performance_score?: number | null
           position?: string | null
           risk_score?: number | null
@@ -1860,12 +1998,17 @@ export type Database = {
           budget_currency: string | null
           buyer_id: string
           category: string
+          category_code: string | null
+          category_standard: string | null
+          county: string | null
           created_at: string | null
           description: string
           documents: Json | null
           evaluation_criteria: Json | null
           id: string
+          location_details: Json | null
           procurement_method: string | null
+          region: string | null
           required_documents: string[] | null
           status: string | null
           submission_deadline: string
@@ -1880,12 +2023,17 @@ export type Database = {
           budget_currency?: string | null
           buyer_id: string
           category: string
+          category_code?: string | null
+          category_standard?: string | null
+          county?: string | null
           created_at?: string | null
           description: string
           documents?: Json | null
           evaluation_criteria?: Json | null
           id?: string
+          location_details?: Json | null
           procurement_method?: string | null
+          region?: string | null
           required_documents?: string[] | null
           status?: string | null
           submission_deadline: string
@@ -1900,12 +2048,17 @@ export type Database = {
           budget_currency?: string | null
           buyer_id?: string
           category?: string
+          category_code?: string | null
+          category_standard?: string | null
+          county?: string | null
           created_at?: string | null
           description?: string
           documents?: Json | null
           evaluation_criteria?: Json | null
           id?: string
+          location_details?: Json | null
           procurement_method?: string | null
+          region?: string | null
           required_documents?: string[] | null
           status?: string | null
           submission_deadline?: string
@@ -2091,6 +2244,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_payment_delay_days: {
+        Args: { completion_date: string; payment_date: string }
+        Returns: number
+      }
       check_trial_eligibility: {
         Args: { trial_type_param: string; user_id_param: string }
         Returns: boolean
