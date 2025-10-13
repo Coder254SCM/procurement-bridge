@@ -1,6 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+// Payment delay calculation helper
+function calculatePaymentDelay(completionDate: string | null, paymentDate: string | null): number | null {
+  if (!completionDate || !paymentDate) return null;
+  const completion = new Date(completionDate);
+  const payment = new Date(paymentDate);
+  return Math.floor((payment.getTime() - completion.getTime()) / (1000 * 60 * 60 * 24));
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -169,6 +177,130 @@ serve(async (req) => {
         })
 
         return new Response(JSON.stringify({ data: progress }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+
+      case 'record_payment':
+        const { milestone_id, payment_received_date, payment_method, payment_reference } = data;
+
+        if (!milestone_id || !payment_received_date) {
+          return new Response(JSON.stringify({ error: 'milestone_id and payment_received_date required' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { data: paymentUpdate, error: paymentError } = await supabase
+          .from('contract_milestones')
+          .update({
+            payment_received_date,
+            payment_method,
+            payment_reference,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', milestone_id)
+          .select(`
+            *,
+            contract:contracts(id, contract_number, supplier_id, buyer_id, contract_value)
+          `)
+          .single();
+
+        if (paymentError) throw paymentError;
+
+        const paymentDelay = calculatePaymentDelay(paymentUpdate.completion_date, payment_received_date);
+
+        console.log(`[contract-performance] Payment recorded for milestone ${milestone_id}, delay: ${paymentDelay} days`);
+
+        return new Response(JSON.stringify({
+          data: paymentUpdate,
+          payment_delay_days: paymentDelay,
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+
+      case 'get_payment_analytics':
+        const filter = data || {};
+        const { supplier_id, buyer_id, start_date, end_date, organization_type } = filter;
+
+        let analyticsQuery = supabase
+          .from('contract_milestones')
+          .select(`
+            id,
+            completion_date,
+            payment_received_date,
+            payment_method,
+            payment_percentage,
+            contract:contracts(
+              id,
+              contract_number,
+              contract_value,
+              supplier_id,
+              buyer_id,
+              supplier:profiles!supplier_id(id, company_name, company_size),
+              buyer:profiles!buyer_id(id, company_name, organization_type)
+            )
+          `)
+          .not('payment_received_date', 'is', null);
+
+        const { data: paymentMilestones, error: analyticsError } = await analyticsQuery;
+
+        if (analyticsError) throw analyticsError;
+
+        // Filter and calculate
+        let filteredData = paymentMilestones;
+        if (supplier_id) filteredData = filteredData.filter((m: any) => m.contract?.supplier_id === supplier_id);
+        if (buyer_id) filteredData = filteredData.filter((m: any) => m.contract?.buyer_id === buyer_id);
+        if (organization_type) filteredData = filteredData.filter((m: any) => m.contract?.buyer?.organization_type === organization_type);
+        if (start_date) filteredData = filteredData.filter((m: any) => m.payment_received_date >= start_date);
+        if (end_date) filteredData = filteredData.filter((m: any) => m.payment_received_date <= end_date);
+
+        const analytics = filteredData.map((m: any) => ({
+          ...m,
+          payment_delay_days: calculatePaymentDelay(m.completion_date, m.payment_received_date),
+          payment_value: (m.payment_percentage / 100) * (m.contract?.contract_value || 0),
+        }));
+
+        const totalPayments = analytics.length;
+        const avgDelay = totalPayments > 0 ? analytics.reduce((sum: number, a: any) => sum + (a.payment_delay_days || 0), 0) / totalPayments : 0;
+        const delayedPayments = analytics.filter((a: any) => (a.payment_delay_days || 0) > 30).length;
+        const totalValue = analytics.reduce((sum: number, a: any) => sum + a.payment_value, 0);
+
+        // Group by organization type
+        const byOrgType = analytics.reduce((acc: any, a: any) => {
+          const orgType = a.contract?.buyer?.organization_type || 'unknown';
+          if (!acc[orgType]) {
+            acc[orgType] = {
+              count: 0,
+              total_value: 0,
+              delays: [],
+            };
+          }
+          acc[orgType].count += 1;
+          acc[orgType].total_value += a.payment_value;
+          acc[orgType].delays.push(a.payment_delay_days || 0);
+          return acc;
+        }, {});
+
+        Object.keys(byOrgType).forEach(key => {
+          byOrgType[key].avg_delay = byOrgType[key].delays.reduce((a: number, b: number) => a + b, 0) / byOrgType[key].count;
+          delete byOrgType[key].delays;
+        });
+
+        console.log(`[contract-performance] Payment analytics for ${totalPayments} payments`);
+
+        return new Response(JSON.stringify({
+          data: {
+            summary: {
+              total_payments: totalPayments,
+              avg_payment_delay_days: avgDelay,
+              delayed_payments_count: delayedPayments,
+              delayed_payments_percentage: totalPayments > 0 ? (delayedPayments / totalPayments) * 100 : 0,
+              total_payment_value: totalValue,
+            },
+            by_organization_type: byOrgType,
+            payments: analytics,
+          }
+        }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
 
