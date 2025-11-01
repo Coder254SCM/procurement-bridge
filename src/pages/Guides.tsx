@@ -10,9 +10,9 @@ import { FileText, Users, ShieldCheck, Download, Server, Globe, Lock, Smartphone
 const Guides = () => {
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold tracking-tight">Complete Implementation Guide</h1>
-          <p className="mt-4 text-lg text-muted-foreground">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Complete Implementation Guide</h1>
+          <p className="mt-3 text-base text-muted-foreground max-w-3xl mx-auto">
             Comprehensive step-by-step guides for deploying, securing, and mastering ProcureChain - Kenya's blockchain-powered procurement platform. From complete beginners to enterprise deployment.
           </p>
           <div className="mt-6 flex justify-center gap-2 flex-wrap">
@@ -42,8 +42,8 @@ const Guides = () => {
         </TabsList>
 
         <TabsContent value="deployment" className="space-y-6">
-          <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg mb-6">
-            <h3 className="text-xl font-semibold text-blue-800 mb-3">Strategic SaaS Distribution Model</h3>
+          <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+            <h3 className="text-base font-semibold text-blue-800 mb-2">Strategic SaaS Distribution Model</h3>
             <p className="text-blue-700 mb-4">
               ProcureChain is primarily distributed as Software-as-a-Service (SaaS) via <strong>procurechain.co.ke</strong> for optimal security, 
               performance, and user experience. No public repository cloning to protect IP and ensure proper support.

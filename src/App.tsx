@@ -26,6 +26,7 @@ import Pricing from '@/pages/Pricing';
 import Guides from '@/pages/Guides';
 import Privacy from '@/pages/Privacy';
 import TermsOfService from '@/pages/TermsOfService';
+import CookiePolicy from '@/pages/CookiePolicy';
 import EnterpriseServices from '@/pages/EnterpriseServices';
 import ResetPassword from '@/pages/ResetPassword';
 import UpdatePassword from '@/pages/UpdatePassword';
@@ -57,6 +58,7 @@ function App() {
                 <Route path="/guides" element={<Guides />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/cookies" element={<CookiePolicy />} />
                 <Route path="/enterprise" element={<EnterpriseServices />} />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
