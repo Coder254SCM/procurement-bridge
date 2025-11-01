@@ -62,12 +62,26 @@ The system includes a comprehensive 4-step tender creation wizard:
 - Auto document verification
 
 **Step 3: Evaluation Criteria**
-- Technical criteria (default 70%)
-- Financial criteria (default 30%)
-- Custom criteria addition
-- Scoring methodology
-- Minimum thresholds
-- Evaluation team assignment
+- Comprehensive criteria system with ~200 criteria organized into 14 categories:
+  - Financial (27 criteria): Price, costs, financial health, payment terms
+  - Technical (27 criteria): Capability, methodology, standards, innovation
+  - Experience (21 criteria): Track record, qualifications, references
+  - Operational (21 criteria): Delivery, capacity, service levels, logistics
+  - Compliance (23 criteria): Legal, regulatory, security, ethical standards
+  - Sustainability (26 criteria): Environmental, social, climate, circular economy
+  - Risk Mitigation (8 criteria): Risk assessment, controls, management
+  - Preliminary/Mandatory Checks (7 criteria): Documentation, registration, compliance
+  - HSEC (8 criteria): Health, safety, environment, community engagement
+  - Supplier Ethical Practices (9 criteria): Labor, governance, transparency
+  - Adaptability & Flexibility (8 criteria): Change management, innovation, scalability
+  - Contract Management (8 criteria): KPIs, reporting, performance monitoring
+  - Social & Economic Objectives (8 criteria): Local content, SME support, equality
+  - Market & Competitive Dynamics (8 criteria): Position, partnerships, leadership
+- Collapsible category sections for easy management
+- Search functionality across all criteria
+- Quick actions: Equal split, clear all, set category to zero
+- Real-time weight calculation and validation
+- Must total exactly 100%
 
 **Step 4: Final Review & Submit**
 - Complete tender preview

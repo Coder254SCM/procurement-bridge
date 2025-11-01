@@ -92,11 +92,11 @@ export function useSystemCapabilities(): SystemCapabilities {
       EvaluationCriteriaCategory.COMMUNITY_IMPACT,
       
       // Contract (5)
-      EvaluationCriteriaCategory.WARRANTY_TERMS,
-      EvaluationCriteriaCategory.AFTER_SALES_SUPPORT,
-      EvaluationCriteriaCategory.MAINTENANCE_CAPABILITY,
-      EvaluationCriteriaCategory.INTELLECTUAL_PROPERTY,
-      EvaluationCriteriaCategory.CONTRACT_TERMS_ACCEPTANCE
+      EvaluationCriteriaCategory.WARRANTY_GUARANTEE_TERMS,
+      EvaluationCriteriaCategory.AFTER_SALES_SERVICE,
+      EvaluationCriteriaCategory.MAINTENANCE_SUPPORT,
+      EvaluationCriteriaCategory.INTELLECTUAL_PROPERTY_RIGHTS_COMPLIANCE,
+      EvaluationCriteriaCategory.FLEXIBILITY_IN_CONTRACT_TERMS
     ],
     
     verificationLevels: [

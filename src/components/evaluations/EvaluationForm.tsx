@@ -79,11 +79,11 @@ const criteriaGroups = {
     { key: EvaluationCriteriaCategory.COMMUNITY_IMPACT, label: 'Community Impact' },
   ],
   contract: [
-    { key: EvaluationCriteriaCategory.WARRANTY_TERMS, label: 'Warranty Terms' },
-    { key: EvaluationCriteriaCategory.AFTER_SALES_SUPPORT, label: 'After-Sales Support' },
-    { key: EvaluationCriteriaCategory.MAINTENANCE_CAPABILITY, label: 'Maintenance Capability' },
-    { key: EvaluationCriteriaCategory.INTELLECTUAL_PROPERTY, label: 'Intellectual Property' },
-    { key: EvaluationCriteriaCategory.CONTRACT_TERMS_ACCEPTANCE, label: 'Contract Terms Acceptance' },
+    { key: EvaluationCriteriaCategory.WARRANTY_GUARANTEE_TERMS, label: 'Warranty & Guarantee Terms' },
+    { key: EvaluationCriteriaCategory.AFTER_SALES_SERVICE, label: 'After-Sales Service' },
+    { key: EvaluationCriteriaCategory.MAINTENANCE_SUPPORT, label: 'Maintenance Support' },
+    { key: EvaluationCriteriaCategory.INTELLECTUAL_PROPERTY_RIGHTS_COMPLIANCE, label: 'Intellectual Property' },
+    { key: EvaluationCriteriaCategory.FLEXIBILITY_IN_CONTRACT_TERMS, label: 'Contract Terms Flexibility' },
   ],
 };
 
