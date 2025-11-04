@@ -2,12 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import heroBg from '@/assets/home-hero-bg.jpg';
 
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 overflow-hidden">
+      <section className="relative py-20 md:py-32 overflow-hidden bg-cover bg-center" style={{ backgroundImage: `url(${heroBg})` }}>
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <img 
@@ -52,10 +54,6 @@ const Index = () => {
             </div>
           </div>
         </div>
-        
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
-        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-background"></div>
       </section>
 
       {/* Features Section */}

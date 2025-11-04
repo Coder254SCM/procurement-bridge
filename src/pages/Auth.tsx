@@ -1,8 +1,8 @@
-
 import React from 'react';
 import AuthForm from '@/components/auth/AuthForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import authBg from '@/assets/auth-bg.jpg';
 
 const Auth = () => {
   const { user } = useAuth();
@@ -13,7 +13,9 @@ const Auth = () => {
   }
   
   return (
-    <div className="container max-w-6xl mx-auto py-16 px-4">
+    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: `url(${authBg})` }}>
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-sm"></div>
+      <div className="container max-w-6xl mx-auto py-16 px-4 relative z-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div>
           <h1 className="text-2xl font-medium mb-4">Welcome to ProcureChain</h1>
@@ -56,6 +58,7 @@ const Auth = () => {
         <div>
           <AuthForm />
         </div>
+      </div>
       </div>
     </div>
   );
