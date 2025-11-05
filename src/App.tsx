@@ -34,6 +34,7 @@ import Budgets from '@/pages/Budgets';
 import Qualifications from '@/pages/Qualifications';
 import FrameworkAgreements from '@/pages/FrameworkAgreements';
 import ContractPerformance from '@/pages/ContractPerformance';
+import SecuritySettings from '@/pages/SecuritySettings';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -144,6 +145,11 @@ function App() {
                 <Route path="/contract-performance" element={
                   <ProtectedRoute>
                     <ContractPerformance />
+                  </ProtectedRoute>
+                } />
+                <Route path="/security" element={
+                  <ProtectedRoute>
+                    <SecuritySettings />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />
