@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { checkRateLimit, recordRateLimit, getRateLimitHeaders } from '../_shared/rateLimiter.ts';
 
 // Security validation utilities
 const validateInput = (input: string): boolean => {
@@ -73,6 +74,44 @@ serve(async (req) => {
       throw new Error("Invalid authentication");
     }
 
+    // Get user's subscription plan for rate limiting
+    const { data: subscriptionStatus } = await supabaseService.rpc('get_user_subscription_status', { user_id_param: user.id });
+    const userStatus = subscriptionStatus?.[0];
+    const planName = userStatus?.plan_name || 'None';
+
+    // Check rate limit
+    const rateLimitResult = await checkRateLimit(
+      supabaseService,
+      user.id,
+      'secure-tender-api',
+      planName
+    );
+
+    // Record rate limit attempt
+    const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip');
+    await recordRateLimit(supabaseService, user.id, 'secure-tender-api', ipAddress, rateLimitResult.allowed);
+
+    // Return 429 if rate limited
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          message: `You have exceeded your API rate limit. Limit: ${rateLimitResult.limit} requests/hour. Your plan: ${planName}`,
+          resetTime: rateLimitResult.resetTime,
+          limit: rateLimitResult.limit,
+          remaining: 0
+        }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            ...getRateLimitHeaders(rateLimitResult)
+          }
+        }
+      );
+    }
+
     const { action, tenderId, data, filters, trialMode }: SecureTenderRequest = await req.json();
     
     logData = { ...logData, user_id: user.id, action, trialMode };
@@ -89,11 +128,7 @@ serve(async (req) => {
     }
 
     // Check subscription status and trial eligibility
-    const { data: subscriptionStatus } = await supabaseService.rpc('get_user_subscription_status', { user_id_param: user.id });
-    const userStatus = subscriptionStatus?.[0];
-
     if (trialMode) {
-      // Check trial eligibility
       const { data: isEligible } = await supabaseService.rpc('check_trial_eligibility', {
         user_id_param: user.id,
         trial_type_param: 'tender_creation'
@@ -219,7 +254,11 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(result), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { 
+        ...corsHeaders, 
+        'Content-Type': 'application/json',
+        ...getRateLimitHeaders(rateLimitResult)
+      }
     });
 
   } catch (error) {

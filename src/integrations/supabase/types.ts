@@ -20,7 +20,7 @@ export type Database = {
           endpoint: string
           error_message: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           method: string
           request_data: Json | null
           response_status: number | null
@@ -33,7 +33,7 @@ export type Database = {
           endpoint: string
           error_message?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           method: string
           request_data?: Json | null
           response_status?: number | null
@@ -46,7 +46,7 @@ export type Database = {
           endpoint?: string
           error_message?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           method?: string
           request_data?: Json | null
           response_status?: number | null
@@ -188,7 +188,7 @@ export type Database = {
           entity_id: string | null
           entity_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_values: Json | null
           old_values: Json | null
           user_agent: string | null
@@ -201,7 +201,7 @@ export type Database = {
           entity_id?: string | null
           entity_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           user_agent?: string | null
@@ -214,7 +214,7 @@ export type Database = {
           entity_id?: string | null
           entity_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           user_agent?: string | null
@@ -672,7 +672,7 @@ export type Database = {
           data_accessed: string
           endpoint: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           query_parameters: Json | null
           record_count: number | null
           user_agent: string | null
@@ -684,7 +684,7 @@ export type Database = {
           data_accessed: string
           endpoint: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           query_parameters?: Json | null
           record_count?: number | null
           user_agent?: string | null
@@ -696,7 +696,7 @@ export type Database = {
           data_accessed?: string
           endpoint?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           query_parameters?: Json | null
           record_count?: number | null
           user_agent?: string | null
@@ -922,7 +922,7 @@ export type Database = {
           id: string
           started_at: string | null
           success_count: number | null
-          sync_duration: unknown | null
+          sync_duration: unknown
           sync_type: string
         }
         Insert: {
@@ -935,7 +935,7 @@ export type Database = {
           id?: string
           started_at?: string | null
           success_count?: number | null
-          sync_duration?: unknown | null
+          sync_duration?: unknown
           sync_type: string
         }
         Update: {
@@ -948,7 +948,7 @@ export type Database = {
           id?: string
           started_at?: string | null
           success_count?: number | null
-          sync_duration?: unknown | null
+          sync_duration?: unknown
           sync_type?: string
         }
         Relationships: [
@@ -1128,7 +1128,7 @@ export type Database = {
           file_path: string | null
           file_size: number | null
           generated_by: string
-          generation_time: unknown | null
+          generation_time: unknown
           id: string
           parameters_used: Json | null
           status: string | null
@@ -1140,7 +1140,7 @@ export type Database = {
           file_path?: string | null
           file_size?: number | null
           generated_by: string
-          generation_time?: unknown | null
+          generation_time?: unknown
           id?: string
           parameters_used?: Json | null
           status?: string | null
@@ -1152,7 +1152,7 @@ export type Database = {
           file_path?: string | null
           file_size?: number | null
           generated_by?: string
-          generation_time?: unknown | null
+          generation_time?: unknown
           id?: string
           parameters_used?: Json | null
           status?: string | null
@@ -1576,6 +1576,33 @@ export type Database = {
           scheduled_for?: string | null
           sent_at?: string | null
           title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      rate_limit_tracking: {
+        Row: {
+          allowed: boolean
+          created_at: string
+          endpoint: string
+          id: string
+          ip_address: unknown
+          user_id: string
+        }
+        Insert: {
+          allowed?: boolean
+          created_at?: string
+          endpoint: string
+          id?: string
+          ip_address?: unknown
+          user_id: string
+        }
+        Update: {
+          allowed?: boolean
+          created_at?: string
+          endpoint?: string
+          id?: string
+          ip_address?: unknown
           user_id?: string
         }
         Relationships: []
@@ -2171,7 +2198,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           trial_data: Json | null
           trial_type: string
           used_at: string
@@ -2181,7 +2208,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           trial_data?: Json | null
           trial_type: string
           used_at?: string
@@ -2191,7 +2218,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           trial_data?: Json | null
           trial_type?: string
           used_at?: string
