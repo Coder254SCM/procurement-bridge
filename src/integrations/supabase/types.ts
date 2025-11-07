@@ -1768,6 +1768,378 @@ export type Database = {
         }
         Relationships: []
       }
+      rth_field_validation: {
+        Row: {
+          created_at: string | null
+          field_name: string
+          field_phase_angle: number | null
+          fraud_likelihood: number | null
+          id: string
+          interference_classification: string | null
+          objective_source: string | null
+          objective_value: number | null
+          session_id: string
+          subjective_source: string | null
+          subjective_value: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          field_name: string
+          field_phase_angle?: number | null
+          fraud_likelihood?: number | null
+          id?: string
+          interference_classification?: string | null
+          objective_source?: string | null
+          objective_value?: number | null
+          session_id: string
+          subjective_source?: string | null
+          subjective_value?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          field_name?: string
+          field_phase_angle?: number | null
+          fraud_likelihood?: number | null
+          id?: string
+          interference_classification?: string | null
+          objective_source?: string | null
+          objective_value?: number | null
+          session_id?: string
+          subjective_source?: string | null
+          subjective_value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rth_field_validation_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "rth_verification_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rth_pattern_library: {
+        Row: {
+          created_at: string | null
+          id: string
+          pattern_metadata: Json | null
+          pattern_vector: Json
+          success_metric: number | null
+          tender_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          pattern_metadata?: Json | null
+          pattern_vector: Json
+          success_metric?: number | null
+          tender_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          pattern_metadata?: Json | null
+          pattern_vector?: Json
+          success_metric?: number | null
+          tender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rth_pattern_library_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rth_phase_matrix: {
+        Row: {
+          created_at: string | null
+          id: string
+          interference_type: string | null
+          phase_angle: number
+          session_id: string
+          verifier_i: string
+          verifier_j: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          interference_type?: string | null
+          phase_angle: number
+          session_id: string
+          verifier_i: string
+          verifier_j: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          interference_type?: string | null
+          phase_angle?: number
+          session_id?: string
+          verifier_i?: string
+          verifier_j?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rth_phase_matrix_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "rth_verification_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rth_phase_matrix_verifier_i_fkey"
+            columns: ["verifier_i"]
+            isOneToOne: false
+            referencedRelation: "rth_verifiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rth_phase_matrix_verifier_j_fkey"
+            columns: ["verifier_j"]
+            isOneToOne: false
+            referencedRelation: "rth_verifiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rth_risk_monitoring: {
+        Row: {
+          created_at: string | null
+          credit_score: number | null
+          id: string
+          payment_terms: string | null
+          performance_score: number | null
+          regulatory_compliance_score: number | null
+          risk_state: string | null
+          supplier_id: string
+          tax_compliance_score: number | null
+          total_risk_pressure: number | null
+          verification_frequency: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          credit_score?: number | null
+          id?: string
+          payment_terms?: string | null
+          performance_score?: number | null
+          regulatory_compliance_score?: number | null
+          risk_state?: string | null
+          supplier_id: string
+          tax_compliance_score?: number | null
+          total_risk_pressure?: number | null
+          verification_frequency?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          credit_score?: number | null
+          id?: string
+          payment_terms?: string | null
+          performance_score?: number | null
+          regulatory_compliance_score?: number | null
+          risk_state?: string | null
+          supplier_id?: string
+          tax_compliance_score?: number | null
+          total_risk_pressure?: number | null
+          verification_frequency?: string | null
+        }
+        Relationships: []
+      }
+      rth_verification_sessions: {
+        Row: {
+          average_phase: number | null
+          blockchain_hash: string | null
+          circular_variance: number | null
+          completed_at: string | null
+          confidence_score: number | null
+          consensus_result: Json | null
+          contract_id: string | null
+          created_at: string | null
+          current_verifiers: number | null
+          decision: string | null
+          expires_at: string | null
+          id: string
+          milestone_id: string | null
+          outlier_confidence: number | null
+          outlier_detected: boolean | null
+          outlier_verifier_id: string | null
+          required_verifiers: number | null
+          status: string | null
+          verification_type: string
+        }
+        Insert: {
+          average_phase?: number | null
+          blockchain_hash?: string | null
+          circular_variance?: number | null
+          completed_at?: string | null
+          confidence_score?: number | null
+          consensus_result?: Json | null
+          contract_id?: string | null
+          created_at?: string | null
+          current_verifiers?: number | null
+          decision?: string | null
+          expires_at?: string | null
+          id?: string
+          milestone_id?: string | null
+          outlier_confidence?: number | null
+          outlier_detected?: boolean | null
+          outlier_verifier_id?: string | null
+          required_verifiers?: number | null
+          status?: string | null
+          verification_type: string
+        }
+        Update: {
+          average_phase?: number | null
+          blockchain_hash?: string | null
+          circular_variance?: number | null
+          completed_at?: string | null
+          confidence_score?: number | null
+          consensus_result?: Json | null
+          contract_id?: string | null
+          created_at?: string | null
+          current_verifiers?: number | null
+          decision?: string | null
+          expires_at?: string | null
+          id?: string
+          milestone_id?: string | null
+          outlier_confidence?: number | null
+          outlier_detected?: boolean | null
+          outlier_verifier_id?: string | null
+          required_verifiers?: number | null
+          status?: string | null
+          verification_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rth_verification_sessions_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rth_verification_sessions_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "contract_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rth_verification_sessions_outlier_verifier_id_fkey"
+            columns: ["outlier_verifier_id"]
+            isOneToOne: false
+            referencedRelation: "rth_verifiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rth_verifications: {
+        Row: {
+          amplitude: number
+          comments: string | null
+          created_at: string | null
+          frequency: number | null
+          id: string
+          phase_angle: number | null
+          response_time_seconds: number | null
+          session_id: string
+          supporting_documents: Json | null
+          verification_data: Json
+          verified_value: number
+          verifier_id: string
+          wavelength: number | null
+        }
+        Insert: {
+          amplitude: number
+          comments?: string | null
+          created_at?: string | null
+          frequency?: number | null
+          id?: string
+          phase_angle?: number | null
+          response_time_seconds?: number | null
+          session_id: string
+          supporting_documents?: Json | null
+          verification_data: Json
+          verified_value: number
+          verifier_id: string
+          wavelength?: number | null
+        }
+        Update: {
+          amplitude?: number
+          comments?: string | null
+          created_at?: string | null
+          frequency?: number | null
+          id?: string
+          phase_angle?: number | null
+          response_time_seconds?: number | null
+          session_id?: string
+          supporting_documents?: Json | null
+          verification_data?: Json
+          verified_value?: number
+          verifier_id?: string
+          wavelength?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rth_verifications_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "rth_verification_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rth_verifications_verifier_id_fkey"
+            columns: ["verifier_id"]
+            isOneToOne: false
+            referencedRelation: "rth_verifiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rth_verifiers: {
+        Row: {
+          consistency_period: number | null
+          correct_verifications: number | null
+          created_at: string | null
+          id: string
+          last_verification_at: string | null
+          reputation_amplitude: number | null
+          response_frequency: number | null
+          total_verifications: number | null
+          updated_at: string | null
+          user_id: string
+          verifier_type: string
+        }
+        Insert: {
+          consistency_period?: number | null
+          correct_verifications?: number | null
+          created_at?: string | null
+          id?: string
+          last_verification_at?: string | null
+          reputation_amplitude?: number | null
+          response_frequency?: number | null
+          total_verifications?: number | null
+          updated_at?: string | null
+          user_id: string
+          verifier_type: string
+        }
+        Update: {
+          consistency_period?: number | null
+          correct_verifications?: number | null
+          created_at?: string | null
+          id?: string
+          last_verification_at?: string | null
+          reputation_amplitude?: number | null
+          response_frequency?: number | null
+          total_verifications?: number | null
+          updated_at?: string | null
+          user_id?: string
+          verifier_type?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           active: boolean | null
