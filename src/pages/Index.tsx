@@ -12,11 +12,9 @@ const Index = () => {
         <div className="absolute inset-0 bg-background/40 backdrop-blur-[2px]"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
-            <img 
-              src="/lovable-uploads/2767cbb7-f0e0-4434-a008-9c44991b8a8b.png" 
-              alt="ProcureChain Logo" 
-              className="h-20 w-auto mx-auto mb-8" 
-            />
+            <div className="text-5xl md:text-6xl font-bold mb-8 text-primary">
+              ProcureChain
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 gradient-text">
               Blockchain-Powered Procurement Platform
             </h1>
