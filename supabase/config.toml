@@ -5,3 +5,15 @@ verify_jwt = true
 
 [functions.contract-performance-management]
 verify_jwt = true
+
+[functions.secure-tender-api]
+verify_jwt = true
+
+[functions.secure-bid-api]
+verify_jwt = true
+
+[functions.secure-evaluation-api]
+verify_jwt = true
+
+[functions.rth-consensus]
+verify_jwt = true
