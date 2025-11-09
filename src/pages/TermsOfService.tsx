@@ -357,7 +357,25 @@ const TermsOfService = () => {
           <li><strong>Third Party Actions:</strong> Actions or content of third parties on the Platform</li>
           <li><strong>Unauthorized Access:</strong> Unauthorized access to your account due to your negligence</li>
           <li><strong>Force Majeure:</strong> Acts of God, natural disasters, pandemics, war, terrorism</li>
+          <li><strong>Contract Failures:</strong> Failed bids, rejected proposals, contract non-awards, or supplier blacklisting</li>
+          <li><strong>Security Breaches:</strong> Cyberattacks, data breaches, or hacking incidents (unless caused by our gross negligence)</li>
+          <li><strong>System Failures:</strong> Downtime, outages, performance degradation, or service interruptions</li>
+          <li><strong>Integration Issues:</strong> Problems arising from third-party integrations, APIs, or external systems</li>
+          <li><strong>Regulatory Actions:</strong> Fines, penalties, or actions by regulatory authorities (e.g., PPRA, KRA)</li>
+          <li><strong>Blockchain Issues:</strong> Network failures, smart contract bugs, or blockchain consensus problems</li>
+          <li><strong>Validation Errors:</strong> Missed errors despite automated checking systems, incomplete validation</li>
+          <li><strong>Verification Failures:</strong> Failed or incomplete verification processes, incorrect verification status</li>
+          <li><strong>Procurement Outcomes:</strong> Unfavorable procurement results, supplier performance failures, delivery delays</li>
+          <li><strong>User Errors:</strong> Damages resulting from user error, misuse, or failure to follow guidelines</li>
+          <li><strong>Error Prevention Failures:</strong> Poka-yoke systems failing to detect or prevent errors</li>
+          <li><strong>Imbalanced Processes:</strong> Tender requirements or submissions that favor one party over another</li>
         </ul>
+        <p className="mt-4 bg-yellow-50 border-l-4 border-l-yellow-500 p-4">
+          <strong>PLATFORM ROLE CLARIFICATION:</strong> ProcureChain is a technology platform facilitator only. We do not:
+          (1) make procurement decisions, (2) guarantee supplier suitability, (3) guarantee fair tender requirements, 
+          (4) guarantee error detection by automated systems, (5) act as a contract party, or (6) provide professional advisory services. 
+          Users are solely responsible for verifying information, conducting due diligence, ensuring compliance, and not relying exclusively on automated checks.
+        </p>
 
         <h3 className="mt-4 text-xl font-semibold">9.2 Maximum Liability Cap</h3>
         <p>

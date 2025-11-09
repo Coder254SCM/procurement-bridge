@@ -223,11 +223,19 @@ const Documentation = () => {
                 <div className="space-y-4">
                   <div className="p-3 bg-orange-50 rounded-lg">
                     <h4 className="font-semibold text-orange-900">Supply Chain Professional</h4>
-                    <p className="text-sm text-orange-700">Reviews tender requirements, validates supply chain feasibility</p>
+                    <p className="text-sm text-orange-700">Reviews tender requirements, validates supply chain feasibility, ensures supplier capability alignment</p>
                   </div>
                   <div className="p-3 bg-red-50 rounded-lg">
                     <h4 className="font-semibold text-red-900">Auditor</h4>
-                    <p className="text-sm text-red-700">Conducts compliance audits, reviews blockchain records</p>
+                    <p className="text-sm text-red-700">Conducts compliance audits, reviews blockchain records, ensures transparency and accountability</p>
+                  </div>
+                  <div className="p-3 bg-yellow-50 rounded-lg">
+                    <h4 className="font-semibold text-yellow-900">Finance Manager</h4>
+                    <p className="text-sm text-yellow-700">Oversees budget allocation, payment processing, financial compliance verification</p>
+                  </div>
+                  <div className="p-3 bg-teal-50 rounded-lg">
+                    <h4 className="font-semibold text-teal-900">Compliance Officer</h4>
+                    <p className="text-sm text-teal-700">Monitors regulatory compliance, enforces policies, manages risk assessments</p>
                   </div>
                 </div>
               </CardContent>
@@ -365,32 +373,34 @@ const Documentation = () => {
                 </div>
                 
                 <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-3">Evaluation Criteria Categories (35+ Categories)</h4>
+                  <h4 className="font-semibold mb-3">Evaluation Criteria Categories (40+ Categories)</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
-                      <h5 className="font-medium text-blue-800 mb-2">Financial (5 criteria)</h5>
+                      <h5 className="font-medium text-blue-800 mb-2">Financial (6 criteria)</h5>
                       <ul className="text-xs space-y-1">
                         <li>• Price Competitiveness</li>
                         <li>• Financial Stability</li>
                         <li>• Cost Effectiveness</li>
                         <li>• Lifecycle Costs</li>
                         <li>• Payment Terms</li>
+                        <li>• Value for Money</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-green-800 mb-2">Technical (5 criteria)</h5>
+                      <h5 className="font-medium text-green-800 mb-2">Technical (6 criteria)</h5>
                       <ul className="text-xs space-y-1">
                         <li>• Technical Capability</li>
                         <li>• Methodology</li>
                         <li>• Innovation</li>
                         <li>• Quality Standards</li>
                         <li>• Technical Compliance</li>
+                        <li>• Technology Stack</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-purple-800 mb-2">Experience (6 criteria)</h5>
+                      <h5 className="font-medium text-purple-800 mb-2">Experience (7 criteria)</h5>
                       <ul className="text-xs space-y-1">
                         <li>• Relevant Experience</li>
                         <li>• Past Performance</li>
@@ -398,28 +408,31 @@ const Documentation = () => {
                         <li>• Industry Expertise</li>
                         <li>• Key Personnel</li>
                         <li>• Project Management</li>
+                        <li>• Similar Projects Delivered</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-orange-800 mb-2">Operational (5 criteria)</h5>
+                      <h5 className="font-medium text-orange-800 mb-2">Operational (6 criteria)</h5>
                       <ul className="text-xs space-y-1">
                         <li>• Delivery Timeframe</li>
                         <li>• Implementation Plan</li>
                         <li>• Operational Capacity</li>
                         <li>• Quality Assurance</li>
                         <li>• Service Level Agreements</li>
+                        <li>• Resource Allocation</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-red-800 mb-2">Compliance (5 criteria)</h5>
+                      <h5 className="font-medium text-red-800 mb-2">Compliance (6 criteria)</h5>
                       <ul className="text-xs space-y-1">
                         <li>• Legal Compliance</li>
                         <li>• Regulatory Compliance</li>
                         <li>• Risk Management</li>
                         <li>• Insurance Coverage</li>
                         <li>• Security Measures</li>
+                        <li>• Data Protection</li>
                       </ul>
                     </div>
                     
@@ -431,6 +444,112 @@ const Documentation = () => {
                         <li>• Local Content</li>
                         <li>• Diversity & Inclusion</li>
                         <li>• Community Impact</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-indigo-800 mb-2">Advanced Verification (4 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Multi-Party Consensus</li>
+                        <li>• Real-Time Validation</li>
+                        <li>• Outlier Detection</li>
+                        <li>• Adaptive Risk Scoring</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-6 mt-6">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-primary" />
+                    Error Prevention (Poka-Yoke) System
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <h5 className="font-semibold text-blue-900 mb-2">Submission Validation</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Required field checks before submission</li>
+                        <li>• Document format validation</li>
+                        <li>• File size and type restrictions</li>
+                        <li>• Automated completeness scoring</li>
+                        <li>• Real-time error highlighting</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <h5 className="font-semibold text-green-900 mb-2">Data Integrity Checks</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Duplicate detection mechanisms</li>
+                        <li>• Cross-reference validation</li>
+                        <li>• Numeric range verification</li>
+                        <li>• Date consistency checks</li>
+                        <li>• Blockchain hash verification</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-purple-50 rounded-lg">
+                      <h5 className="font-semibold text-purple-900 mb-2">Process Safeguards</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Workflow stage validation</li>
+                        <li>• Authorization requirement checks</li>
+                        <li>• Deadline compliance monitoring</li>
+                        <li>• Budget availability verification</li>
+                        <li>• Approval workflow enforcement</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-orange-50 rounded-lg">
+                      <h5 className="font-semibold text-orange-900 mb-2">Smart Warnings</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Pre-submission checklist</li>
+                        <li>• Missing document alerts</li>
+                        <li>• Pricing anomaly detection</li>
+                        <li>• Compliance gap notifications</li>
+                        <li>• Submission deadline reminders</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border-t pt-6 mt-6">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <ClipboardCheck className="h-5 w-5 text-primary" />
+                    Checks and Balances System
+                  </h4>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-yellow-50 rounded-lg">
+                      <h5 className="font-semibold text-yellow-900 mb-2">Buyer Submission Safeguards</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Requirement fairness assessment (no bias toward specific suppliers)</li>
+                        <li>• Market availability verification (realistic specifications)</li>
+                        <li>• Budget reasonableness checks</li>
+                        <li>• Evaluation criteria balance validation (price vs. quality)</li>
+                        <li>• Timeline adequacy verification (sufficient bid preparation time)</li>
+                        <li>• Supply chain professional review mandatory</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-teal-50 rounded-lg">
+                      <h5 className="font-semibold text-teal-900 mb-2">Supplier Submission Safeguards</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Capability matching (requirements vs. supplier capacity)</li>
+                        <li>• Financial viability checks (bid amount vs. financial strength)</li>
+                        <li>• Experience verification (past projects similarity)</li>
+                        <li>• Pricing reasonableness analysis (not too low/high)</li>
+                        <li>• Delivery timeline feasibility assessment</li>
+                        <li>• Compliance documentation completeness</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-red-50 rounded-lg">
+                      <h5 className="font-semibold text-red-900 mb-2">Mutual Protection Mechanisms</h5>
+                      <ul className="text-sm space-y-1">
+                        <li>• Automated bid-requirement alignment scoring</li>
+                        <li>• Red flag detection for unrealistic requirements or bids</li>
+                        <li>• Independent third-party verification on high-value tenders</li>
+                        <li>• Dispute resolution mechanism with neutral arbitration</li>
+                        <li>• Performance bond requirements for contract protection</li>
+                        <li>• Milestone-based payment protection for both parties</li>
                       </ul>
                     </div>
                   </div>
