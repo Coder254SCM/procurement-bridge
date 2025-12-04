@@ -397,6 +397,47 @@ export type Database = {
           },
         ]
       }
+      capability_matches: {
+        Row: {
+          created_at: string | null
+          id: string
+          invitation_sent: boolean | null
+          invitation_sent_at: string | null
+          match_reasons: Json
+          match_score: number
+          supplier_id: string
+          tender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          invitation_sent?: boolean | null
+          invitation_sent_at?: string | null
+          match_reasons?: Json
+          match_score: number
+          supplier_id: string
+          tender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          invitation_sent?: boolean | null
+          invitation_sent_at?: string | null
+          match_reasons?: Json
+          match_score?: number
+          supplier_id?: string
+          tender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capability_matches_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_items: {
         Row: {
           base_price: number | null
@@ -1120,6 +1161,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      fraud_alerts: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          description: string
+          detected_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          severity: string
+          status: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          description: string
+          detected_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity: string
+          status?: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          description?: string
+          detected_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       generated_reports: {
         Row: {
@@ -2140,6 +2229,48 @@ export type Database = {
         }
         Relationships: []
       }
+      submission_progress: {
+        Row: {
+          created_at: string | null
+          current_step: number
+          entity_id: string | null
+          entity_type: string
+          id: string
+          is_draft: boolean | null
+          last_saved_at: string | null
+          step_data: Json | null
+          total_steps: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_step?: number
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          is_draft?: boolean | null
+          last_saved_at?: string | null
+          step_data?: Json | null
+          total_steps: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          current_step?: number
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          is_draft?: boolean | null
+          last_saved_at?: string | null
+          step_data?: Json | null
+          total_steps?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           active: boolean | null
@@ -2351,6 +2482,56 @@ export type Database = {
           updated_by?: string | null
         }
         Relationships: []
+      }
+      tender_fairness_metrics: {
+        Row: {
+          budget_realism: number
+          calculated_at: string | null
+          created_at: string | null
+          evaluation_transparency: number
+          id: string
+          overall_fairness: number
+          recommendations: Json | null
+          requirement_clarity: number
+          supplier_accessibility: number
+          tender_id: string
+          timeline_adequacy: number
+        }
+        Insert: {
+          budget_realism: number
+          calculated_at?: string | null
+          created_at?: string | null
+          evaluation_transparency: number
+          id?: string
+          overall_fairness: number
+          recommendations?: Json | null
+          requirement_clarity: number
+          supplier_accessibility: number
+          tender_id: string
+          timeline_adequacy: number
+        }
+        Update: {
+          budget_realism?: number
+          calculated_at?: string | null
+          created_at?: string | null
+          evaluation_transparency?: number
+          id?: string
+          overall_fairness?: number
+          recommendations?: Json | null
+          requirement_clarity?: number
+          supplier_accessibility?: number
+          tender_id?: string
+          timeline_adequacy?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_fairness_metrics_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tender_reviews: {
         Row: {
