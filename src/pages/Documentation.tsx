@@ -373,87 +373,120 @@ const Documentation = () => {
                 </div>
                 
                 <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-3">Evaluation Criteria Categories (40+ Categories)</h4>
+                  <h4 className="font-semibold mb-3">Comprehensive Evaluation Criteria (200+ Criteria in 14 Categories)</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
-                      <h5 className="font-medium text-blue-800 mb-2">Financial (6 criteria)</h5>
+                      <h5 className="font-medium text-blue-800 mb-2">Financial (27 criteria)</h5>
                       <ul className="text-xs space-y-1">
-                        <li>• Price Competitiveness</li>
-                        <li>• Financial Stability</li>
-                        <li>• Cost Effectiveness</li>
-                        <li>• Lifecycle Costs</li>
-                        <li>• Payment Terms</li>
-                        <li>• Value for Money</li>
+                        <li>• Price Competitiveness & Total Cost</li>
+                        <li>• Financial Stability & Liquidity</li>
+                        <li>• Cost Effectiveness & Value</li>
+                        <li>• Lifecycle Costs & TCO</li>
+                        <li>• Payment Terms & Conditions</li>
+                        <li>• Budget Allocation & Controls</li>
+                        <li>• Currency & Exchange Risk</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-green-800 mb-2">Technical (6 criteria)</h5>
+                      <h5 className="font-medium text-green-800 mb-2">Technical (27 criteria)</h5>
                       <ul className="text-xs space-y-1">
-                        <li>• Technical Capability</li>
-                        <li>• Methodology</li>
-                        <li>• Innovation</li>
-                        <li>• Quality Standards</li>
-                        <li>• Technical Compliance</li>
-                        <li>• Technology Stack</li>
+                        <li>• Technical Capability & Expertise</li>
+                        <li>• Methodology & Approach</li>
+                        <li>• Innovation & Technology</li>
+                        <li>• Quality Standards & ISO Compliance</li>
+                        <li>• Technical Specifications Match</li>
+                        <li>• Equipment & Tools Availability</li>
+                        <li>• R&D Capabilities</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-purple-800 mb-2">Experience (7 criteria)</h5>
+                      <h5 className="font-medium text-purple-800 mb-2">Experience (21 criteria)</h5>
                       <ul className="text-xs space-y-1">
-                        <li>• Relevant Experience</li>
-                        <li>• Past Performance</li>
-                        <li>• Qualifications</li>
-                        <li>• Industry Expertise</li>
-                        <li>• Key Personnel</li>
-                        <li>• Project Management</li>
+                        <li>• Relevant Experience & Track Record</li>
+                        <li>• Past Performance & References</li>
+                        <li>• Qualifications & Certifications</li>
+                        <li>• Industry Expertise & Knowledge</li>
+                        <li>• Key Personnel Experience</li>
+                        <li>• Project Management History</li>
                         <li>• Similar Projects Delivered</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-orange-800 mb-2">Operational (6 criteria)</h5>
+                      <h5 className="font-medium text-orange-800 mb-2">Operational (21 criteria)</h5>
                       <ul className="text-xs space-y-1">
-                        <li>• Delivery Timeframe</li>
-                        <li>• Implementation Plan</li>
-                        <li>• Operational Capacity</li>
-                        <li>• Quality Assurance</li>
+                        <li>• Delivery Timeframe & Schedule</li>
+                        <li>• Implementation Plan & Methodology</li>
+                        <li>• Operational Capacity & Resources</li>
+                        <li>• Quality Assurance Processes</li>
                         <li>• Service Level Agreements</li>
-                        <li>• Resource Allocation</li>
+                        <li>• Resource & Logistics Planning</li>
+                        <li>• Scalability & Flexibility</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-red-800 mb-2">Compliance (6 criteria)</h5>
+                      <h5 className="font-medium text-red-800 mb-2">Compliance (23 criteria)</h5>
                       <ul className="text-xs space-y-1">
-                        <li>• Legal Compliance</li>
-                        <li>• Regulatory Compliance</li>
-                        <li>• Risk Management</li>
-                        <li>• Insurance Coverage</li>
-                        <li>• Security Measures</li>
-                        <li>• Data Protection</li>
+                        <li>• Legal & Regulatory Compliance</li>
+                        <li>• PPRA/PPADA Requirements</li>
+                        <li>• Risk Management & Controls</li>
+                        <li>• Insurance & Bonding Coverage</li>
+                        <li>• Security & Data Protection</li>
+                        <li>• Tax & Revenue Compliance</li>
+                        <li>• Industry-Specific Regulations</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-teal-800 mb-2">Sustainability (5 criteria)</h5>
+                      <h5 className="font-medium text-teal-800 mb-2">Sustainability (26 criteria)</h5>
                       <ul className="text-xs space-y-1">
-                        <li>• Environmental Sustainability</li>
-                        <li>• Social Responsibility</li>
-                        <li>• Local Content</li>
+                        <li>• Environmental Impact & Carbon</li>
+                        <li>• Social Responsibility & CSR</li>
+                        <li>• Local Content & Employment</li>
                         <li>• Diversity & Inclusion</li>
-                        <li>• Community Impact</li>
+                        <li>• Community Impact & Benefits</li>
+                        <li>• Circular Economy Practices</li>
+                        <li>• Climate Resilience</li>
                       </ul>
                     </div>
                     
                     <div>
-                      <h5 className="font-medium text-indigo-800 mb-2">Advanced Verification (4 criteria)</h5>
+                      <h5 className="font-medium text-indigo-800 mb-2">RTH Consensus Verification</h5>
                       <ul className="text-xs space-y-1">
-                        <li>• Multi-Party Consensus</li>
-                        <li>• Real-Time Validation</li>
-                        <li>• Outlier Detection</li>
-                        <li>• Adaptive Risk Scoring</li>
+                        <li>• Multi-Party Phase Verification</li>
+                        <li>• Tetrahedral Quorum (4 verifiers)</li>
+                        <li>• Wave Interference Analysis</li>
+                        <li>• Outlier Detection & Flagging</li>
+                        <li>• Reputation-Weighted Scoring</li>
+                        <li>• Dual-Field Fraud Detection</li>
+                        <li>• Risk Pressure Calculation</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-pink-800 mb-2">Risk Mitigation (8 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Risk Assessment & Identification</li>
+                        <li>• Mitigation Controls & Strategies</li>
+                        <li>• Risk Management Framework</li>
+                        <li>• Contingency Planning</li>
+                        <li>• Insurance Coverage</li>
+                        <li>• Business Continuity</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-medium text-cyan-800 mb-2">HSEC (8 criteria)</h5>
+                      <ul className="text-xs space-y-1">
+                        <li>• Health & Safety Standards</li>
+                        <li>• Environment Protection</li>
+                        <li>• Community Engagement</li>
+                        <li>• Incident Management</li>
+                        <li>• Safety Records & Training</li>
+                        <li>• Emergency Response Plans</li>
                       </ul>
                     </div>
                   </div>
