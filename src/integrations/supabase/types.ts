@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      addendum_acknowledgments: {
+        Row: {
+          acknowledged_at: string | null
+          addendum_id: string
+          id: string
+          ip_address: unknown
+          supplier_id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          addendum_id: string
+          id?: string
+          ip_address?: unknown
+          supplier_id: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          addendum_id?: string
+          id?: string
+          ip_address?: unknown
+          supplier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "addendum_acknowledgments_addendum_id_fkey"
+            columns: ["addendum_id"]
+            isOneToOne: false
+            referencedRelation: "tender_addendums"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_access_logs: {
         Row: {
           created_at: string
@@ -571,6 +603,109 @@ export type Database = {
           version?: string
         }
         Relationships: []
+      }
+      consortium_members: {
+        Row: {
+          accepted_at: string | null
+          accepted_terms: boolean | null
+          consortium_id: string
+          created_at: string | null
+          document_verification_status: string | null
+          documents_submitted: Json | null
+          financial_capacity: number | null
+          id: string
+          member_role: string
+          member_user_id: string
+          percentage_share: number
+          responsibilities: Json | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_terms?: boolean | null
+          consortium_id: string
+          created_at?: string | null
+          document_verification_status?: string | null
+          documents_submitted?: Json | null
+          financial_capacity?: number | null
+          id?: string
+          member_role?: string
+          member_user_id: string
+          percentage_share: number
+          responsibilities?: Json | null
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_terms?: boolean | null
+          consortium_id?: string
+          created_at?: string | null
+          document_verification_status?: string | null
+          documents_submitted?: Json | null
+          financial_capacity?: number | null
+          id?: string
+          member_role?: string
+          member_user_id?: string
+          percentage_share?: number
+          responsibilities?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consortium_members_consortium_id_fkey"
+            columns: ["consortium_id"]
+            isOneToOne: false
+            referencedRelation: "consortium_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consortium_registrations: {
+        Row: {
+          combined_turnover: number | null
+          consortium_name: string
+          created_at: string | null
+          id: string
+          joint_liability_accepted: boolean | null
+          lead_partner_id: string
+          registration_date: string | null
+          status: string | null
+          tender_id: string
+          total_members: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          combined_turnover?: number | null
+          consortium_name: string
+          created_at?: string | null
+          id?: string
+          joint_liability_accepted?: boolean | null
+          lead_partner_id: string
+          registration_date?: string | null
+          status?: string | null
+          tender_id: string
+          total_members?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          combined_turnover?: number | null
+          consortium_name?: string
+          created_at?: string | null
+          id?: string
+          joint_liability_accepted?: boolean | null
+          lead_partner_id?: string
+          registration_date?: string | null
+          status?: string | null
+          tender_id?: string
+          total_members?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consortium_registrations_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contract_milestones: {
         Row: {
@@ -2229,6 +2364,39 @@ export type Database = {
         }
         Relationships: []
       }
+      specification_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          mandatory_documents: string[] | null
+          min_specifications: number | null
+          specifications: Json
+          template_name: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          mandatory_documents?: string[] | null
+          min_specifications?: number | null
+          specifications?: Json
+          template_name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          mandatory_documents?: string[] | null
+          min_specifications?: number | null
+          specifications?: Json
+          template_name?: string
+        }
+        Relationships: []
+      }
       submission_progress: {
         Row: {
           created_at: string | null
@@ -2483,6 +2651,65 @@ export type Database = {
         }
         Relationships: []
       }
+      tender_addendums: {
+        Row: {
+          addendum_number: number
+          changes_summary: Json
+          created_at: string | null
+          description: string
+          extends_deadline: boolean | null
+          id: string
+          issued_at: string | null
+          issued_by: string
+          new_deadline: string | null
+          new_values: Json | null
+          original_values: Json | null
+          requires_acknowledgment: boolean | null
+          tender_id: string
+          title: string
+        }
+        Insert: {
+          addendum_number: number
+          changes_summary?: Json
+          created_at?: string | null
+          description: string
+          extends_deadline?: boolean | null
+          id?: string
+          issued_at?: string | null
+          issued_by: string
+          new_deadline?: string | null
+          new_values?: Json | null
+          original_values?: Json | null
+          requires_acknowledgment?: boolean | null
+          tender_id: string
+          title: string
+        }
+        Update: {
+          addendum_number?: number
+          changes_summary?: Json
+          created_at?: string | null
+          description?: string
+          extends_deadline?: boolean | null
+          id?: string
+          issued_at?: string | null
+          issued_by?: string
+          new_deadline?: string | null
+          new_values?: Json | null
+          original_values?: Json | null
+          requires_acknowledgment?: boolean | null
+          tender_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_addendums_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tender_fairness_metrics: {
         Row: {
           budget_realism: number
@@ -2566,6 +2793,53 @@ export type Database = {
             foreignKeyName: "tender_reviews_tender_id_fkey"
             columns: ["tender_id"]
             isOneToOne: true
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_specifications: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          is_mandatory: boolean | null
+          specification_key: string
+          specification_type: string
+          specification_value: string
+          tender_id: string
+          tolerance_range: string | null
+          unit_of_measure: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          specification_key: string
+          specification_type: string
+          specification_value: string
+          tender_id: string
+          tolerance_range?: string | null
+          unit_of_measure?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          specification_key?: string
+          specification_type?: string
+          specification_value?: string
+          tender_id?: string
+          tolerance_range?: string | null
+          unit_of_measure?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_specifications_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
             referencedRelation: "tenders"
             referencedColumns: ["id"]
           },
