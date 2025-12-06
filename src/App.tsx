@@ -35,6 +35,8 @@ import Qualifications from '@/pages/Qualifications';
 import FrameworkAgreements from '@/pages/FrameworkAgreements';
 import ContractPerformance from '@/pages/ContractPerformance';
 import SecuritySettings from '@/pages/SecuritySettings';
+import DataProtection from '@/pages/DataProtection';
+import Appeals from '@/pages/Appeals';
 import FraudDetection from '@/pages/FraudDetection';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
@@ -61,7 +63,13 @@ function App() {
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/cookies" element={<CookiePolicy />} />
+                <Route path="/data-protection" element={<DataProtection />} />
                 <Route path="/enterprise" element={<EnterpriseServices />} />
+                <Route path="/appeals" element={
+                  <ProtectedRoute>
+                    <Appeals />
+                  </ProtectedRoute>
+                } />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
                     <Dashboard />

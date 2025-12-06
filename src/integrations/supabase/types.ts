@@ -46,6 +46,39 @@ export type Database = {
           },
         ]
       }
+      agpo_categories: {
+        Row: {
+          category_code: string
+          category_name: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          preference_percentage: number
+          reservation_limit: number | null
+        }
+        Insert: {
+          category_code: string
+          category_name: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          preference_percentage?: number
+          reservation_limit?: number | null
+        }
+        Update: {
+          category_code?: string
+          category_name?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          preference_percentage?: number
+          reservation_limit?: number | null
+        }
+        Relationships: []
+      }
       api_access_logs: {
         Row: {
           created_at: string
@@ -87,6 +120,47 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      appeal_timeline: {
+        Row: {
+          appeal_id: string
+          documents: Json | null
+          event_by: string | null
+          event_date: string | null
+          event_description: string
+          event_type: string
+          id: string
+          is_public: boolean | null
+        }
+        Insert: {
+          appeal_id: string
+          documents?: Json | null
+          event_by?: string | null
+          event_date?: string | null
+          event_description: string
+          event_type: string
+          id?: string
+          is_public?: boolean | null
+        }
+        Update: {
+          appeal_id?: string
+          documents?: Json | null
+          event_by?: string | null
+          event_date?: string | null
+          event_description?: string
+          event_type?: string
+          id?: string
+          is_public?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appeal_timeline_appeal_id_fkey"
+            columns: ["appeal_id"]
+            isOneToOne: false
+            referencedRelation: "procurement_appeals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       approval_instances: {
         Row: {
@@ -880,6 +954,45 @@ export type Database = {
         }
         Relationships: []
       }
+      data_retention_schedule: {
+        Row: {
+          created_at: string | null
+          data_category: string
+          id: string
+          is_active: boolean | null
+          last_purge_run: string | null
+          legal_basis: string
+          next_purge_scheduled: string | null
+          purge_method: string | null
+          retention_years: number
+          table_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          data_category: string
+          id?: string
+          is_active?: boolean | null
+          last_purge_run?: string | null
+          legal_basis: string
+          next_purge_scheduled?: string | null
+          purge_method?: string | null
+          retention_years?: number
+          table_name: string
+        }
+        Update: {
+          created_at?: string | null
+          data_category?: string
+          id?: string
+          is_active?: boolean | null
+          last_purge_run?: string | null
+          legal_basis?: string
+          next_purge_scheduled?: string | null
+          purge_method?: string | null
+          retention_years?: number
+          table_name?: string
+        }
+        Relationships: []
+      }
       digital_identity_verification: {
         Row: {
           blockchain_hash: string | null
@@ -1087,6 +1200,74 @@ export type Database = {
         }
         Relationships: []
       }
+      erp_connector_configs: {
+        Row: {
+          connection_id: string
+          connector_type: string
+          created_at: string | null
+          dynamics_environment_url: string | null
+          dynamics_tenant_id: string | null
+          error_handling_config: Json | null
+          field_mappings: Json
+          id: string
+          is_active: boolean | null
+          oracle_service_name: string | null
+          oracle_wallet_path: string | null
+          sap_client: string | null
+          sap_logon_group: string | null
+          sap_system_id: string | null
+          sync_entities: string[] | null
+          transformation_rules: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          connection_id: string
+          connector_type: string
+          created_at?: string | null
+          dynamics_environment_url?: string | null
+          dynamics_tenant_id?: string | null
+          error_handling_config?: Json | null
+          field_mappings?: Json
+          id?: string
+          is_active?: boolean | null
+          oracle_service_name?: string | null
+          oracle_wallet_path?: string | null
+          sap_client?: string | null
+          sap_logon_group?: string | null
+          sap_system_id?: string | null
+          sync_entities?: string[] | null
+          transformation_rules?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          connection_id?: string
+          connector_type?: string
+          created_at?: string | null
+          dynamics_environment_url?: string | null
+          dynamics_tenant_id?: string | null
+          error_handling_config?: Json | null
+          field_mappings?: Json
+          id?: string
+          is_active?: boolean | null
+          oracle_service_name?: string | null
+          oracle_wallet_path?: string | null
+          sap_client?: string | null
+          sap_logon_group?: string | null
+          sap_system_id?: string | null
+          sync_entities?: string[] | null
+          transformation_rules?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "erp_connector_configs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "erp_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       erp_sync_logs: {
         Row: {
           completed_at: string | null
@@ -1130,6 +1311,65 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "erp_sync_logs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "erp_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      erp_sync_queue: {
+        Row: {
+          connection_id: string
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          error_message: string | null
+          id: string
+          max_retries: number | null
+          operation: string
+          payload: Json
+          priority: number | null
+          processed_at: string | null
+          retry_count: number | null
+          scheduled_at: string | null
+          status: string | null
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          error_message?: string | null
+          id?: string
+          max_retries?: number | null
+          operation: string
+          payload: Json
+          priority?: number | null
+          processed_at?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          error_message?: string | null
+          id?: string
+          max_retries?: number | null
+          operation?: string
+          payload?: Json
+          priority?: number | null
+          processed_at?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "erp_sync_queue_connection_id_fkey"
             columns: ["connection_id"]
             isOneToOne: false
             referencedRelation: "erp_connections"
@@ -1585,6 +1825,107 @@ export type Database = {
             columns: ["contract_id"]
             isOneToOne: false
             referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      procurement_appeals: {
+        Row: {
+          appeal_date: string | null
+          appeal_grounds: string
+          appeal_type: string
+          appellant_id: string
+          appellant_type: string
+          assigned_reviewer: string | null
+          blockchain_hash: string | null
+          buyer_response: string | null
+          buyer_response_by: string | null
+          buyer_response_date: string | null
+          created_at: string | null
+          decision: string | null
+          decision_date: string | null
+          decision_rationale: string | null
+          escalated_to_pparb: boolean | null
+          id: string
+          pparb_decision: string | null
+          pparb_decision_date: string | null
+          pparb_reference_number: string | null
+          remedial_actions: Json | null
+          response_deadline: string | null
+          review_committee_members: Json | null
+          review_notes: string | null
+          standstill_triggered: boolean | null
+          status: string | null
+          supporting_evidence: Json | null
+          tender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          appeal_date?: string | null
+          appeal_grounds: string
+          appeal_type: string
+          appellant_id: string
+          appellant_type: string
+          assigned_reviewer?: string | null
+          blockchain_hash?: string | null
+          buyer_response?: string | null
+          buyer_response_by?: string | null
+          buyer_response_date?: string | null
+          created_at?: string | null
+          decision?: string | null
+          decision_date?: string | null
+          decision_rationale?: string | null
+          escalated_to_pparb?: boolean | null
+          id?: string
+          pparb_decision?: string | null
+          pparb_decision_date?: string | null
+          pparb_reference_number?: string | null
+          remedial_actions?: Json | null
+          response_deadline?: string | null
+          review_committee_members?: Json | null
+          review_notes?: string | null
+          standstill_triggered?: boolean | null
+          status?: string | null
+          supporting_evidence?: Json | null
+          tender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          appeal_date?: string | null
+          appeal_grounds?: string
+          appeal_type?: string
+          appellant_id?: string
+          appellant_type?: string
+          assigned_reviewer?: string | null
+          blockchain_hash?: string | null
+          buyer_response?: string | null
+          buyer_response_by?: string | null
+          buyer_response_date?: string | null
+          created_at?: string | null
+          decision?: string | null
+          decision_date?: string | null
+          decision_rationale?: string | null
+          escalated_to_pparb?: boolean | null
+          id?: string
+          pparb_decision?: string | null
+          pparb_decision_date?: string | null
+          pparb_reference_number?: string | null
+          remedial_actions?: Json | null
+          response_deadline?: string | null
+          review_committee_members?: Json | null
+          review_notes?: string | null
+          standstill_triggered?: boolean | null
+          status?: string | null
+          supporting_evidence?: Json | null
+          tender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procurement_appeals_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
             referencedColumns: ["id"]
           },
         ]
@@ -2475,6 +2816,59 @@ export type Database = {
         }
         Relationships: []
       }
+      supplier_agpo_registration: {
+        Row: {
+          agpo_category_id: string
+          certificate_document_url: string | null
+          certificate_expiry: string
+          certificate_number: string
+          created_at: string | null
+          id: string
+          rejection_reason: string | null
+          supplier_id: string
+          updated_at: string | null
+          verification_status: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          agpo_category_id: string
+          certificate_document_url?: string | null
+          certificate_expiry: string
+          certificate_number: string
+          created_at?: string | null
+          id?: string
+          rejection_reason?: string | null
+          supplier_id: string
+          updated_at?: string | null
+          verification_status?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          agpo_category_id?: string
+          certificate_document_url?: string | null
+          certificate_expiry?: string
+          certificate_number?: string
+          created_at?: string | null
+          id?: string
+          rejection_reason?: string | null
+          supplier_id?: string
+          updated_at?: string | null
+          verification_status?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_agpo_registration_agpo_category_id_fkey"
+            columns: ["agpo_category_id"]
+            isOneToOne: false
+            referencedRelation: "agpo_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supplier_lists: {
         Row: {
           created_at: string | null
@@ -2705,6 +3099,44 @@ export type Database = {
             foreignKeyName: "tender_addendums_tender_id_fkey"
             columns: ["tender_id"]
             isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_agpo_settings: {
+        Row: {
+          agpo_reserved: boolean | null
+          created_at: string | null
+          exclusive_agpo: boolean | null
+          id: string
+          reservation_percentage: number | null
+          reserved_categories: string[] | null
+          tender_id: string
+        }
+        Insert: {
+          agpo_reserved?: boolean | null
+          created_at?: string | null
+          exclusive_agpo?: boolean | null
+          id?: string
+          reservation_percentage?: number | null
+          reserved_categories?: string[] | null
+          tender_id: string
+        }
+        Update: {
+          agpo_reserved?: boolean | null
+          created_at?: string | null
+          exclusive_agpo?: boolean | null
+          id?: string
+          reservation_percentage?: number | null
+          reserved_categories?: string[] | null
+          tender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_agpo_settings_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: true
             referencedRelation: "tenders"
             referencedColumns: ["id"]
           },
