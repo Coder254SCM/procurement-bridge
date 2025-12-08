@@ -36,9 +36,11 @@ export interface ERPSyncQueueItem {
   retry_count: number;
 }
 
+export type ERPSystem = 'sap' | 'oracle' | 'dynamics' | 'netsuite' | 'workday' | 'odoo' | 'google_sheets' | 'excel_online';
+
 /**
  * Service for ERP System Integration
- * Supports SAP S/4HANA, SAP Ariba, Oracle Fusion, Oracle EBS, MS Dynamics 365
+ * Supports SAP S/4HANA, SAP Ariba, Oracle Fusion, Oracle EBS, MS Dynamics 365, Google Sheets, Excel Online
  */
 class ERPIntegrationService {
   // Create ERP connection
