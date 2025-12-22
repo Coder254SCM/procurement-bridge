@@ -98,12 +98,11 @@ export function ConsortiumRegistration({ tenderId, leadPartnerId, onRegistration
         status: 'draft'
       });
 
-      if (result) {
+      if (result.id) {
         // Add members
         for (const member of members) {
           const memberData: ConsortiumMember = {
-            consortium_id: result.id,
-            member_user_id: member.email, // This would need user lookup
+            member_user_id: member.email,
             member_role: member.role,
             percentage_share: member.percentage_share,
             responsibilities: [member.responsibilities],
