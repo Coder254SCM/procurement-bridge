@@ -1,175 +1,192 @@
 # Database Architecture - ProcureChain
 
-## Complete Table Structure (37 Tables) ✅
+## Overview
+**Total Tables**: 50+  
+**Last Updated**: December 22, 2025
 
-### Core Procurement Tables (6)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `tenders` | Tender postings and details | Blockchain hash, multiple procurement methods, RLS policies |
-| `bids` | Supplier bid submissions | Document storage, technical details, supplier access control |
-| `evaluations` | Bid evaluations | ~200 criteria stored as JSONB, multi-evaluator support |
-| `contracts` | Award contracts | Milestone tracking, terms & conditions, party access |
-| `contract_milestones` | Delivery milestones | Payment tracking, verification documents |
-| `payment_schedules` | Payment tracking | Due dates, payment methods, status tracking |
+---
 
-### Supplier Management Tables (4)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `supplier_qualifications` | Certifications & qualifications | Category-based, financial capacity, compliance scores |
-| `supplier_performance_history` | Performance tracking | Quality, delivery, service scores per contract |
-| `vendor_blacklist` | Debarred suppliers | Expiry dates, supporting documents, admin control |
-| `risk_assessments` | Risk evaluation | Risk scores, mitigation actions, assessment criteria |
+## Core Procurement Tables
 
-### Compliance & Verification Tables (4)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `compliance_checks` | Automated validation | Check types, status tracking, result data |
-| `compliance_frameworks` | Regulatory frameworks | Requirements, validation rules, penalties |
-| `digital_identity_verification` | KYC/business verification | Blockchain hash, verification status, business IDs |
-| `behavior_analysis` | AI pattern detection | Risk scores, analysis data, entity tracking |
+| Table | Description | Key Columns |
+|-------|-------------|-------------|
+| `tenders` | Tender postings | buyer_id, status, deadline, blockchain_hash |
+| `bids` | Supplier submissions | tender_id, supplier_id, bid_amount, status |
+| `evaluations` | Bid scoring | bid_id, evaluator_id, score, criteria_scores |
+| `contracts` | Awarded contracts | tender_id, winning_bid_id, contract_value |
+| `contract_milestones` | Delivery tracking | contract_id, due_date, status, payment_percentage |
+| `payment_schedules` | Payment tracking | contract_id, amount, due_date, paid_date |
 
-### Blockchain & Audit Tables (2)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `blockchain_transactions` | Immutable audit trail | Transaction hashes, metadata, entity tracking |
-| `audit_logs` | System audit trail | Action tracking, old/new values, IP logging |
+---
 
-### Advanced Procurement Tables (7)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `framework_agreements` | Long-term agreements | Supplier panels, evaluation criteria, max values |
-| `reverse_auctions` | Dynamic pricing | Real-time bidding, reserve price, leader tracking |
-| `auction_bids` | Auction bid tracking | Automatic bids, ranking, bid history |
-| `purchase_requisitions` | Internal requisitions | Approval workflow, multi-approver support |
-| `catalog_items` | E-catalog products | SKU, specifications, supplier assignments |
-| `product_categories` | Catalog categories | Hierarchical structure, active/inactive status |
-| `budget_allocations` | Budget management | Financial year tracking, allocation monitoring |
+## Supplier Management
 
-### Dispute & Review Tables (2)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `dispute_resolution` | Dispute handling | Mediation support, resolution tracking, outcomes |
-| `tender_reviews` | Supply chain reviews | Reviewer assignments, status, remarks |
+| Table | Description |
+|-------|-------------|
+| `profiles` | User/company profiles with verification status |
+| `supplier_qualifications` | Certifications, financial capacity |
+| `supplier_performance_history` | Quality, delivery scores per contract |
+| `vendor_blacklist` | Debarred suppliers with expiry dates |
+| `risk_assessments` | Risk scoring and mitigation |
 
-### System & Notifications Tables (6)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `notifications` | In-app notifications | Type categorization, read status, entity linking |
-| `push_notifications` | Mobile push notifications | Delivery status, scheduling, error tracking |
-| `mobile_sessions` | Mobile app sessions | Device info, push tokens, last active |
-| `user_roles` | Role-based access | Admin, buyer, supplier, evaluator roles |
-| `user_trials` | Trial tracking | IP tracking, trial types, usage data |
-| `user_subscriptions` | Subscription management | Stripe integration, trial periods, status |
+---
 
-### Configuration & Templates Tables (6)
-| Table | Description | Key Features |
-|-------|-------------|--------------|
-| `document_templates` | Document generation | Template types, versioning, active status |
-| `report_templates` | Custom reports | Query templates, parameters, role-based access |
-| `generated_reports` | Report history | File paths, generation time, status tracking |
-| `system_settings` | Platform config | Setting types, public/private, JSON values |
-| `translations` | Multi-language | Language codes, context, translation keys |
-| `erp_connections` | ERP integrations | Connection configs, sync frequency, status |
+## AGPO & Compliance (NEW)
 
-## Evaluation Criteria System (~200 Criteria)
+| Table | Description |
+|-------|-------------|
+| `agpo_categories` | Youth, Women, PWD, MSME categories |
+| `supplier_agpo_registration` | Supplier AGPO certifications |
+| `tender_agpo_settings` | Per-tender AGPO requirements |
+| `compliance_checks` | Automated validation results |
+| `compliance_frameworks` | Regulatory requirements |
 
-### Storage Architecture
-- **Flexible JSONB Storage**: All evaluation criteria scores stored as JSONB in `evaluations.criteria_scores`
-- **Code-Defined Schema**: Criteria definitions in `src/types/enums.ts` and `src/utils/evaluationCriteria.ts`
-- **Dynamic Scoring**: Supports custom criteria per tender, default templates available
+---
 
-### Criteria Categories (14 Categories)
+## Consortium & Addendum
 
-#### 1. Financial (27 Criteria)
-Price Competitiveness, Financial Stability, Cost Effectiveness, Lifecycle Costs, Payment Terms, Budget Adherence, Pricing Structure Transparency, Inflation Adjustment, Credit Terms, Financial Reporting Accuracy, Profit Margin, Tax Compliance, Total Cost of Ownership, Discount Terms, Currency Risk Management, Financial Health Indicators, Creditworthiness, Cash Flow Stability, Bonding Capacity, Warranty Terms, Cost Escalation, Price Adjustment Flexibility, Financing Availability, Invoice Accuracy, Audit Transparency, Contractual Penalties, Value for Money
+| Table | Description |
+|-------|-------------|
+| `consortium_registrations` | Joint venture registrations |
+| `consortium_members` | Member details, shares, documents |
+| `tender_addendums` | Tender change notices |
+| `addendum_acknowledgments` | Supplier acknowledgment tracking |
 
-#### 2. Technical (27 Criteria)
-Technical Capability, Methodology, Innovation, Quality Standards, Technical Compliance, Documentation Quality, System Integration, Prototyping & Testing, Scalability, Maintenance Support, Technology Maturity, Standards Compliance (ISO), Product Reliability, Product Performance, Design & Functionality, Technical Support, Technology Roadmap, Software Compatibility, Product Certification, Usability & UX, Customization Flexibility, Training Provision, Warranty Terms, R&D Focus, Environmental Compliance, Data Security Controls, Product Safety Standards
+---
 
-#### 3. Experience (21 Criteria)
-Relevant Experience, Past Performance, Qualifications, Industry Expertise, Key Personnel, Project Management, Client References, Dispute History, Industry Awards, Repeat Business Rate, Training Programs, Subcontractor Management, Certifications, Cross-Industry Experience, Supplier Longevity, Market Reputation, On-Time Delivery Track Record, Innovation Experience, Crisis Management, Relationship Management, Scalability Experience
+## Appeal Handling (NEW)
 
-#### 4. Operational (21 Criteria)
-Delivery Timeframe, Implementation Plan, Operational Capacity, Quality Assurance, SLAs, Resource Availability, Supply Chain Robustness, Contingency Planning, After-Sales Service, Customer Support, Training & Knowledge Transfer, Disaster Recovery, Inventory Management, Logistics Capability, Technology Infrastructure, Worksite Safety, Communication Transparency, Flexibility, Capacity to Scale, Business Continuity, Environmental Management
+| Table | Description |
+|-------|-------------|
+| `procurement_appeals` | Appeal submissions, PPARB escalation |
+| `appeal_timeline` | Appeal event history |
 
-#### 5. Compliance (23 Criteria)
-Legal Compliance, Regulatory Compliance, Risk Management, Insurance Coverage, Security Measures, Data Privacy, Ethical Sourcing, Anti-corruption, Health & Safety Record, Labor Standards, IP Rights, Transparency, Audit Readiness, Environmental Regulations, Trade Compliance, Export/Import Controls, Conflict of Interest, Procurement Rules, Social Responsibility, Anti-Bribery, Whistleblower Protections, Compliance Training, Disaster Compliance
+---
 
-#### 6. Sustainability (26 Criteria)
-Environmental Sustainability, Social Responsibility, Local Content, Diversity & Inclusion, Community Impact, Carbon Footprint Reduction, Waste Management, Energy Efficiency, Water Usage, Circular Economy, Sustainable Procurement, Social Equity, Climate Risk Management, Sustainability Certifications, Renewable Energy, Emissions Monitoring, Resource Conservation, Stakeholder Engagement, Labor Rights, Supplier Diversity, Green Innovation, Ecological Impact, Long-term Goals, Environmental Reporting, Risk Mitigation, Climate Adaptation
+## ERP Integration (NEW)
 
-#### 7. Risk Mitigation
-Risk Identification, Risk Response Planning, Financial Risk Controls, Supply Chain Risk Management, Market Risk Analysis, Technical Risk Mitigation, Environmental Risk Management, Social Risk Management
+| Table | Description |
+|-------|-------------|
+| `erp_connections` | SAP, Oracle, Dynamics, Google Sheets |
+| `erp_connector_configs` | Connection settings, field mappings |
+| `erp_sync_queue` | Pending sync operations |
+| `erp_sync_logs` | Sync history and errors |
 
-#### 8. Preliminary / Mandatory Checks
-Bid Completeness, Qualification Compliance, Registration Validation, Licenses & Permits, Tax Compliance, Submission Timeliness, Format Requirements
+---
 
-#### 9. Health, Safety, Environment, Community (HSEC)
-Site Access Compliance, Health & Safety Policies, Environmental Management Plans, Community Engagement, Impact Mitigation, Emergency Response, Occupational Health Training, Worker Safety Equipment
+## Data Retention (NEW)
 
-#### 10. Supplier Ethical Practices
-Fair Labor Certification, Conflict of Interest Declarations, Anti-Bribery Policies, Whistleblower Protection, Corporate Governance, Human Rights Compliance, Supply Chain Transparency, Ethical Sourcing Verification
+| Table | Description |
+|-------|-------------|
+| `data_retention_schedule` | Retention policies per data type |
 
-#### 11. Adaptability & Flexibility
-Change Management Capacity, Innovation Capacity, Responsiveness to Changes, Technology Change Management, Contract Term Flexibility, Service Scalability, Customization Options, Fast-track Delivery Ability
+**Retention Periods (Kenya Law)**:
+- Procurement records: 7 years (PPRA 2015)
+- Audit logs: 10 years (Evidence Act)
+- User profiles: 7 years (DPA 2019)
+- Blockchain hashes: Permanent (no PII)
 
-#### 12. Contract Management & Performance Monitoring
-KPI Definition & Measurement, Contract Administration Experience, Reporting Plans, Continuous Improvement Plans, Dispute Resolution Mechanisms, Performance Incentives, Issue Escalation Procedures, Post-Contract Support
+---
 
-#### 13. Social and Economic Objectives
-Local Content & Employment, SME Support, Empowerment of Disadvantaged Groups, Gender Equality Advancement, Regional Economic Development, Social Infrastructure Contribution, Supplier Diversity Initiatives, Community Development Programs
+## Blockchain & Audit
 
-#### 14. Market and Competitive Dynamics
-Market Position & Share, Partnership Potential, Co-Innovation Possibilities, Supply Base Diversity, Long-term Relationship Potential, Competitive Advantage Contributions, Technology Leadership, Industry Influence
+| Table | Description |
+|-------|-------------|
+| `blockchain_transactions` | Immutable hash records |
+| `audit_logs` | All system actions with IP tracking |
+| `behavior_analysis` | AI fraud detection patterns |
+| `fraud_alerts` | Detected anomalies |
 
-## Row Level Security (RLS) Policies
+---
 
-All 37 tables have comprehensive RLS policies ensuring:
-- **User Isolation**: Users only access their own data
+## RTH Verification (Patent Pending)
+
+| Table | Description |
+|-------|-------------|
+| `rth_verifiers` | Registered verifiers with expertise |
+| `rth_verification_sessions` | Consensus sessions |
+| `rth_verifications` | Individual verifier responses |
+| `rth_field_validation` | Field-level interference detection |
+| `rth_pattern_library` | Historical patterns for matching |
+
+---
+
+## Additional Tables
+
+| Category | Tables |
+|----------|--------|
+| Notifications | `notifications`, `push_notifications`, `mobile_sessions` |
+| Subscriptions | `subscription_plans`, `user_subscriptions`, `user_trials` |
+| Templates | `document_templates`, `report_templates`, `specification_templates` |
+| System | `system_settings`, `translations`, `external_integrations` |
+| Advanced | `framework_agreements`, `reverse_auctions`, `auction_bids` |
+
+---
+
+## Row Level Security (RLS)
+
+All tables have comprehensive RLS policies:
+
+- **User Isolation**: Users access only their own data
 - **Role-Based Access**: Admin, buyer, supplier, evaluator permissions
-- **Party-Based Access**: Contract/tender parties can view related data
-- **Public Data**: Published tenders visible to all
-- **Service Role**: Backend functions can manage system data
+- **Party-Based Access**: Contract parties view related records
+- **Public Data**: Published tenders visible to authenticated users
+- **Service Role**: Backend functions manage system operations
 
-## Blockchain Integration
+---
 
-### Hyperledger Fabric Integration
-- **Transaction Recording**: All tenders, bids, evaluations, contracts
-- **Hash Storage**: `blockchain_hash` columns in key tables
-- **Verification**: `blockchain_transactions` table for audit trail
-- **Edge Functions**: 
-  - `blockchain-verification` - Basic verification
-  - `advanced-blockchain-verification` - Enhanced verification
-  - `fabric-gateway` - Direct Fabric network access
-  - `chaincode-explorer` - Chaincode query interface
+## Evaluation Criteria System
 
-## Performance Optimizations
+**Storage**: JSONB in `evaluations.criteria_scores`  
+**Categories**: 14 major categories, ~200 criteria
 
-### Indexes Created
-- Foreign key indexes on all relationship columns
-- Status indexes for filtering (e.g., `idx_contracts_status`)
-- Date indexes for time-based queries (e.g., `idx_notifications_created_at`)
-- Blockchain hash indexes for verification lookups
-- User ID indexes for RLS performance
+1. Financial (27 criteria)
+2. Technical (27 criteria)
+3. Experience (21 criteria)
+4. Operational (21 criteria)
+5. Compliance (23 criteria)
+6. Sustainability (26 criteria)
+7. Risk Mitigation
+8. Preliminary Checks
+9. HSEC
+10. Ethical Practices
+11. Adaptability
+12. Contract Management
+13. Social Objectives
+14. Market Dynamics
 
-### JSONB Indexes
-- GIN indexes on JSONB columns for efficient querying
-- Optimized criteria_scores searching in evaluations
+---
 
-## Migration Strategy
+## Indexes
 
-All tables created through Supabase migrations with:
-- Automatic timestamp triggers (`created_at`, `updated_at`)
-- Foreign key constraints with cascade/set null behavior
-- Check constraints for status enums
-- Default values for common fields
-- Audit triggers where applicable
+- Foreign key indexes on all relationships
+- Status indexes for filtering
+- Date indexes for time queries
+- GIN indexes on JSONB columns
+- Blockchain hash indexes for verification
 
-## Data Monetization Ready
+---
 
-The database structure supports TenderIntel analytics:
-- Access tracking through audit logs
-- Query patterns in behavior analysis
-- Organization classification in profiles
-- Payment tracking for usage-based billing
-- Generated reports history for insights
+## Edge Functions (19)
+
+| Function | Purpose |
+|----------|---------|
+| `secure-tender-api` | Tender CRUD with validation |
+| `secure-bid-api` | Bid submission handling |
+| `secure-evaluation-api` | Evaluation processing |
+| `blockchain-verification` | Hash verification |
+| `rth-consensus` | RTH voting mechanism |
+| `compliance-check` | Automated validation |
+| `catalog-management` | E-catalog operations |
+| `requisition-management` | Purchase requisitions |
+| `budget-management` | Budget tracking |
+| `framework-agreement-management` | Long-term agreements |
+| `contract-performance-management` | Performance tracking |
+| `supplier-qualification-management` | Qualification checks |
+| `reverse-auction` | Real-time bidding |
+| `trial-status` | Trial period tracking |
+| `ai-pattern-detection` | Fraud detection |
+| `procurement-intelligence` | Analytics |
+| `kenya-ppip-integration` | Government integration |
+| `vendor-blacklist-api` | Debarment management |
+| `chaincode-explorer` | Blockchain queries |

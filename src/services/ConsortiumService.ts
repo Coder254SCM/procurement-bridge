@@ -7,6 +7,7 @@ export interface ConsortiumMember {
   responsibilities: string[];
   documents_submitted: Record<string, string>;
   financial_capacity?: number;
+  accepted_terms?: boolean;
 }
 
 export interface ConsortiumRegistration {

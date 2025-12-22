@@ -1,330 +1,526 @@
 import React from 'react';
-import { Shield, AlertTriangle, Lock, Database, Globe, FileText, Users, Clock, Key } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Shield, Lock, Database, Globe, FileText, Users, Clock, Key, Scale, Eye, Trash2, Download, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Layout from '@/components/layout/Layout';
 
 const Privacy = () => {
-  const lastUpdated = "December 6, 2025";
+  const lastUpdated = "December 22, 2025";
 
   return (
-    <div className="container mx-auto py-12 px-4 md:px-6">
-      <div className="prose prose-lg max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold flex items-center gap-3">
-          <Shield className="h-10 w-10 text-primary" />
-          Privacy Policy
-        </h1>
-        <p className="text-muted-foreground">Last Updated: {lastUpdated}</p>
-
-        <div className="bg-blue-50 dark:bg-blue-950 border-l-4 border-l-blue-500 p-6 rounded-lg my-6">
-          <p className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Your Privacy is Our Priority</p>
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            ProcureChain is committed to protecting your privacy and ensuring transparent data practices. 
-            This comprehensive policy explains how we collect, use, protect, and manage your information in compliance 
-            with Kenya Data Protection Act 2019, GDPR, and international standards.
-          </p>
+    <Layout>
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-b">
+          <div className="container mx-auto py-16 px-4 md:px-6">
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-6">
+                <Shield className="h-10 w-10 text-primary" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
+              <p className="text-lg text-muted-foreground mb-4">
+                Your privacy is fundamental to how we operate ProcureChain.
+              </p>
+              <Badge variant="outline" className="text-sm">
+                Last Updated: {lastUpdated}
+              </Badge>
+            </div>
+          </div>
         </div>
 
-        <p>
-          ProcureChain Kenya Limited ("we," "our," or "us") operates the Kenya e-Government Procurement Platform. 
-          This Privacy Policy explains in detail how we collect, use, disclose, and safeguard your information. 
-          Please read this policy carefully. If you do not agree with these terms, please do not access or use the platform.
-        </p>
+        <div className="container mx-auto py-12 px-4 md:px-6">
+          <div className="max-w-4xl mx-auto space-y-12">
+            
+            {/* Introduction */}
+            <section>
+              <Alert className="border-primary/20 bg-primary/5">
+                <Shield className="h-4 w-4" />
+                <AlertTitle>Our Commitment</AlertTitle>
+                <AlertDescription>
+                  ProcureChain Kenya Limited is committed to protecting your privacy and ensuring transparent data practices 
+                  in compliance with the Kenya Data Protection Act 2019 and GDPR principles.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="mt-6 prose prose-gray dark:prose-invert max-w-none">
+                <p className="text-muted-foreground leading-relaxed">
+                  This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use 
+                  the ProcureChain e-Procurement Platform. Please read this policy carefully. If you do not agree with 
+                  these terms, please discontinue use of the platform.
+                </p>
+              </div>
+            </section>
 
-        <h2 className="mt-8 text-2xl font-semibold flex items-center gap-2">
-          <Database className="h-6 w-6" />
-          1. Information We Collect
-        </h2>
-        
-        <h3 className="mt-4 text-xl font-semibold">1.1 Information You Provide Directly</h3>
-        <ul>
-          <li>
-            <strong>Account Registration Data:</strong> Full name, email address, phone number, organization name, 
-            business registration number, physical address, Tax Identification Number (TIN/PIN), and password.
-          </li>
-          <li>
-            <strong>Identity Verification Documents:</strong> National ID, passport, director IDs, business registration 
-            certificates, tax compliance certificates, professional licenses, insurance certificates, and bank account details.
-          </li>
-          <li>
-            <strong>Procurement Data:</strong> Tender specifications, bid submissions, technical proposals, financial proposals, 
-            evaluation scores, contract terms, payment records, and performance metrics.
-          </li>
-          <li>
-            <strong>AGPO Registration:</strong> Youth/Women/PWD certificates, AGPO certificate numbers, category registrations.
-          </li>
-          <li>
-            <strong>Communication Data:</strong> Messages, inquiries, support tickets, clarification questions, appeals, and any other 
-            correspondence with us or other platform users.
-          </li>
-        </ul>
+            <Separator />
 
-        <h3 className="mt-4 text-xl font-semibold">1.2 Information Collected Automatically</h3>
-        <ul>
-          <li>
-            <strong>Device and Usage Data:</strong> IP address, browser type and version, device identifiers, operating system, 
-            screen resolution, language preferences, time zone settings, and referral URLs.
-          </li>
-          <li>
-            <strong>Activity Logs:</strong> Pages visited, features used, time spent on pages, click patterns, search queries, 
-            downloads, document views, and user interactions.
-          </li>
-          <li>
-            <strong>Security Monitoring Data:</strong> Login attempts, IP addresses, geolocation data, device fingerprints, 
-            and security event logs for fraud prevention and system protection.
-          </li>
-        </ul>
+            {/* Section 1: Information We Collect */}
+            <section className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <Database className="h-6 w-6 text-blue-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">1. Information We Collect</h2>
+                  <p className="text-muted-foreground mt-1">Categories of personal data we process</p>
+                </div>
+              </div>
 
-        <h3 className="mt-4 text-xl font-semibold">1.3 Information from Third Parties</h3>
-        <ul>
-          <li>
-            <strong>Government Verification Services:</strong> Business registration status from Kenya Business Registration Service, 
-            tax compliance status from Kenya Revenue Authority (KRA), and professional license verification from regulatory bodies.
-          </li>
-          <li>
-            <strong>Payment Processors:</strong> Transaction confirmations, payment status, and billing information from M-Pesa, 
-            Stripe, and other payment gateways.
-          </li>
-        </ul>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Account Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm text-muted-foreground">
+                    <p>• Full name and contact details</p>
+                    <p>• Organization name and registration number</p>
+                    <p>• Tax Identification Number (PIN/TIN)</p>
+                    <p>• Business address and phone number</p>
+                  </CardContent>
+                </Card>
 
-        <h2 className="mt-8 text-2xl font-semibold flex items-center gap-2">
-          <Users className="h-6 w-6" />
-          2. How We Use Your Information
-        </h2>
-        
-        <h3 className="mt-4 text-xl font-semibold">2.1 Platform Operations and Service Delivery</h3>
-        <ul>
-          <li>Create, maintain, and manage user accounts and profiles</li>
-          <li>Process tender publications, bid submissions, and contract awards</li>
-          <li>Facilitate communication between buyers, suppliers, and evaluators</li>
-          <li>Manage AGPO preferences and supplier categorization</li>
-          <li>Process and track procurement appeals</li>
-          <li>Provide customer support and respond to inquiries</li>
-          <li>Manage subscriptions and process payments</li>
-        </ul>
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Verification Documents</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm text-muted-foreground">
+                    <p>• National ID or passport copies</p>
+                    <p>• Business registration certificates</p>
+                    <p>• Tax compliance certificates</p>
+                    <p>• Professional licenses</p>
+                  </CardContent>
+                </Card>
 
-        <h3 className="mt-4 text-xl font-semibold">2.2 Verification and Compliance</h3>
-        <ul>
-          <li>Verify user identity, business registration, and professional licenses</li>
-          <li>Conduct Know Your Customer (KYC) and Anti-Money Laundering (AML) checks</li>
-          <li>Assess supplier qualifications and AGPO eligibility</li>
-          <li>Ensure compliance with Public Procurement and Asset Disposal Act 2015</li>
-          <li>Monitor for fraudulent activities, bid rigging, and corruption</li>
-          <li>Maintain audit trails for regulatory inspections</li>
-        </ul>
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Procurement Data</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm text-muted-foreground">
+                    <p>• Tender submissions and proposals</p>
+                    <p>• Bid documents and pricing</p>
+                    <p>• Contract details and performance</p>
+                    <p>• AGPO category registrations</p>
+                  </CardContent>
+                </Card>
 
-        <h3 className="mt-4 text-xl font-semibold">2.3 Legal Basis for Processing (GDPR & Kenya DPA 2019)</h3>
-        <ul>
-          <li><strong>Contract Performance:</strong> Processing necessary to fulfill our contractual obligations to you</li>
-          <li><strong>Legal Obligation:</strong> Compliance with Kenya procurement laws (PPRA 2015), tax regulations, and AML requirements</li>
-          <li><strong>Legitimate Interests:</strong> Fraud prevention, security monitoring, and platform improvement</li>
-          <li><strong>Consent:</strong> Marketing communications and optional features (you can withdraw consent anytime)</li>
-        </ul>
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Technical Data</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm text-muted-foreground">
+                    <p>• IP address and device information</p>
+                    <p>• Browser type and version</p>
+                    <p>• Login timestamps and activity logs</p>
+                    <p>• Session and security data</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
 
-        <h2 className="mt-8 text-2xl font-semibold flex items-center gap-2">
-          <Lock className="h-6 w-6" />
-          3. Data Security Measures
-        </h2>
-        
-        <p>We implement industry-standard security measures to protect your data:</p>
+            <Separator />
 
-        <h3 className="mt-4 text-xl font-semibold">3.1 Technical Security</h3>
-        <ul>
-          <li><strong>Encryption:</strong> TLS 1.3 for data in transit; AES-256 encryption for data at rest (provided by Supabase infrastructure)</li>
-          <li><strong>Access Controls:</strong> Role-based access control (RBAC) with 12 defined roles</li>
-          <li><strong>Application Security:</strong> SQL injection prevention, XSS protection, CSRF tokens, input validation</li>
-          <li><strong>Rate Limiting:</strong> API rate limiting per subscription tier to prevent abuse</li>
-          <li><strong>Blockchain:</strong> Hyperledger Fabric for tamper-proof audit trails (cryptographic hashes only, not personal data)</li>
-        </ul>
+            {/* Section 2: How We Use Your Information */}
+            <section className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-green-500/10 rounded-lg">
+                  <Users className="h-6 w-6 text-green-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">2. How We Use Your Information</h2>
+                  <p className="text-muted-foreground mt-1">Purposes for processing your data</p>
+                </div>
+              </div>
 
-        <h3 className="mt-4 text-xl font-semibold">3.2 Infrastructure Security</h3>
-        <div className="bg-secondary/20 p-4 rounded-lg my-4">
-          <p className="text-sm">
-            Our platform is hosted on Supabase cloud infrastructure which provides:
-          </p>
-          <ul className="text-sm mt-2">
-            <li>• Automated backups and disaster recovery</li>
-            <li>• Network isolation and firewall protection</li>
-            <li>• Regular security updates and patches</li>
-            <li>• Geographic data residency options</li>
-          </ul>
-        </div>
+              <div className="space-y-4">
+                <Card className="border-l-4 border-l-green-500">
+                  <CardContent className="pt-6">
+                    <h3 className="font-semibold mb-3">Service Delivery</h3>
+                    <ul className="grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2" />
+                        <span>Process tender publications and bid submissions</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2" />
+                        <span>Manage contract awards and performance tracking</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2" />
+                        <span>Verify identity and business credentials</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2" />
+                        <span>Facilitate communication between parties</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
 
-        <div className="bg-yellow-50 dark:bg-yellow-950 border-l-4 border-l-yellow-500 p-4 rounded-lg my-4">
-          <p className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
-            Transparency Notice
-          </p>
-          <p className="text-sm text-yellow-700 dark:text-yellow-300">
-            While we implement robust security measures, no system is 100% secure. We commit to:
-            <br />• Notifying affected users within 72 hours of confirmed data breaches
-            <br />• Continuously improving our security posture
-            <br />• Engaging third-party security assessments as resources allow
-          </p>
-        </div>
+                <Card className="border-l-4 border-l-blue-500">
+                  <CardContent className="pt-6">
+                    <h3 className="font-semibold mb-3">Compliance & Security</h3>
+                    <ul className="grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2" />
+                        <span>Ensure PPRA 2015 regulatory compliance</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2" />
+                        <span>Conduct fraud detection and prevention</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2" />
+                        <span>Maintain audit trails for transparency</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2" />
+                        <span>Process AGPO eligibility verification</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
 
-        <h2 className="mt-8 text-2xl font-semibold flex items-center gap-2">
-          <Clock className="h-6 w-6" />
-          4. Data Retention Policy
-        </h2>
-        
-        <p>We retain data in accordance with Kenya law and international best practices:</p>
+            <Separator />
 
-        <Card className="my-4">
-          <CardHeader>
-            <CardTitle className="text-lg">Retention Periods by Data Type</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2">Data Category</th>
-                  <th className="text-left py-2">Retention</th>
-                  <th className="text-left py-2">Legal Basis</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="py-2">Procurement Records (Tenders, Bids, Contracts)</td>
-                  <td className="py-2"><Badge variant="outline">7 Years</Badge></td>
-                  <td className="py-2 text-muted-foreground">PPRA 2015 Section 67</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">Audit Logs</td>
-                  <td className="py-2"><Badge variant="outline">10 Years</Badge></td>
-                  <td className="py-2 text-muted-foreground">PPRA 2015 + Kenya Evidence Act</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">Blockchain Transaction Hashes</td>
-                  <td className="py-2"><Badge variant="secondary">Permanent</Badge></td>
-                  <td className="py-2 text-muted-foreground">Immutable by design (no PII stored)</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">User Profiles</td>
-                  <td className="py-2"><Badge variant="outline">7 Years</Badge></td>
-                  <td className="py-2 text-muted-foreground">Kenya Data Protection Act 2019</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">Appeal Records</td>
-                  <td className="py-2"><Badge variant="outline">7 Years</Badge></td>
-                  <td className="py-2 text-muted-foreground">PPRA 2015 Section 168</td>
-                </tr>
-                <tr>
-                  <td className="py-2">Operational Notifications</td>
-                  <td className="py-2"><Badge variant="outline">2 Years</Badge></td>
-                  <td className="py-2 text-muted-foreground">Internal policy</td>
-                </tr>
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
+            {/* Section 3: Legal Basis */}
+            <section className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-purple-500/10 rounded-lg">
+                  <Scale className="h-6 w-6 text-purple-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">3. Legal Basis for Processing</h2>
+                  <p className="text-muted-foreground mt-1">Kenya Data Protection Act 2019 & GDPR</p>
+                </div>
+              </div>
 
-        <h2 className="mt-8 text-2xl font-semibold flex items-center gap-2">
-          <Key className="h-6 w-6" />
-          5. Blockchain and Data Immutability
-        </h2>
-        
-        <p>ProcureChain uses Hyperledger Fabric blockchain (a private/permissioned blockchain) for transaction integrity. You acknowledge that:</p>
-        <ul>
-          <li><strong>Immutability:</strong> Transaction hashes and metadata recorded on blockchain cannot be altered or deleted</li>
-          <li><strong>Privacy Protection:</strong> Personal identifiable information (PII) is NOT stored on blockchain - only cryptographic hashes (SHA-256)</li>
-          <li><strong>Verification:</strong> Any party can verify document authenticity using blockchain records through our platform</li>
-          <li><strong>Private Network:</strong> Unlike public blockchains (Ethereum, Polygon), our records are not viewable on public explorers like Polygonscan. Verification is done through our secure platform interface.</li>
-        </ul>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card className="bg-purple-500/5 border-purple-500/20">
+                  <CardContent className="pt-6">
+                    <Badge className="mb-3 bg-purple-500">Contract Performance</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Processing necessary to fulfill our contractual obligations for procurement services.
+                    </p>
+                  </CardContent>
+                </Card>
 
-        <h2 className="mt-8 text-2xl font-semibold flex items-center gap-2">
-          <FileText className="h-6 w-6" />
-          6. Your Data Protection Rights
-        </h2>
-        
-        <p>Under Kenya Data Protection Act 2019 and GDPR, you have the following rights:</p>
+                <Card className="bg-blue-500/5 border-blue-500/20">
+                  <CardContent className="pt-6">
+                    <Badge className="mb-3 bg-blue-500">Legal Obligation</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Compliance with PPRA 2015, tax regulations, and anti-money laundering requirements.
+                    </p>
+                  </CardContent>
+                </Card>
 
-        <div className="grid gap-4 my-4">
-          <Card>
-            <CardContent className="pt-4">
-              <h4 className="font-semibold">Right of Access</h4>
+                <Card className="bg-green-500/5 border-green-500/20">
+                  <CardContent className="pt-6">
+                    <Badge className="mb-3 bg-green-500">Legitimate Interest</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Fraud prevention, security monitoring, and platform improvement.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-orange-500/5 border-orange-500/20">
+                  <CardContent className="pt-6">
+                    <Badge className="mb-3 bg-orange-500">Consent</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Marketing communications and optional features (withdrawable anytime).
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
+
+            <Separator />
+
+            {/* Section 4: Data Security */}
+            <section className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-red-500/10 rounded-lg">
+                  <Lock className="h-6 w-6 text-red-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">4. Data Security Measures</h2>
+                  <p className="text-muted-foreground mt-1">How we protect your information</p>
+                </div>
+              </div>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-4">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Lock className="h-4 w-4 text-primary" />
+                        Technical Security
+                      </h3>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li className="flex items-start gap-2">
+                          <Badge variant="outline" className="text-xs mt-0.5">TLS 1.3</Badge>
+                          <span>Encryption for data in transit</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Badge variant="outline" className="text-xs mt-0.5">AES-256</Badge>
+                          <span>Encryption for data at rest</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Badge variant="outline" className="text-xs mt-0.5">RBAC</Badge>
+                          <span>Role-based access control</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Badge variant="outline" className="text-xs mt-0.5">API</Badge>
+                          <span>Rate limiting and input validation</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="space-y-4">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Database className="h-4 w-4 text-primary" />
+                        Infrastructure
+                      </h3>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>• Automated database backups</li>
+                        <li>• Network isolation and firewalls</li>
+                        <li>• Regular security updates</li>
+                        <li>• Blockchain audit trails (hashes only)</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Alert variant="default" className="bg-amber-500/10 border-amber-500/30">
+                <AlertCircle className="h-4 w-4 text-amber-500" />
+                <AlertTitle>Transparency Notice</AlertTitle>
+                <AlertDescription className="text-sm">
+                  While we implement industry-standard security, no system is 100% secure. We commit to notifying 
+                  affected users within 72 hours of any confirmed data breach and continuously improving our security posture.
+                </AlertDescription>
+              </Alert>
+            </section>
+
+            <Separator />
+
+            {/* Section 5: Data Retention */}
+            <section className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-cyan-500/10 rounded-lg">
+                  <Clock className="h-6 w-6 text-cyan-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">5. Data Retention Policy</h2>
+                  <p className="text-muted-foreground mt-1">How long we keep your data</p>
+                </div>
+              </div>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 font-semibold">Data Category</th>
+                          <th className="text-left py-3 font-semibold">Retention</th>
+                          <th className="text-left py-3 font-semibold">Legal Basis</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        <tr>
+                          <td className="py-3">Procurement Records</td>
+                          <td className="py-3"><Badge variant="outline">7 Years</Badge></td>
+                          <td className="py-3 text-muted-foreground">PPRA 2015 Section 67</td>
+                        </tr>
+                        <tr>
+                          <td className="py-3">Audit Logs</td>
+                          <td className="py-3"><Badge variant="outline">10 Years</Badge></td>
+                          <td className="py-3 text-muted-foreground">Kenya Evidence Act</td>
+                        </tr>
+                        <tr>
+                          <td className="py-3">User Profiles</td>
+                          <td className="py-3"><Badge variant="outline">7 Years</Badge></td>
+                          <td className="py-3 text-muted-foreground">Data Protection Act 2019</td>
+                        </tr>
+                        <tr>
+                          <td className="py-3">Appeal Records</td>
+                          <td className="py-3"><Badge variant="outline">7 Years</Badge></td>
+                          <td className="py-3 text-muted-foreground">PPRA 2015 Section 168</td>
+                        </tr>
+                        <tr>
+                          <td className="py-3">Blockchain Hashes</td>
+                          <td className="py-3"><Badge variant="secondary">Permanent</Badge></td>
+                          <td className="py-3 text-muted-foreground">Immutable (no PII)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            <Separator />
+
+            {/* Section 6: Your Rights */}
+            <section className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-teal-500/10 rounded-lg">
+                  <Key className="h-6 w-6 text-teal-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">6. Your Data Protection Rights</h2>
+                  <p className="text-muted-foreground mt-1">Under Kenya DPA 2019 and GDPR</p>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card className="hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-2">
+                    <Eye className="h-5 w-5 text-primary mb-2" />
+                    <CardTitle className="text-base">Right of Access</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Request a copy of all personal data we hold about you within 30 days.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-2">
+                    <FileText className="h-5 w-5 text-primary mb-2" />
+                    <CardTitle className="text-base">Right to Rectification</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Update or correct inaccurate personal data through account settings.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-2">
+                    <Trash2 className="h-5 w-5 text-primary mb-2" />
+                    <CardTitle className="text-base">Right to Erasure</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Request deletion subject to legal retention requirements (7 years for procurement).
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-2">
+                    <Download className="h-5 w-5 text-primary mb-2" />
+                    <CardTitle className="text-base">Right to Portability</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Request your data in machine-readable format (JSON, CSV) for transfer.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card className="bg-muted/50">
+                <CardContent className="pt-6">
+                  <h3 className="font-semibold mb-2">Lodge a Complaint</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Contact the Office of the Data Protection Commissioner (Kenya): {' '}
+                    <a href="https://www.odpc.go.ke" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                      www.odpc.go.ke
+                    </a>
+                  </p>
+                </CardContent>
+              </Card>
+            </section>
+
+            <Separator />
+
+            {/* Section 7: International Transfers */}
+            <section className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-indigo-500/10 rounded-lg">
+                  <Globe className="h-6 w-6 text-indigo-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">7. International Data Transfers</h2>
+                  <p className="text-muted-foreground mt-1">Cross-border data processing</p>
+                </div>
+              </div>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <p className="text-muted-foreground mb-4">
+                    Your data may be processed in Kenya or other countries where our service providers operate. 
+                    We ensure appropriate safeguards including:
+                  </p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      Standard Contractual Clauses (SCCs) with service providers
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      Data Processing Agreements with all vendors
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      Encryption and pseudonymization for transfers
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </section>
+
+            <Separator />
+
+            {/* Contact Section */}
+            <section className="space-y-6">
+              <h2 className="text-2xl font-bold">8. Contact Us</h2>
+              
+              <Card className="bg-primary/5 border-primary/20">
+                <CardContent className="pt-6">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <h3 className="font-semibold mb-3">Data Protection Officer</h3>
+                      <div className="space-y-1 text-sm text-muted-foreground">
+                        <p>ProcureChain Kenya Limited</p>
+                        <p>Email: privacy@procurechain.co.ke</p>
+                        <p>Phone: +254 (0) 20 123 4567</p>
+                        <p>Address: Nairobi, Kenya</p>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-3">Policy Updates</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Material changes will be notified via email (30 days advance notice) 
+                        and displayed on the platform. Continued use constitutes acceptance.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* Related Policies */}
+            <div className="pt-8 border-t">
               <p className="text-sm text-muted-foreground">
-                Request a copy of all personal data we hold about you. We will provide this within 30 days in a 
-                commonly used electronic format.
+                Related Policies:{' '}
+                <a href="/terms" className="text-primary hover:underline">Terms of Service</a>
+                {' | '}
+                <a href="/cookies" className="text-primary hover:underline">Cookie Policy</a>
+                {' | '}
+                <a href="/data-protection" className="text-primary hover:underline">Data Protection Details</a>
               </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4">
-              <h4 className="font-semibold">Right to Rectification</h4>
-              <p className="text-sm text-muted-foreground">
-                Update or correct inaccurate personal data directly through your account settings or by contacting our 
-                Data Protection Officer.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4">
-              <h4 className="font-semibold">Right to Erasure</h4>
-              <p className="text-sm text-muted-foreground">
-                Request deletion of your personal data, subject to legal retention requirements. Procurement records must 
-                be retained for 7 years under PPRA regulations.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4">
-              <h4 className="font-semibold">Right to Data Portability</h4>
-              <p className="text-sm text-muted-foreground">
-                Request your data in a structured, machine-readable format (JSON, CSV) for transfer to another service.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4">
-              <h4 className="font-semibold">Right to Lodge a Complaint</h4>
-              <p className="text-sm text-muted-foreground">
-                Contact the Office of the Data Protection Commissioner (Kenya): 
-                <a href="https://www.odpc.go.ke" className="text-primary underline ml-1">www.odpc.go.ke</a>
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <h2 className="mt-8 text-2xl font-semibold flex items-center gap-2">
-          <Globe className="h-6 w-6" />
-          7. International Data Transfers
-        </h2>
-        
-        <p>
-          Your data may be processed and stored in Kenya or other countries where our service providers operate 
-          (primarily cloud infrastructure). When we transfer data internationally, we ensure appropriate safeguards:
-        </p>
-        <ul>
-          <li>Standard Contractual Clauses (SCCs) with international service providers</li>
-          <li>Data Processing Agreements with all service providers</li>
-          <li>Encryption and pseudonymization for cross-border transfers</li>
-        </ul>
-
-        <h2 className="mt-8 text-2xl font-semibold">8. Contact Us</h2>
-        
-        <div className="bg-secondary/20 p-6 rounded-lg my-4">
-          <p><strong>Data Protection Officer</strong></p>
-          <p>ProcureChain Kenya Limited</p>
-          <p>Email: privacy@procurechain.co.ke</p>
-          <p>Phone: +254 (0) 20 123 4567</p>
-          <p>Address: Nairobi, Kenya</p>
-        </div>
-
-        <h2 className="mt-8 text-2xl font-semibold">9. Changes to This Policy</h2>
-        <p>
-          We may update this Privacy Policy from time to time. Material changes will be notified via email (30 days advance notice) 
-          and prominently displayed on the platform. Your continued use after changes constitutes acceptance.
-        </p>
-
-        <div className="mt-8 pt-8 border-t">
-          <p className="text-sm text-muted-foreground">
-            Related Policies: <a href="/terms" className="text-primary underline">Terms of Service</a> | 
-            <a href="/cookies" className="text-primary underline ml-2">Cookie Policy</a> | 
-            <a href="/data-protection" className="text-primary underline ml-2">Data Protection Policy</a>
-          </p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
