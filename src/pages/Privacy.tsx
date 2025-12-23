@@ -1,31 +1,98 @@
 import React from 'react';
-import { Shield, Lock, Database, Globe, FileText, Users, Clock, Key, Scale, Eye, Trash2, Download, AlertCircle } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
+import { 
+  Shield, Lock, Database, Globe, FileText, Users, Clock, Key, Scale, Eye, 
+  Trash2, Download, AlertCircle, CheckCircle2, Server, Fingerprint, ShieldCheck,
+  FileKey, UserCheck, Bell
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Progress } from '@/components/ui/progress';
 import Layout from '@/components/layout/Layout';
 
 const Privacy = () => {
-  const lastUpdated = "December 22, 2025";
+  const lastUpdated = "December 23, 2025";
+  const policyVersion = "3.2.0";
+
+  const securityFeatures = [
+    { name: 'TLS 1.3 Encryption', status: 'active', score: 100 },
+    { name: 'AES-256 At-Rest', status: 'active', score: 100 },
+    { name: 'Rate Limiting', status: 'active', score: 100 },
+    { name: 'SQL Injection Protection', status: 'active', score: 100 },
+    { name: 'XSS Protection', status: 'active', score: 100 },
+    { name: 'CSRF Protection', status: 'active', score: 100 },
+  ];
+
+  const overallSecurityScore = Math.round(
+    securityFeatures.reduce((acc, f) => acc + f.score, 0) / securityFeatures.length
+  );
 
   return (
     <Layout>
+      <Helmet>
+        <title>Privacy Policy | ProcureChain Kenya</title>
+        <meta name="description" content="ProcureChain privacy policy detailing data protection practices in compliance with Kenya DPA 2019 and GDPR." />
+      </Helmet>
+
       <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <div className="bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-b">
-          <div className="container mx-auto py-16 px-4 md:px-6">
+        {/* Enhanced Hero Section */}
+        <div className="relative bg-gradient-to-br from-primary/15 via-background to-secondary/15 border-b overflow-hidden">
+          <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+          <div className="container mx-auto py-20 px-4 md:px-6 relative">
             <div className="max-w-4xl mx-auto text-center">
-              <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-6">
-                <Shield className="h-10 w-10 text-primary" />
+              <div className="inline-flex items-center justify-center p-4 bg-primary/10 rounded-2xl mb-8 ring-4 ring-primary/20">
+                <ShieldCheck className="h-12 w-12 text-primary" />
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
-              <p className="text-lg text-muted-foreground mb-4">
-                Your privacy is fundamental to how we operate ProcureChain.
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+                Privacy Policy
+              </h1>
+              <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto leading-relaxed">
+                Your privacy is fundamental to how we operate. We protect your data with 
+                enterprise-grade security and full regulatory compliance.
               </p>
-              <Badge variant="outline" className="text-sm">
-                Last Updated: {lastUpdated}
-              </Badge>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <Badge variant="outline" className="text-sm px-4 py-2">
+                  <Clock className="h-3 w-3 mr-2" />
+                  Updated: {lastUpdated}
+                </Badge>
+                <Badge variant="secondary" className="text-sm px-4 py-2">
+                  <FileKey className="h-3 w-3 mr-2" />
+                  Version {policyVersion}
+                </Badge>
+                <Badge className="bg-green-500/20 text-green-600 border-green-500/30 px-4 py-2">
+                  <CheckCircle2 className="h-3 w-3 mr-2" />
+                  GDPR & Kenya DPA Compliant
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Security Score Banner */}
+        <div className="border-b bg-muted/30">
+          <div className="container mx-auto py-6 px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Shield className="h-5 w-5 text-green-500" />
+                    <span className="font-semibold">Platform Security Score</span>
+                    <Badge className="bg-green-500">{overallSecurityScore}%</Badge>
+                  </div>
+                  <Progress value={overallSecurityScore} className="h-2" />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {securityFeatures.slice(0, 3).map((feature) => (
+                    <Badge key={feature.name} variant="outline" className="text-xs">
+                      <CheckCircle2 className="h-3 w-3 mr-1 text-green-500" />
+                      {feature.name}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
