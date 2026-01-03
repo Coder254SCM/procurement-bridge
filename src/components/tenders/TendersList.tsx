@@ -1,100 +1,122 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Search, SlidersHorizontal, Plus, ArrowUpDown } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, ArrowUpDown, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import TenderCard, { TenderProps } from './TenderCard';
-
-const fakeTenders: TenderProps[] = [
-  {
-    id: "T1001",
-    title: "Supply and Installation of IT Equipment for County Offices",
-    organization: "Ministry of ICT",
-    location: "Nairobi County",
-    category: "IT & Telecommunications",
-    description: "Provision of desktop computers, laptops, printers and networking equipment for county government offices across Nairobi county.",
-    deadline: "Jul 15, 2023",
-    daysLeft: 12,
-    submissions: 8,
-    value: "KES 12,500,000",
-    status: 'open'
-  },
-  {
-    id: "T1002",
-    title: "Construction of Health Center in Kiambu County",
-    organization: "Ministry of Health",
-    location: "Kiambu County",
-    category: "Construction",
-    description: "Construction of a new health center including outpatient facilities, maternity ward, laboratory and pharmacy services.",
-    deadline: "Jul 22, 2023",
-    daysLeft: 19,
-    submissions: 5,
-    value: "KES 35,800,000",
-    status: 'open'
-  },
-  {
-    id: "T1003",
-    title: "Supply of School Textbooks and Learning Materials",
-    organization: "Ministry of Education",
-    location: "Countrywide",
-    category: "Education",
-    description: "Supply and delivery of approved curriculum textbooks and learning materials for primary and secondary schools across Kenya.",
-    deadline: "Jul 10, 2023",
-    daysLeft: 7,
-    submissions: 12,
-    value: "KES 28,000,000",
-    status: 'open'
-  },
-  {
-    id: "T1004",
-    title: "Renovation of Government Office Buildings",
-    organization: "Ministry of Public Works",
-    location: "Mombasa County",
-    category: "Construction",
-    description: "Renovation and refurbishment of government office buildings in Mombasa including painting, electrical repairs, plumbing and general renovations.",
-    deadline: "Jun 25, 2023",
-    daysLeft: 0,
-    submissions: 9,
-    value: "KES 15,750,000",
-    status: 'evaluation'
-  },
-  {
-    id: "T1005",
-    title: "Supply of Medical Equipment and Supplies",
-    organization: "Ministry of Health",
-    location: "Kisumu County",
-    category: "Medical",
-    description: "Supply of medical equipment, pharmaceutical products and general hospital supplies for public hospitals in Kisumu county.",
-    deadline: "Jun 18, 2023",
-    daysLeft: 0,
-    submissions: 15,
-    value: "KES 22,300,000",
-    status: 'awarded'
-  },
-  {
-    id: "T1006",
-    title: "Agricultural Irrigation Systems Installation",
-    organization: "Ministry of Agriculture",
-    location: "Nakuru County",
-    category: "Agriculture",
-    description: "Design and installation of irrigation systems for agricultural demonstration farms in Nakuru county.",
-    deadline: "Jun 15, 2023",
-    daysLeft: 0,
-    submissions: 7,
-    value: "KES 18,450,000",
-    status: 'closed'
-  }
-];
 
 const TendersList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
   const [status, setStatus] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [tenders, setTenders] = useState<TenderProps[]>([]);
+  const [myTenders, setMyTenders] = useState<TenderProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  const filteredTenders = fakeTenders.filter(tender => {
+  useEffect(() => {
+    fetchTenders();
+  }, [user]);
+
+  const fetchTenders = async () => {
+    setLoading(true);
+    try {
+      // Fetch all published tenders
+      const { data: allTenders, error: allError } = await supabase
+        .from('tenders')
+        .select(`
+          id,
+          title,
+          description,
+          category,
+          budget_amount,
+          budget_currency,
+          submission_deadline,
+          status,
+          procurement_method,
+          buyer_id,
+          created_at
+        `)
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
+
+      if (allError) throw allError;
+
+      // Transform to TenderProps
+      const formattedTenders = (allTenders || []).map(tender => {
+        const deadline = new Date(tender.submission_deadline);
+        const today = new Date();
+        const daysLeft = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        
+        return {
+          id: tender.id,
+          title: tender.title,
+          organization: 'Government Entity',
+          location: 'Kenya',
+          category: tender.category || 'General',
+          description: tender.description || '',
+          deadline: deadline.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+          daysLeft: Math.max(0, daysLeft),
+          submissions: 0,
+          value: `${tender.budget_currency || 'KES'} ${(tender.budget_amount || 0).toLocaleString()}`,
+          status: daysLeft > 0 ? 'open' : 'evaluation'
+        } as TenderProps;
+      });
+
+      setTenders(formattedTenders);
+
+      // Fetch user's own tenders if logged in
+      if (user) {
+        const { data: userTenders, error: userError } = await supabase
+          .from('tenders')
+          .select('*')
+          .eq('buyer_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (!userError && userTenders) {
+          const formattedMyTenders = userTenders.map(tender => {
+            const deadline = new Date(tender.submission_deadline);
+            const today = new Date();
+            const daysLeft = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            
+            return {
+              id: tender.id,
+              title: tender.title,
+              organization: 'My Organization',
+              location: 'Kenya',
+              category: tender.category || 'General',
+              description: tender.description || '',
+              deadline: deadline.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+              daysLeft: Math.max(0, daysLeft),
+              submissions: 0,
+              value: `${tender.budget_currency || 'KES'} ${(tender.budget_amount || 0).toLocaleString()}`,
+              status: tender.status as TenderProps['status']
+            } as TenderProps;
+          });
+          setMyTenders(formattedMyTenders);
+        }
+      }
+    } catch (error: any) {
+      console.error('Error fetching tenders:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load tenders",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTenders = tenders.filter(tender => {
     const matchesSearch = tender.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           tender.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = category === 'all' || tender.category.toLowerCase().includes(category.toLowerCase());
@@ -103,11 +125,20 @@ const TendersList = () => {
     return matchesSearch && matchesCategory && matchesStatus;
   });
   
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Loading tenders...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
         <h1 className="text-3xl font-semibold">Tenders</h1>
-        <Button className="ml-auto">
+        <Button className="ml-auto" onClick={() => navigate('/create-tender')}>
           <Plus className="w-4 h-4 mr-2" />
           Post New Tender
         </Button>
@@ -117,7 +148,7 @@ const TendersList = () => {
         <Tabs defaultValue="browse" className="w-full">
           <TabsList className="w-full max-w-md mb-6">
             <TabsTrigger value="browse" className="flex-1">Browse Tenders</TabsTrigger>
-            <TabsTrigger value="my-tenders" className="flex-1">My Tenders</TabsTrigger>
+            <TabsTrigger value="my-tenders" className="flex-1">My Tenders ({myTenders.length})</TabsTrigger>
             <TabsTrigger value="saved" className="flex-1">Saved</TabsTrigger>
           </TabsList>
           
@@ -228,25 +259,50 @@ const TendersList = () => {
               ) : (
                 <div className="col-span-full text-center py-16">
                   <h3 className="text-xl font-medium mb-2">No tenders found</h3>
-                  <p className="text-muted-foreground">Try adjusting your search or filters</p>
+                  <p className="text-muted-foreground mb-4">
+                    {tenders.length === 0 
+                      ? "No tenders have been published yet. Be the first to create one!"
+                      : "Try adjusting your search or filters"
+                    }
+                  </p>
+                  <Button onClick={() => navigate('/create-tender')}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create First Tender
+                  </Button>
                 </div>
               )}
             </div>
           </TabsContent>
           
           <TabsContent value="my-tenders">
-            <div className="bg-secondary/30 rounded-lg p-8 text-center">
-              <h3 className="text-xl font-medium mb-2">My Tenders</h3>
-              <p className="text-muted-foreground mb-4">View and manage tenders you've created or applied to</p>
-              <Button>View My Tenders</Button>
-            </div>
+            {myTenders.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {myTenders.map(tender => (
+                  <TenderCard key={tender.id} tender={tender} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-secondary/30 rounded-lg p-8 text-center">
+                <h3 className="text-xl font-medium mb-2">No Tenders Yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  {user ? "You haven't created any tenders yet" : "Sign in to create and manage your tenders"}
+                </p>
+                <Button onClick={() => user ? navigate('/create-tender') : navigate('/auth')}>
+                  {user ? 'Create Your First Tender' : 'Sign In'}
+                </Button>
+              </div>
+            )}
           </TabsContent>
           
           <TabsContent value="saved">
             <div className="bg-secondary/30 rounded-lg p-8 text-center">
               <h3 className="text-xl font-medium mb-2">Saved Tenders</h3>
-              <p className="text-muted-foreground mb-4">View tenders you've saved for later</p>
-              <Button>Browse Saved Tenders</Button>
+              <p className="text-muted-foreground mb-4">
+                {user ? "You haven't saved any tenders yet" : "Sign in to save tenders for later"}
+              </p>
+              <Button onClick={() => navigate(user ? '/marketplace' : '/auth')}>
+                {user ? 'Browse Marketplace' : 'Sign In'}
+              </Button>
             </div>
           </TabsContent>
         </Tabs>
