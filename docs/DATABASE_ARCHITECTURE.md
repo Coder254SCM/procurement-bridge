@@ -1,8 +1,8 @@
 # Database Architecture - ProcureChain
 
 ## Overview
-**Total Tables**: 50+  
-**Last Updated**: December 22, 2025
+**Total Tables**: 73  
+**Last Updated**: January 3, 2026
 
 ---
 
@@ -19,19 +19,30 @@
 
 ---
 
-## Supplier Management
+## User Management
 
 | Table | Description |
 |-------|-------------|
 | `profiles` | User/company profiles with verification status |
+| `user_roles` | User role assignments (12 roles) |
+| `user_subscriptions` | Subscription plan tracking |
+| `user_trials` | Trial feature usage |
+
+---
+
+## Supplier Management
+
+| Table | Description |
+|-------|-------------|
 | `supplier_qualifications` | Certifications, financial capacity |
 | `supplier_performance_history` | Quality, delivery scores per contract |
 | `vendor_blacklist` | Debarred suppliers with expiry dates |
 | `risk_assessments` | Risk scoring and mitigation |
+| `digital_identity_verification` | KYC verification records |
 
 ---
 
-## AGPO & Compliance (NEW)
+## AGPO & Compliance
 
 | Table | Description |
 |-------|-------------|
@@ -54,7 +65,7 @@
 
 ---
 
-## Appeal Handling (NEW)
+## Appeals
 
 | Table | Description |
 |-------|-------------|
@@ -63,7 +74,7 @@
 
 ---
 
-## ERP Integration (NEW)
+## ERP Integration
 
 | Table | Description |
 |-------|-------------|
@@ -74,7 +85,88 @@
 
 ---
 
-## Data Retention (NEW)
+## RTH Verification (Patent Pending)
+
+| Table | Description |
+|-------|-------------|
+| `rth_verifiers` | Registered verifiers with expertise |
+| `rth_verification_sessions` | Consensus sessions |
+| `rth_verifications` | Individual verifier responses |
+| `rth_phase_matrix` | Pairwise phase comparisons |
+| `rth_field_validation` | Field-level interference detection |
+| `rth_risk_monitoring` | Adaptive risk monitoring |
+| `rth_pattern_library` | Historical patterns for matching |
+
+---
+
+## Financial
+
+| Table | Description |
+|-------|-------------|
+| `budget_allocations` | Department budget tracking |
+| `payment_schedules` | Contract payment schedules |
+| `subscription_plans` | Available subscription tiers |
+
+---
+
+## Marketplace
+
+| Table | Description |
+|-------|-------------|
+| `product_categories` | Hierarchical categories |
+| `catalog_items` | E-catalog products |
+| `framework_agreements` | Long-term supplier agreements |
+| `reverse_auctions` | Dynamic bidding sessions |
+| `auction_bids` | Auction bid entries |
+
+---
+
+## Workflows
+
+| Table | Description |
+|-------|-------------|
+| `approval_workflows` | Configurable approval processes |
+| `approval_instances` | Active workflow instances |
+| `purchase_requisitions` | Purchase request tracking |
+
+---
+
+## Documents & Templates
+
+| Table | Description |
+|-------|-------------|
+| `document_templates` | Reusable document templates |
+| `report_templates` | Report generation templates |
+| `specification_templates` | Tender specification templates |
+| `generated_reports` | Generated report tracking |
+
+---
+
+## Audit & Security
+
+| Table | Description |
+|-------|-------------|
+| `audit_logs` | All system actions with IP tracking |
+| `api_access_logs` | API request logging |
+| `data_access_logs` | Data access tracking |
+| `rate_limit_tracking` | Rate limit enforcement |
+| `blockchain_transactions` | Immutable hash records |
+| `behavior_analysis` | AI fraud detection patterns |
+| `fraud_alerts` | Detected anomalies |
+
+---
+
+## Notifications
+
+| Table | Description |
+|-------|-------------|
+| `notifications` | In-app notifications |
+| `push_notifications` | Mobile push notifications |
+| `mobile_sessions` | Mobile app sessions |
+
+---
+
+## Data Retention
 
 | Table | Description |
 |-------|-------------|
@@ -88,38 +180,21 @@
 
 ---
 
-## Blockchain & Audit
-
-| Table | Description |
-|-------|-------------|
-| `blockchain_transactions` | Immutable hash records |
-| `audit_logs` | All system actions with IP tracking |
-| `behavior_analysis` | AI fraud detection patterns |
-| `fraud_alerts` | Detected anomalies |
-
----
-
-## RTH Verification (Patent Pending)
-
-| Table | Description |
-|-------|-------------|
-| `rth_verifiers` | Registered verifiers with expertise |
-| `rth_verification_sessions` | Consensus sessions |
-| `rth_verifications` | Individual verifier responses |
-| `rth_field_validation` | Field-level interference detection |
-| `rth_pattern_library` | Historical patterns for matching |
-
----
-
 ## Additional Tables
 
-| Category | Tables |
-|----------|--------|
-| Notifications | `notifications`, `push_notifications`, `mobile_sessions` |
-| Subscriptions | `subscription_plans`, `user_subscriptions`, `user_trials` |
-| Templates | `document_templates`, `report_templates`, `specification_templates` |
-| System | `system_settings`, `translations`, `external_integrations` |
-| Advanced | `framework_agreements`, `reverse_auctions`, `auction_bids` |
+| Table | Description |
+|-------|-------------|
+| `tender_specifications` | Tender technical specifications |
+| `tender_reviews` | Supply chain reviews |
+| `tender_fairness_metrics` | Fairness analysis scores |
+| `capability_matches` | Supplier-tender matching |
+| `submission_progress` | Multi-step form progress |
+| `dispute_resolution` | Contract disputes |
+| `performance_evaluations` | Supplier performance reviews |
+| `external_integrations` | Third-party integrations |
+| `system_settings` | Platform configuration |
+| `translations` | Multi-language support |
+| `supplier_lists` | Curated supplier lists |
 
 ---
 
@@ -132,38 +207,6 @@ All tables have comprehensive RLS policies:
 - **Party-Based Access**: Contract parties view related records
 - **Public Data**: Published tenders visible to authenticated users
 - **Service Role**: Backend functions manage system operations
-
----
-
-## Evaluation Criteria System
-
-**Storage**: JSONB in `evaluations.criteria_scores`  
-**Categories**: 14 major categories, ~200 criteria
-
-1. Financial (27 criteria)
-2. Technical (27 criteria)
-3. Experience (21 criteria)
-4. Operational (21 criteria)
-5. Compliance (23 criteria)
-6. Sustainability (26 criteria)
-7. Risk Mitigation
-8. Preliminary Checks
-9. HSEC
-10. Ethical Practices
-11. Adaptability
-12. Contract Management
-13. Social Objectives
-14. Market Dynamics
-
----
-
-## Indexes
-
-- Foreign key indexes on all relationships
-- Status indexes for filtering
-- Date indexes for time queries
-- GIN indexes on JSONB columns
-- Blockchain hash indexes for verification
 
 ---
 
@@ -190,3 +233,13 @@ All tables have comprehensive RLS policies:
 | `kenya-ppip-integration` | Government integration |
 | `vendor-blacklist-api` | Debarment management |
 | `chaincode-explorer` | Blockchain queries |
+
+---
+
+## Indexes
+
+- Foreign key indexes on all relationships
+- Status indexes for filtering
+- Date indexes for time queries
+- GIN indexes on JSONB columns
+- Blockchain hash indexes for verification

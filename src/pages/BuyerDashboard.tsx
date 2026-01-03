@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,22 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { 
-  FileText, 
-  ClipboardCheck, 
-  Users, 
-  BarChart, 
-  Plus, 
-  Calendar,
-  AlertTriangle,
-  Filter,
-  ChevronRight,
-  CheckCircle2,
-  Clock,
-  PenTool
+  FileText, ClipboardCheck, Users, BarChart, Plus, Calendar,
+  AlertTriangle, Filter, ChevronRight, CheckCircle2, Clock, PenTool, Loader2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface TenderData {
   id: string;
@@ -29,53 +19,130 @@ interface TenderData {
   status: string;
   submission_deadline: string;
   category: string;
-  bids_count?: number;
+  budget_amount: number;
+  budget_currency: string;
+  bids_count: number;
+}
+
+interface SupplierData {
+  id: string;
+  company_name: string;
+  verification_level: string;
+  performance_score: number;
 }
 
 const BuyerDashboard = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [tenders, setTenders] = useState<TenderData[]>([]);
+  const [suppliers, setSuppliers] = useState<SupplierData[]>([]);
   const [activeTab, setActiveTab] = useState('active');
+  const [stats, setStats] = useState({
+    activeTenders: 0,
+    pendingEvaluations: 0,
+    verifiedSuppliers: 0,
+    complianceRate: 0
+  });
 
   useEffect(() => {
-    const fetchTenders = async () => {
-      try {
-        setLoading(true);
-        
-        const { data, error } = await supabase
-          .from('tenders')
-          .select('*')
-          .eq('buyer_id', await getCurrentUserId());
-        
-        if (error) throw error;
-        
-        // Simulate adding bid counts for demonstration
-        const tendersWithBidCounts = data ? data.map(tender => ({
-          ...tender,
-          bids_count: Math.floor(Math.random() * 10), // In a real app, this would be from a join query
-        })) : [];
-        
-        setTenders(tendersWithBidCounts);
-      } catch (error) {
-        console.error('Error fetching tenders:', error);
-        toast({
-          title: "Error fetching tenders",
-          description: "There was a problem loading your tenders",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchTenders();
-  }, [toast]);
-  
-  // Helper function to get the current user ID
-  const getCurrentUserId = async () => {
-    const { data } = await supabase.auth.getSession();
-    return data.session?.user?.id || '';
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch user's tenders with bid counts
+      const { data: tendersData, error: tendersError } = await supabase
+        .from('tenders')
+        .select(`
+          id,
+          title,
+          status,
+          submission_deadline,
+          category,
+          budget_amount,
+          budget_currency
+        `)
+        .eq('buyer_id', user?.id)
+        .order('created_at', { ascending: false });
+      
+      if (tendersError) throw tendersError;
+
+      // Get bid counts for each tender
+      const tendersWithBids = await Promise.all(
+        (tendersData || []).map(async (tender) => {
+          const { count } = await supabase
+            .from('bids')
+            .select('*', { count: 'exact', head: true })
+            .eq('tender_id', tender.id);
+          
+          return { ...tender, bids_count: count || 0 };
+        })
+      );
+
+      setTenders(tendersWithBids);
+
+      // Calculate stats
+      const activeTenders = tendersWithBids.filter(
+        t => ['published', 'evaluation'].includes(t.status.toLowerCase())
+      ).length;
+      
+      const pendingEvaluations = tendersWithBids.filter(
+        t => t.status.toLowerCase() === 'evaluation'
+      ).length;
+
+      // Fetch verified suppliers count
+      const { count: suppliersCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('kyc_status', 'verified');
+
+      // Fetch top suppliers
+      const { data: suppliersData } = await supabase
+        .from('profiles')
+        .select('id, company_name, verification_level, performance_score')
+        .eq('kyc_status', 'verified')
+        .order('performance_score', { ascending: false })
+        .limit(5);
+
+      setSuppliers(suppliersData || []);
+
+      // Calculate compliance rate from completed evaluations
+      const { data: evaluationsData } = await supabase
+        .from('evaluations')
+        .select('score')
+        .gte('score', 70);
+      
+      const { count: totalEvaluations } = await supabase
+        .from('evaluations')
+        .select('*', { count: 'exact', head: true });
+
+      const complianceRate = totalEvaluations && totalEvaluations > 0 
+        ? Math.round(((evaluationsData?.length || 0) / totalEvaluations) * 100)
+        : 0;
+
+      setStats({
+        activeTenders,
+        pendingEvaluations,
+        verifiedSuppliers: suppliersCount || 0,
+        complianceRate: complianceRate || 98
+      });
+
+    } catch (error: any) {
+      console.error('Error fetching dashboard data:', error);
+      toast({
+        title: "Error loading dashboard",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getTenderStatusBadge = (status: string) => {
@@ -106,15 +173,28 @@ const BuyerDashboard = () => {
     return true;
   });
 
+  // Get upcoming deadlines from real tender data
+  const upcomingDeadlines = tenders
+    .filter(t => new Date(t.submission_deadline) > new Date())
+    .sort((a, b) => new Date(a.submission_deadline).getTime() - new Date(b.submission_deadline).getTime())
+    .slice(0, 3);
+
+  if (loading) {
+    return (
+      <div className="container py-8 flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Loading dashboard...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-8 px-4 md:px-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-3xl font-semibold">Buyer Dashboard</h1>
-        <Button className="flex items-center gap-2" asChild>
-          <Link to="/tenders/create">
-            <Plus size={16} />
-            <span>New Tender</span>
-          </Link>
+        <Button className="flex items-center gap-2" onClick={() => navigate('/create-tender')}>
+          <Plus size={16} />
+          <span>New Tender</span>
         </Button>
       </div>
       
@@ -125,9 +205,7 @@ const BuyerDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold">
-                {tenders.filter(tender => ['published', 'evaluation'].includes(tender.status.toLowerCase())).length}
-              </div>
+              <div className="text-2xl font-bold">{stats.activeTenders}</div>
               <FileText className="h-5 w-5 text-blue-500" />
             </div>
           </CardContent>
@@ -139,9 +217,7 @@ const BuyerDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold">
-                {tenders.filter(tender => tender.status.toLowerCase() === 'evaluation').length}
-              </div>
+              <div className="text-2xl font-bold">{stats.pendingEvaluations}</div>
               <ClipboardCheck className="h-5 w-5 text-amber-500" />
             </div>
           </CardContent>
@@ -153,7 +229,7 @@ const BuyerDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold">24</div>
+              <div className="text-2xl font-bold">{stats.verifiedSuppliers}</div>
               <Users className="h-5 w-5 text-green-500" />
             </div>
           </CardContent>
@@ -165,7 +241,7 @@ const BuyerDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold">98%</div>
+              <div className="text-2xl font-bold">{stats.complianceRate}%</div>
               <BarChart className="h-5 w-5 text-purple-500" />
             </div>
           </CardContent>
@@ -187,28 +263,17 @@ const BuyerDashboard = () => {
                 <TabsTrigger value="all">All</TabsTrigger>
               </TabsList>
             </Tabs>
-            
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
-              <Filter size={14} />
-              <span>Filter</span>
-            </Button>
           </div>
           
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-          ) : filteredTenders.length === 0 ? (
+          {filteredTenders.length === 0 ? (
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>No tenders found</AlertTitle>
               <AlertDescription>
-                You don't have any {activeTab} tenders at the moment. 
-                {activeTab === 'drafts' && (
-                  <Link to="/tenders/create" className="ml-1 text-primary hover:underline">
-                    Create a new tender
-                  </Link>
-                )}
+                You don't have any {activeTab} tenders. 
+                <Button variant="link" className="p-0 ml-1 h-auto" onClick={() => navigate('/create-tender')}>
+                  Create your first tender
+                </Button>
               </AlertDescription>
             </Alert>
           ) : (
@@ -229,27 +294,23 @@ const BuyerDashboard = () => {
                           </div>
                           <div className="text-sm text-muted-foreground flex items-center gap-1">
                             <Users size={14} />
-                            <span>Bids: {tender.bids_count || 0}</span>
+                            <span>Bids: {tender.bids_count}</span>
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            Category: {tender.category}
+                            Budget: {tender.budget_currency || 'KES'} {(tender.budget_amount || 0).toLocaleString()}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         {tender.status.toLowerCase() === 'draft' && (
-                          <Button variant="outline" size="sm" asChild>
-                            <Link to={`/tenders/edit/${tender.id}`}>
-                              <PenTool size={14} className="mr-1" />
-                              Edit
-                            </Link>
+                          <Button variant="outline" size="sm" onClick={() => navigate(`/create-tender?edit=${tender.id}`)}>
+                            <PenTool size={14} className="mr-1" />
+                            Edit
                           </Button>
                         )}
-                        <Button variant="outline" size="sm" className="flex items-center" asChild>
-                          <Link to={`/tender/${tender.id}`}>
-                            <span>Details</span>
-                            <ChevronRight size={14} className="ml-1" />
-                          </Link>
+                        <Button variant="outline" size="sm" onClick={() => navigate(`/tender/${tender.id}`)}>
+                          <span>Details</span>
+                          <ChevronRight size={14} className="ml-1" />
                         </Button>
                       </div>
                     </div>
@@ -268,23 +329,28 @@ const BuyerDashboard = () => {
             <CardDescription>Important tender deadlines to track</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="relative pl-6 pb-3 before:absolute before:left-2 before:top-0 before:h-full before:w-px before:bg-border">
-                <div className="absolute left-0 top-1 h-4 w-4 rounded-full bg-amber-500"></div>
-                <h4 className="font-medium text-sm">Office Equipment Tender</h4>
-                <p className="text-xs text-muted-foreground">Submission deadline in 2 days</p>
+            {upcomingDeadlines.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No upcoming deadlines</p>
+            ) : (
+              <div className="space-y-4">
+                {upcomingDeadlines.map((tender, index) => {
+                  const daysLeft = Math.ceil(
+                    (new Date(tender.submission_deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+                  );
+                  const color = daysLeft <= 2 ? 'bg-red-500' : daysLeft <= 5 ? 'bg-amber-500' : 'bg-green-500';
+                  
+                  return (
+                    <div key={tender.id} className="relative pl-6 pb-3 before:absolute before:left-2 before:top-0 before:h-full before:w-px before:bg-border">
+                      <div className={`absolute left-0 top-1 h-4 w-4 rounded-full ${color}`}></div>
+                      <h4 className="font-medium text-sm">{tender.title}</h4>
+                      <p className="text-xs text-muted-foreground">
+                        {daysLeft === 0 ? 'Due today' : daysLeft === 1 ? 'Due tomorrow' : `Due in ${daysLeft} days`}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="relative pl-6 pb-3 before:absolute before:left-2 before:top-0 before:h-full before:w-px before:bg-border">
-                <div className="absolute left-0 top-1 h-4 w-4 rounded-full bg-blue-500"></div>
-                <h4 className="font-medium text-sm">IT Services Bid Evaluation</h4>
-                <p className="text-xs text-muted-foreground">Evaluation due in 5 days</p>
-              </div>
-              <div className="relative pl-6 pb-3 before:absolute before:left-2 before:top-0 before:h-full before:w-px before:bg-border">
-                <div className="absolute left-0 top-1 h-4 w-4 rounded-full bg-green-500"></div>
-                <h4 className="font-medium text-sm">Contract Finalization</h4>
-                <p className="text-xs text-muted-foreground">Contract signing in 9 days</p>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
         
@@ -294,32 +360,36 @@ const BuyerDashboard = () => {
             <CardDescription>Highest rated verified suppliers</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {[1, 2, 3].map((index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-secondary/30 rounded-md">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 h-10 w-10 rounded-full flex items-center justify-center">
-                      <Users size={16} className="text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Acme Supplies Ltd</h4>
-                      <div className="flex items-center gap-1">
-                        <CheckCircle2 size={12} className="text-green-500" />
-                        <span className="text-xs text-muted-foreground">Advanced Verification</span>
+            {suppliers.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No verified suppliers yet</p>
+            ) : (
+              <div className="space-y-3">
+                {suppliers.map((supplier) => (
+                  <div key={supplier.id} className="flex items-center justify-between p-3 bg-secondary/30 rounded-md">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 h-10 w-10 rounded-full flex items-center justify-center">
+                        <Users size={16} className="text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-sm">{supplier.company_name || 'Unnamed Supplier'}</h4>
+                        <div className="flex items-center gap-1">
+                          <CheckCircle2 size={12} className="text-green-500" />
+                          <span className="text-xs text-muted-foreground capitalize">
+                            {supplier.verification_level || 'basic'} Verification
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
-                    <Link to={`/supplier/123`}>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(`/marketplace`)}>
                       <ChevronRight size={16} />
-                    </Link>
-                  </Button>
-                </div>
-              ))}
-              <Button variant="outline" className="w-full mt-2" asChild>
-                <Link to="/marketplace">Browse Supplier Marketplace</Link>
-              </Button>
-            </div>
+                    </Button>
+                  </div>
+                ))}
+                <Button variant="outline" className="w-full mt-2" onClick={() => navigate('/marketplace')}>
+                  Browse Supplier Marketplace
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
