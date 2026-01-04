@@ -1,0 +1,27 @@
+{
+  "name": "ProcureChain",
+  "short_name": "ProcureChain",
+  "description": "Blockchain-based procurement and tender management platform for Kenya",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/lovable-uploads/2767cbb7-f0e0-4434-a008-9c44991b8a8b.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/2767cbb7-f0e0-4434-a008-9c44991b8a8b.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
