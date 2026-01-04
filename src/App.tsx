@@ -43,13 +43,18 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt';
+import usePWA from '@/hooks/usePWA';
 
 const queryClient = new QueryClient();
 
 function App() {
+  usePWA();
+  
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-background">
+        <PWAInstallPrompt />
         <BrowserRouter>
           <AuthProvider>
             <Layout>
