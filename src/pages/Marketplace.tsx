@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,10 @@ const Marketplace = () => {
   
   return (
     <div className="container mx-auto py-6 px-4">
+      <Helmet>
+        <title>Marketplace | ProcureChain</title>
+        <meta name="description" content="Browse tenders and suppliers in our blockchain-powered procurement marketplace." />
+      </Helmet>
       <MarketplaceHeader />
       
       <div className="mb-8">

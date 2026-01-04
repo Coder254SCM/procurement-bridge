@@ -1,11 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { FileText, Calendar, DollarSign, User, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { FileText, Calendar, DollarSign, User, CheckCircle, Clock, AlertTriangle, Loader2 } from 'lucide-react';
 import { Contract } from '@/types/database.types';
 import { contractService } from '@/services/ContractService';
 import { useToast } from '@/hooks/use-toast';
@@ -102,16 +102,19 @@ const Contracts: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container py-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+      <div className="container py-8 flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2 text-muted-foreground">Loading contracts...</span>
       </div>
     );
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 px-4 md:px-6">
+      <Helmet>
+        <title>Contract Management | ProcureChain</title>
+        <meta name="description" content="Manage procurement contracts and track project milestones." />
+      </Helmet>
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Contract Management</h1>
         <p className="text-muted-foreground mt-2">
