@@ -1,5 +1,5 @@
-
 import React, { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMarketTrends, useSuppliers, useSupplierPerformance, useRiskAssessment } from '@/hooks/useAnalytics';
@@ -48,6 +48,10 @@ const Analytics = () => {
 
   return (
     <div className="container py-8 px-4 md:px-6">
+      <Helmet>
+        <title>Analytics | ProcureChain</title>
+        <meta name="description" content="View procurement analytics, supplier performance metrics, and market trends." />
+      </Helmet>
       <AnalyticsHeader period={period} onPeriodChange={setPeriod} />
       
       <KpiCards metrics={kpiMetrics} />

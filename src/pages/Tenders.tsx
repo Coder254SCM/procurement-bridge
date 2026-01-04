@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import TendersList from '@/components/tenders/TendersList';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,10 @@ const Tenders = () => {
   
   return (
     <div className="container py-8 px-4 md:px-6">
+      <Helmet>
+        <title>Tender Management | ProcureChain</title>
+        <meta name="description" content="Create, manage, and respond to procurement tenders." />
+      </Helmet>
       <div className="mb-6">
         <h1 className="text-3xl font-semibold">Tender Management</h1>
         <p className="text-muted-foreground mt-1">
