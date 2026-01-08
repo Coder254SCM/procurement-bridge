@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,9 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, ChevronDown, FileText, Users, ShoppingCart, Gavel, Handshake, Target, Award, PenTool } from 'lucide-react';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const Header = () => {
@@ -24,18 +25,24 @@ const Header = () => {
     navigate('/');
   };
 
+  const procurementMethods = [
+    { name: 'Open Tender', href: '/tenders?method=open_tender', icon: FileText },
+    { name: 'Restricted Tender', href: '/tenders?method=restricted_tender', icon: Target },
+    { name: 'Direct Procurement', href: '/tenders?method=direct_procurement', icon: Handshake },
+    { name: 'Request for Proposal', href: '/tenders?method=request_for_proposal', icon: PenTool },
+    { name: 'Request for Quotation', href: '/tenders?method=request_for_quotation', icon: ShoppingCart },
+    { name: 'Framework Agreement', href: '/framework-agreements', icon: Award },
+    { name: 'Reverse Auction', href: '/tenders?method=reverse_auction', icon: Gavel },
+  ];
+
   const navigation = [
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Catalog', href: '/catalog' },
     { name: 'Requisitions', href: '/requisitions' },
-    { name: 'Tenders', href: '/tenders' },
+    { name: 'Procurement', href: '', dropdown: true }, // Dropdown for methods
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Analytics', href: '/analytics' },
-    { name: 'Budgets', href: '/budgets' },
-    { name: 'Qualifications', href: '/qualifications' },
-    { name: 'Frameworks', href: '/framework-agreements' },
-    { name: 'Performance', href: '/contract-performance' },
-    { name: 'Contracts', href: '/contracts' },
+    { name: 'Team', href: '/team' },
   ];
 
   return (
@@ -48,15 +55,56 @@ const Header = () => {
                 ProcureChain
               </Link>
             </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-6 items-center">
               {user && navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  {item.name}
-                </Link>
+                item.dropdown ? (
+                  <DropdownMenu key={item.name}>
+                    <DropdownMenuTrigger asChild>
+                      <button className="border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                        {item.name}
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-64" align="start">
+                      <DropdownMenuLabel>Procurement Methods</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        {procurementMethods.map((method) => (
+                          <DropdownMenuItem key={method.name} asChild>
+                            <Link to={method.href} className="flex items-center">
+                              <method.icon className="mr-2 h-4 w-4" />
+                              {method.name}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuLabel className="text-xs">More</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                          <Link to="/budgets" className="flex items-center">Budgets</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/qualifications" className="flex items-center">Qualifications</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/contract-performance" className="flex items-center">Performance</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/contracts" className="flex items-center">Contracts</Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium"
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
             </div>
           </div>
