@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Index from '@/pages/Index';
@@ -38,6 +37,7 @@ import SecuritySettings from '@/pages/SecuritySettings';
 import DataProtection from '@/pages/DataProtection';
 import Appeals from '@/pages/Appeals';
 import FraudDetection from '@/pages/FraudDetection';
+import Team from '@/pages/Team';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -169,6 +169,11 @@ function App() {
                 <Route path="/fraud-detection" element={
                   <ProtectedRoute>
                     <FraudDetection />
+                  </ProtectedRoute>
+                } />
+                <Route path="/team" element={
+                  <ProtectedRoute>
+                    <Team />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />
