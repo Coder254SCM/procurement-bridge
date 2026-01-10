@@ -119,7 +119,14 @@ export const CatalogManagement = () => {
   });
 
   if (loading) {
-    return <div className="flex justify-center p-8">Loading catalog...</div>;
+    return (
+      <div className="flex justify-center p-8">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span className="text-muted-foreground">Loading catalog...</span>
+        </div>
+      </div>
+    );
   }
 
   return (

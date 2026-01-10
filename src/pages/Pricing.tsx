@@ -9,7 +9,7 @@ const Pricing = () => {
   const plans = [
     {
       name: 'Starter',
-      price: 'Free',
+      price: 'KES 8,000/year',
       description: 'Perfect for small suppliers getting started',
       features: [
         'Up to 5 tender submissions per month',
@@ -27,7 +27,7 @@ const Pricing = () => {
     },
     {
       name: 'Professional',
-      price: 'KES 15,000/month',
+      price: 'KES 20,000/year',
       description: 'For growing businesses and regular participants',
       features: [
         'Unlimited tender submissions',
@@ -39,15 +39,16 @@ const Pricing = () => {
         'Basic analytics dashboard',
         'Multi-role support',
         'Contract management tools',
-        'Advanced evaluation criteria access'
+        'Advanced evaluation criteria access',
+        'Team members (up to 5)'
       ],
       popular: true,
       badge: 'Most Popular'
     },
     {
       name: 'Enterprise',
-      price: 'KES 50,000/month',
-      description: 'For large organizations and government entities',
+      price: 'KES 50,000/year',
+      description: 'For large organizations with advanced needs',
       features: [
         'Everything in Professional',
         'Advanced verification level access',
@@ -60,32 +61,16 @@ const Pricing = () => {
         'Blockchain certificate priority',
         'Advanced behavior analysis',
         'Custom evaluation workflows',
-        'Multi-organization management'
-      ],
-      badge: 'Enterprise'
-    },
-    {
-      name: 'Government',
-      price: 'Custom',
-      description: 'Specialized solution for government agencies',
-      features: [
-        'Everything in Enterprise',
+        'Multi-organization management',
         'Full regulatory compliance suite',
         'PPRA integration & reporting',
         'KRA direct integration',
         'Custom procurement methods',
         'Advanced audit trails',
-        'White-label deployment options',
-        'On-premises deployment available',
-        'Custom SLA agreements',
-        'Advanced security features',
-        'Dedicated infrastructure',
-        'Full blockchain node access',
-        '24/7 priority support',
-        'Training & onboarding included'
+        'Unlimited team members',
+        '24/7 priority support'
       ],
-      badge: 'Government',
-      enterprise: true
+      badge: 'Enterprise'
     }
   ];
 
@@ -93,17 +78,17 @@ const Pricing = () => {
     {
       level: 'Basic',
       description: 'Identity & business registration verification',
-      plans: ['Starter', 'Professional', 'Enterprise', 'Government']
+      plans: ['Starter', 'Professional', 'Enterprise']
     },
     {
       level: 'Intermediate',
       description: 'Financial records & tax compliance verification',
-      plans: ['Professional', 'Enterprise', 'Government']
+      plans: ['Professional', 'Enterprise']
     },
     {
       level: 'Advanced',
       description: 'Full compliance & blockchain certification',
-      plans: ['Enterprise', 'Government']
+      plans: ['Enterprise']
     }
   ];
 
@@ -111,22 +96,22 @@ const Pricing = () => {
     {
       name: 'KYC/AML Compliance',
       description: 'Know Your Customer and Anti-Money Laundering checks',
-      plans: ['Professional', 'Enterprise', 'Government']
+      plans: ['Professional', 'Enterprise']
     },
     {
       name: 'Tax Compliance (KRA)',
       description: 'Direct integration with Kenya Revenue Authority',
-      plans: ['Enterprise', 'Government']
+      plans: ['Enterprise']
     },
     {
       name: 'PPRA Compliance',
       description: 'Public Procurement Regulatory Authority compliance',
-      plans: ['Government']
+      plans: ['Enterprise']
     },
     {
       name: 'Custom Frameworks',
       description: 'Industry-specific compliance frameworks',
-      plans: ['Enterprise', 'Government']
+      plans: ['Enterprise']
     }
   ];
 
@@ -140,14 +125,14 @@ const Pricing = () => {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
+      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
         {plans.map((plan, index) => (
-          <Card key={index} className={`relative ${plan.popular ? 'border-primary shadow-lg scale-105' : plan.enterprise ? 'border-purple-500 shadow-lg' : ''}`}>
+          <Card key={index} className={`relative ${plan.popular ? 'border-primary shadow-lg scale-105' : plan.badge === 'Enterprise' ? 'border-purple-500 shadow-lg' : ''}`}>
             {plan.badge && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge className={`px-3 py-1 ${
                   plan.popular ? 'bg-primary text-primary-foreground' : 
-                  plan.enterprise ? 'bg-purple-600 text-white' : 'bg-secondary'
+                  plan.badge === 'Enterprise' ? 'bg-purple-600 text-white' : 'bg-secondary'
                 }`}>
                   {plan.badge}
                 </Badge>
@@ -156,7 +141,7 @@ const Pricing = () => {
             
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                {plan.enterprise && <Shield className="h-5 w-5 text-purple-600" />}
+                {plan.badge === 'Enterprise' && <Shield className="h-5 w-5 text-purple-600" />}
                 {plan.popular && <Star className="h-5 w-5 text-primary" />}
                 {plan.name}
               </CardTitle>
@@ -188,11 +173,10 @@ const Pricing = () => {
               )}
               
               <Button 
-                className={`w-full ${plan.popular ? 'bg-primary' : plan.enterprise ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
-                variant={plan.popular || plan.enterprise ? 'default' : 'outline'}
+                className={`w-full ${plan.popular ? 'bg-primary' : plan.badge === 'Enterprise' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                variant={plan.popular || plan.badge === 'Enterprise' ? 'default' : 'outline'}
               >
-                {plan.price === 'Free' ? 'Get Started' : 
-                 plan.price === 'Custom' ? 'Contact Sales' : 'Start Free Trial'}
+                Start Free Trial
               </Button>
             </CardContent>
           </Card>
@@ -345,11 +329,11 @@ const Pricing = () => {
             </div>
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-blue-600" />
-              <span className="text-sm">Dedicated account management (Enterprise+)</span>
+              <span className="text-sm">Dedicated account management (Enterprise)</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-blue-600" />
-              <span className="text-sm">24/7 priority support (Government)</span>
+              <span className="text-sm">24/7 priority support (Enterprise)</span>
             </div>
           </CardContent>
         </Card>
