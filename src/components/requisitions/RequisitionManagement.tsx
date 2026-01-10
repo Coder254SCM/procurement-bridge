@@ -7,10 +7,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { requisitionService, type PurchaseRequisition, type RequisitionItem } from '@/services/RequisitionService';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Plus, Search, FileText, Send, Eye, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, FileText, Send, Eye, Edit, Trash2, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
+
+export interface RequisitionItem {
+  id?: string;
+  catalog_item_id?: string;
+  name: string;
+  description?: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  specifications?: Record<string, any>;
+}
+
+export interface PurchaseRequisition {
+  id: string;
+  requisition_number: string;
+  requester_id: string;
+  department: string;
+  title: string;
+  description?: string;
+  justification: string;
+  budget_code?: string;
+  estimated_value: number;
+  currency: string;
+  required_date: string;
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  approval_status: 'draft' | 'submitted' | 'approved' | 'rejected' | 'cancelled';
+  items: RequisitionItem[];
+  approvers: any[];
+  approval_workflow: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
 
 export const RequisitionManagement = () => {
   const [requisitions, setRequisitions] = useState<PurchaseRequisition[]>([]);
@@ -54,10 +86,37 @@ export const RequisitionManagement = () => {
     }
     
     try {
-      const { data, error } = await requisitionService.getUserRequisitions(user.id);
-      if (error) throw new Error(error.message);
+      const { data, error } = await supabase
+        .from('purchase_requisitions')
+        .select('*')
+        .eq('requester_id', user.id)
+        .order('created_at', { ascending: false });
       
-      setRequisitions(data || []);
+      if (error) throw error;
+      
+      // Map the data to the expected format with proper type casting
+      const formattedData = (data || []).map(req => ({
+        id: req.id,
+        requisition_number: req.requisition_number,
+        requester_id: req.requester_id,
+        department: req.department,
+        title: req.title,
+        description: req.description || '',
+        justification: req.justification,
+        budget_code: req.budget_code || '',
+        estimated_value: req.estimated_value,
+        currency: req.currency,
+        required_date: req.required_date,
+        priority: req.priority as 'low' | 'normal' | 'high' | 'urgent',
+        approval_status: req.approval_status as 'draft' | 'submitted' | 'approved' | 'rejected' | 'cancelled',
+        items: (Array.isArray(req.items) ? req.items : []) as unknown as RequisitionItem[],
+        approvers: Array.isArray(req.approvers) ? req.approvers : [],
+        approval_workflow: (typeof req.approval_workflow === 'object' && req.approval_workflow !== null) ? req.approval_workflow as Record<string, any> : {},
+        created_at: req.created_at,
+        updated_at: req.updated_at
+      }));
+      
+      setRequisitions(formattedData);
     } catch (error: any) {
       console.error('Error loading requisitions:', error);
       toast({
@@ -107,16 +166,55 @@ export const RequisitionManagement = () => {
     if (!user) return;
     
     try {
-      const requisitionData = {
-        ...newRequisition,
+      // Generate requisition number
+      const reqNumber = `REQ-${Date.now().toString(36).toUpperCase()}`;
+      
+      const insertData: any = {
+        requisition_number: reqNumber,
         requester_id: user.id,
-        currency: 'KES'
+        title: newRequisition.title,
+        description: newRequisition.description,
+        department: newRequisition.department,
+        justification: newRequisition.justification,
+        budget_code: newRequisition.budget_code,
+        estimated_value: newRequisition.estimated_value,
+        required_date: newRequisition.required_date,
+        priority: newRequisition.priority,
+        items: newRequisition.items,
+        currency: 'KES',
+        approval_status: 'draft'
+      };
+      
+      const { data, error } = await supabase
+        .from('purchase_requisitions')
+        .insert([insertData])
+        .select()
+        .single();
+      
+      if (error) throw error;
+
+      const formattedData: PurchaseRequisition = {
+        id: data.id,
+        requisition_number: data.requisition_number,
+        requester_id: data.requester_id,
+        department: data.department,
+        title: data.title,
+        description: data.description || '',
+        justification: data.justification,
+        budget_code: data.budget_code || '',
+        estimated_value: data.estimated_value,
+        currency: data.currency,
+        required_date: data.required_date,
+        priority: data.priority as 'low' | 'normal' | 'high' | 'urgent',
+        approval_status: data.approval_status as 'draft' | 'submitted' | 'approved' | 'rejected' | 'cancelled',
+        items: (Array.isArray(data.items) ? data.items : []) as unknown as RequisitionItem[],
+        approvers: Array.isArray(data.approvers) ? data.approvers : [],
+        approval_workflow: (typeof data.approval_workflow === 'object' && data.approval_workflow !== null) ? data.approval_workflow as Record<string, any> : {},
+        created_at: data.created_at,
+        updated_at: data.updated_at
       };
 
-      const { data, error } = await requisitionService.createRequisition(requisitionData);
-      if (error) throw new Error(error.message);
-
-      setRequisitions([data, ...requisitions]);
+      setRequisitions([formattedData, ...requisitions]);
       setNewRequisition({
         title: '',
         description: '',
@@ -145,8 +243,12 @@ export const RequisitionManagement = () => {
 
   const handleSubmitForApproval = async (requisitionId: string) => {
     try {
-      const { data, error } = await requisitionService.submitForApproval(requisitionId);
-      if (error) throw new Error(error.message);
+      const { error } = await supabase
+        .from('purchase_requisitions')
+        .update({ approval_status: 'submitted' })
+        .eq('id', requisitionId);
+      
+      if (error) throw error;
 
       // Update local state
       setRequisitions(requisitions.map(req => 
