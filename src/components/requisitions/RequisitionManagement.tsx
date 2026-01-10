@@ -46,7 +46,12 @@ export const RequisitionManagement = () => {
   }, [user]);
 
   const loadRequisitions = async () => {
-    if (!user) return;
+    setLoading(true);
+    
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     
     try {
       const { data, error } = await requisitionService.getUserRequisitions(user.id);
@@ -54,9 +59,10 @@ export const RequisitionManagement = () => {
       
       setRequisitions(data || []);
     } catch (error: any) {
+      console.error('Error loading requisitions:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to load requisitions",
         variant: "destructive"
       });
     } finally {
@@ -184,7 +190,29 @@ export const RequisitionManagement = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8">Loading requisitions...</div>;
+    return (
+      <div className="flex justify-center p-8">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span className="text-muted-foreground">Loading requisitions...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">Purchase Requisitions</h1>
+        <Card>
+          <CardContent className="text-center py-12">
+            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">Sign in required</h3>
+            <p className="text-muted-foreground">Please sign in to create and manage requisitions.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (

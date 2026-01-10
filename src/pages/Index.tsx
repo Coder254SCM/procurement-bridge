@@ -9,7 +9,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 overflow-hidden bg-cover bg-center" style={{ backgroundImage: `url(${heroBg})` }}>
-        <div className="absolute inset-0 bg-background/25 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px]"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <div className="text-5xl md:text-6xl font-bold mb-8 text-primary">
