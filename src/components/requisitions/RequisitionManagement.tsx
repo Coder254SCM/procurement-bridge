@@ -9,9 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Plus, Search, FileText, Send, Eye, Edit, Trash2, Loader2 } from 'lucide-react';
+import { useUserRole } from '@/hooks/useUserRole';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Search, FileText, Send, Eye, Edit, Trash2, Loader2, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
-
 export interface RequisitionItem {
   id?: string;
   catalog_item_id?: string;
@@ -51,7 +52,9 @@ export const RequisitionManagement = () => {
   const [selectedRequisition, setSelectedRequisition] = useState<PurchaseRequisition | null>(null);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { isBuyer, loading: rolesLoading } = useUserRole();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [newRequisition, setNewRequisition] = useState({
     title: '',
@@ -291,11 +294,11 @@ export const RequisitionManagement = () => {
     }
   };
 
-  if (loading) {
+  if (loading || rolesLoading) {
     return (
       <div className="flex justify-center p-8">
         <div className="flex items-center gap-2">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
           <span className="text-muted-foreground">Loading requisitions...</span>
         </div>
       </div>
@@ -311,6 +314,30 @@ export const RequisitionManagement = () => {
             <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">Sign in required</h3>
             <p className="text-muted-foreground">Please sign in to create and manage requisitions.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Requisitions are for buyers only
+  if (!isBuyer) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">Purchase Requisitions</h1>
+        <Card>
+          <CardContent className="text-center py-12">
+            <ShieldAlert className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">Buyer Access Required</h3>
+            <p className="text-muted-foreground mb-4">
+              Purchase requisitions are for buyers (organizations) to request internal approvals before creating tenders.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6">
+              As a supplier, you can browse and bid on published tenders instead.
+            </p>
+            <Button onClick={() => navigate('/tenders')}>
+              Browse Tenders
+            </Button>
           </CardContent>
         </Card>
       </div>

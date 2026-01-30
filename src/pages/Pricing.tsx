@@ -87,27 +87,21 @@ const Pricing = () => {
       available: true
     },
     {
+      name: 'Real-time Notifications',
+      description: 'In-app tender alerts and status updates',
+      status: 'Available',
+      available: true
+    },
+    {
       name: 'Email Notifications',
-      description: 'Tender alerts and status updates',
+      description: 'External email alerts for deadlines',
       status: 'Planned',
-      available: false
-    },
-    {
-      name: 'KRA Integration',
-      description: 'Kenya Revenue Authority tax verification',
-      status: 'Roadmap',
-      available: false
-    },
-    {
-      name: 'PPRA/PPIP Integration',
-      description: 'Government procurement portal sync',
-      status: 'Roadmap',
       available: false
     },
     {
       name: 'Payment Gateway',
       description: 'Subscription payment processing',
-      status: 'Roadmap',
+      status: 'Planned',
       available: false
     }
   ];
