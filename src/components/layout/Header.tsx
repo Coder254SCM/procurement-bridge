@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +13,12 @@ import {
   DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Menu, X, User, LogOut, Settings, ChevronDown, FileText, Users, ShoppingCart, Gavel, Handshake, Target, Award, PenTool } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, ChevronDown, FileText, ShoppingCart, Gavel, Handshake, Target, Award, PenTool, ClipboardList, Package } from 'lucide-react';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const Header = () => {
   const { user, signOut } = useAuth();
+  const { isBuyer, isSupplier, primaryRole, loading: rolesLoading } = useUserRole();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -35,15 +37,46 @@ const Header = () => {
     { name: 'Reverse Auction', href: '/tenders?method=reverse_auction', icon: Gavel },
   ];
 
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Catalog', href: '/catalog' },
-    { name: 'Requisitions', href: '/requisitions' },
-    { name: 'Procurement', href: '', dropdown: true }, // Dropdown for methods
-    { name: 'Marketplace', href: '/marketplace' },
-    { name: 'Analytics', href: '/analytics' },
-    { name: 'Team', href: '/team' },
-  ];
+  // Role-based navigation
+  const getNavigation = (): Array<{ name: string; href: string; dropdown?: boolean }> => {
+    const base = [
+      { name: 'Dashboard', href: '/dashboard' },
+    ];
+
+    // Buyers get full procurement menu
+    if (isBuyer) {
+      return [
+        ...base,
+        { name: 'Catalog', href: '/catalog' },
+        { name: 'Requisitions', href: '/requisitions' },
+        { name: 'Procurement', href: '', dropdown: true },
+        { name: 'Marketplace', href: '/marketplace' },
+        { name: 'Analytics', href: '/analytics' },
+        { name: 'Team', href: '/team' },
+      ];
+    }
+
+    // Suppliers get different menu
+    if (isSupplier) {
+      return [
+        ...base,
+        { name: 'Tenders', href: '/tenders' },
+        { name: 'My Bids', href: '/supplier-dashboard' },
+        { name: 'Contracts', href: '/contracts' },
+        { name: 'Marketplace', href: '/marketplace' },
+        { name: 'Verification', href: '/verification' },
+      ];
+    }
+
+    // Default/evaluator
+    return [
+      ...base,
+      { name: 'Evaluations', href: '/evaluations' },
+      { name: 'Tenders', href: '/tenders' },
+    ];
+  };
+
+  const navigation = getNavigation();
 
   return (
     <header className="bg-white shadow-sm border-b">
@@ -56,7 +89,7 @@ const Header = () => {
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-6 items-center">
-              {user && navigation.map((item) => (
+              {user && !rolesLoading && navigation.map((item) => (
                 item.dropdown ? (
                   <DropdownMenu key={item.name}>
                     <DropdownMenuTrigger asChild>
@@ -124,6 +157,15 @@ const Header = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user.email}</p>
+                        <p className="text-xs leading-none text-muted-foreground capitalize">
+                          {primaryRole || 'User'}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
@@ -180,15 +222,32 @@ const Header = () => {
               {user ? (
                 <>
                   {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
+                    !item.dropdown && (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    )
                   ))}
+                  {isBuyer && (
+                    <>
+                      <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase">Procurement</div>
+                      {procurementMethods.slice(0, 4).map((method) => (
+                        <Link
+                          key={method.name}
+                          to={method.href}
+                          className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-6 pr-4 py-2 border-l-4 text-base font-medium"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {method.name}
+                        </Link>
+                      ))}
+                    </>
+                  )}
                   <Link
                     to="/profile"
                     className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
