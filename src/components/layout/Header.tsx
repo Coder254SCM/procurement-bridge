@@ -13,12 +13,16 @@ import {
   DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Menu, X, User, LogOut, Settings, ChevronDown, FileText, ShoppingCart, Gavel, Handshake, Target, Award, PenTool, ClipboardList, Package } from 'lucide-react';
+import { 
+  Menu, X, User, LogOut, Settings, ChevronDown, FileText, ShoppingCart, 
+  Gavel, Handshake, Target, Award, PenTool, ClipboardList, Package,
+  Shield, AlertTriangle, Users, Scale, Building2, BadgeCheck, Briefcase
+} from 'lucide-react';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const Header = () => {
   const { user, signOut } = useAuth();
-  const { isBuyer, isSupplier, primaryRole, loading: rolesLoading } = useUserRole();
+  const { isBuyer, isSupplier, isEvaluator, primaryRole, loading: rolesLoading } = useUserRole();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -27,6 +31,7 @@ const Header = () => {
     navigate('/');
   };
 
+  // Buyer procurement dropdown
   const procurementMethods = [
     { name: 'Open Tender', href: '/tenders?method=open_tender', icon: FileText },
     { name: 'Restricted Tender', href: '/tenders?method=restricted_tender', icon: Target },
@@ -37,41 +42,52 @@ const Header = () => {
     { name: 'Reverse Auction', href: '/tenders?method=reverse_auction', icon: Gavel },
   ];
 
-  // Role-based navigation
-  const getNavigation = (): Array<{ name: string; href: string; dropdown?: boolean }> => {
-    const base = [
-      { name: 'Dashboard', href: '/dashboard' },
-    ];
+  // Supplier dropdown items
+  const supplierMoreItems = [
+    { name: 'Verification', href: '/verification', icon: BadgeCheck },
+    { name: 'Qualifications', href: '/qualifications', icon: Award },
+    { name: 'AGPO Registration', href: '/profile?tab=agpo', icon: Building2 },
+    { name: 'Consortium', href: '/profile?tab=consortium', icon: Users },
+    { name: 'Appeals', href: '/appeals', icon: Scale },
+    { name: 'Profile & KYC', href: '/profile', icon: User },
+  ];
 
-    // Buyers get full procurement menu
-    if (isBuyer) {
-      return [
-        ...base,
-        { name: 'Catalog', href: '/catalog' },
-        { name: 'Requisitions', href: '/requisitions' },
-        { name: 'Procurement', href: '', dropdown: true },
-        { name: 'Marketplace', href: '/marketplace' },
-        { name: 'Analytics', href: '/analytics' },
-        { name: 'Team', href: '/team' },
-      ];
-    }
+  // Role-based navigation - Complete based on PRD
+  const getBuyerNavigation = () => [
+    { name: 'Dashboard', href: '/buyer-dashboard' },
+    { name: 'Catalog', href: '/catalog' },
+    { name: 'Requisitions', href: '/requisitions' },
+    { name: 'Procurement', href: '', dropdown: true },
+    { name: 'Marketplace', href: '/marketplace' },
+    { name: 'Analytics', href: '/analytics' },
+    { name: 'Team', href: '/team' },
+  ];
 
-    // Suppliers get different menu
-    if (isSupplier) {
-      return [
-        ...base,
-        { name: 'Tenders', href: '/tenders' },
-        { name: 'My Bids', href: '/supplier-dashboard' },
-        { name: 'Contracts', href: '/contracts' },
-        { name: 'Marketplace', href: '/marketplace' },
-        { name: 'Verification', href: '/verification' },
-      ];
-    }
+  const getSupplierNavigation = () => [
+    { name: 'Dashboard', href: '/supplier-dashboard' },
+    { name: 'Find Tenders', href: '/tenders' },
+    { name: 'My Bids', href: '/evaluations' },
+    { name: 'My Contracts', href: '/contracts' },
+    { name: 'My Catalog', href: '/catalog' },
+    { name: 'Marketplace', href: '/marketplace' },
+    { name: 'More', href: '', supplierDropdown: true },
+  ];
 
-    // Default/evaluator
+  const getEvaluatorNavigation = () => [
+    { name: 'Dashboard', href: '/evaluator-dashboard' },
+    { name: 'Evaluations', href: '/evaluations' },
+    { name: 'Tenders', href: '/tenders' },
+    { name: 'Fraud Detection', href: '/fraud-detection' },
+    { name: 'Security', href: '/security' },
+  ];
+
+  const getNavigation = (): Array<{ name: string; href: string; dropdown?: boolean; supplierDropdown?: boolean }> => {
+    if (isBuyer) return getBuyerNavigation();
+    if (isSupplier) return getSupplierNavigation();
+    if (isEvaluator) return getEvaluatorNavigation();
+    // Default
     return [
-      ...base,
-      { name: 'Evaluations', href: '/evaluations' },
+      { name: 'Dashboard', href: '/dashboard' },
       { name: 'Tenders', href: '/tenders' },
     ];
   };
@@ -91,9 +107,10 @@ const Header = () => {
             <div className="hidden sm:ml-6 sm:flex sm:space-x-6 items-center">
               {user && !rolesLoading && navigation.map((item) => (
                 item.dropdown ? (
+                  // Buyer Procurement Dropdown
                   <DropdownMenu key={item.name}>
                     <DropdownMenuTrigger asChild>
-                      <button className="border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                      <button className="border-transparent text-muted-foreground hover:text-foreground inline-flex items-center px-1 pt-1 text-sm font-medium">
                         {item.name}
                         <ChevronDown className="ml-1 h-4 w-4" />
                       </button>
@@ -113,19 +130,67 @@ const Header = () => {
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
-                        <DropdownMenuLabel className="text-xs">More</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-xs">Management</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                          <Link to="/budgets" className="flex items-center">Budgets</Link>
+                          <Link to="/budgets" className="flex items-center">
+                            <Briefcase className="mr-2 h-4 w-4" />
+                            Budgets
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link to="/qualifications" className="flex items-center">Qualifications</Link>
+                          <Link to="/qualifications" className="flex items-center">
+                            <Award className="mr-2 h-4 w-4" />
+                            Supplier Qualifications
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link to="/contract-performance" className="flex items-center">Performance</Link>
+                          <Link to="/contract-performance" className="flex items-center">
+                            <Target className="mr-2 h-4 w-4" />
+                            Performance Monitoring
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link to="/contracts" className="flex items-center">Contracts</Link>
+                          <Link to="/contracts" className="flex items-center">
+                            <FileText className="mr-2 h-4 w-4" />
+                            Contracts
+                          </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/fraud-detection" className="flex items-center">
+                            <AlertTriangle className="mr-2 h-4 w-4" />
+                            Fraud Detection
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/appeals" className="flex items-center">
+                            <Scale className="mr-2 h-4 w-4" />
+                            Appeals
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : item.supplierDropdown ? (
+                  // Supplier More Dropdown
+                  <DropdownMenu key={item.name}>
+                    <DropdownMenuTrigger asChild>
+                      <button className="border-transparent text-muted-foreground hover:text-foreground inline-flex items-center px-1 pt-1 text-sm font-medium">
+                        {item.name}
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="start">
+                      <DropdownMenuLabel>Supplier Tools</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        {supplierMoreItems.map((menuItem) => (
+                          <DropdownMenuItem key={menuItem.name} asChild>
+                            <Link to={menuItem.href} className="flex items-center">
+                              <menuItem.icon className="mr-2 h-4 w-4" />
+                              {menuItem.name}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -133,7 +198,7 @@ const Header = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className="border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium"
+                    className="border-transparent text-muted-foreground hover:text-foreground inline-flex items-center px-1 pt-1 text-sm font-medium"
                   >
                     {item.name}
                   </Link>
@@ -222,11 +287,11 @@ const Header = () => {
               {user ? (
                 <>
                   {navigation.map((item) => (
-                    !item.dropdown && (
+                    !item.dropdown && !item.supplierDropdown && (
                       <Link
                         key={item.name}
                         to={item.href}
-                        className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                        className="border-transparent text-muted-foreground hover:bg-muted hover:border-border hover:text-foreground block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.name}
@@ -240,7 +305,7 @@ const Header = () => {
                         <Link
                           key={method.name}
                           to={method.href}
-                          className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-6 pr-4 py-2 border-l-4 text-base font-medium"
+                          className="border-transparent text-muted-foreground hover:bg-muted hover:border-border hover:text-foreground block pl-6 pr-4 py-2 border-l-4 text-base font-medium"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           {method.name}
@@ -248,9 +313,24 @@ const Header = () => {
                       ))}
                     </>
                   )}
+                  {isSupplier && (
+                    <>
+                      <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase">Supplier Tools</div>
+                      {supplierMoreItems.map((menuItem) => (
+                        <Link
+                          key={menuItem.name}
+                          to={menuItem.href}
+                          className="border-transparent text-muted-foreground hover:bg-muted hover:border-border hover:text-foreground block pl-6 pr-4 py-2 border-l-4 text-base font-medium"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {menuItem.name}
+                        </Link>
+                      ))}
+                    </>
+                  )}
                   <Link
                     to="/profile"
-                    className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                    className="border-transparent text-muted-foreground hover:bg-muted hover:border-border hover:text-foreground block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Profile
@@ -260,7 +340,7 @@ const Header = () => {
                       handleSignOut();
                       setMobileMenuOpen(false);
                     }}
-                    className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium w-full text-left"
+                    className="border-transparent text-muted-foreground hover:bg-muted hover:border-border hover:text-foreground block pl-3 pr-4 py-2 border-l-4 text-base font-medium w-full text-left"
                   >
                     Sign out
                   </button>
