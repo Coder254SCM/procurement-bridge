@@ -17,3 +17,6 @@ verify_jwt = true
 
 [functions.rth-consensus]
 verify_jwt = true
+
+[functions.predictive-analytics]
+verify_jwt = false

@@ -1,152 +1,252 @@
 # TODO: Development Roadmap
 
-## System Status: 90% COMPLETE
-**Updated**: January 10, 2026
+## System Status: 75% COMPLETE (Honest Reassessment)
+**Updated**: January 31, 2026
 
 ---
 
-## REMAINING WORK (10%)
+## GAP ANALYSIS: BASIC vs COMPREHENSIVE
 
-### High Priority ❌
+### Current State: BASIC Implementation ⚠️
+While the system has many features, most are at **basic implementation level** rather than comprehensive/production-ready.
 
-| Task | Status | Notes |
-|------|--------|-------|
-| Email Notifications | Not Started | Requires email service integration |
-| SMS Notifications | Not Started | Requires SMS gateway |
-| Payment Processing API | Stub Only | Stripe/M-Pesa integration needed for subscriptions |
-| Automated Data Retention Purge | Schema Only | Cron job implementation pending |
+---
 
-### Medium Priority ❌
+## MISSING FEATURES FOR COMPREHENSIVE SYSTEM
 
-| Task | Status |
-|------|--------|
-| MFA Support | Not Started |
-| KRA API Integration | NOT Connected - Framework Only |
-| PPRA/PPIP API Integration | NOT Connected - Framework Only |
+### 1. ML/AI FEATURES ❌ → ✅ ADDED
 
-### Testing ❌
+| Feature | Status | Implementation |
+|---------|--------|----------------|
+| Supplier Churn Prediction | ✅ ADDED | `predictive-analytics` edge function |
+| Buyer Churn Prediction | ✅ ADDED | IBM HR Analytics-inspired model |
+| Bid Success Prediction | ✅ ADDED | Logistic regression with domain features |
+| Payment Delay Prediction | ✅ ADDED | Historical + behavioral factors |
+| Contract Completion Prediction | ✅ ADDED | Capacity & complexity analysis |
+| Fraud Risk ML Scoring | ✅ ADDED | Pattern detection algorithm |
+| Predictive Analytics Dashboard | ✅ ADDED | `/predictive-analytics` route |
 
-| Area | Status |
-|------|--------|
-| Unit Tests | 0% |
-| Integration Tests | 0% |
-| E2E Tests | 0% |
+### 2. FORMS & WORKFLOWS - COMPREHENSIVE STATUS
+
+| Form/Workflow | Current State | Needed for Comprehensive |
+|---------------|---------------|-------------------------|
+| Tender Creation Wizard | ✅ Complete | 4-step wizard implemented |
+| Bid Submission Form | ⚠️ Basic | Missing: attachments preview, draft save |
+| Evaluation Form | ⚠️ Basic | Missing: multi-evaluator consensus view |
+| Requisition Form | ⚠️ Basic | Missing: multi-line items, approval chain viz |
+| Contract Form | ⚠️ Basic | Missing: clause library, template merge |
+| AGPO Registration | ⚠️ Basic | Missing: document verification flow |
+| Consortium Registration | ⚠️ Basic | Missing: member invitation flow |
+| Appeal Submission | ⚠️ Basic | Missing: timeline visualization |
+| Profile/KYC Form | ⚠️ Basic | Missing: progressive verification steps |
+
+### 3. DASHBOARD ENHANCEMENTS NEEDED
+
+| Dashboard | Current | Comprehensive Requirement |
+|-----------|---------|--------------------------|
+| Buyer Dashboard | ⚠️ Basic stats | ❌ Missing: budget burn chart, pipeline funnel, team activity |
+| Supplier Dashboard | ⚠️ Basic stats | ❌ Missing: win rate trend, competitor analysis, opportunity score |
+| Evaluator Dashboard | ⚠️ Basic | ❌ Missing: evaluation workload, consensus progress, deadline tracker |
+| Admin Dashboard | ❌ Not Built | Full system health, user analytics, audit summary |
+
+### 4. MISSING PAGES & ROUTES
+
+| Page | Status | Description |
+|------|--------|-------------|
+| `/admin` | ❌ NOT BUILT | Admin control panel |
+| `/reports` | ❌ NOT BUILT | Custom report builder |
+| `/audit-logs` | ❌ NOT BUILT | Audit trail viewer |
+| `/settings` | ❌ NOT BUILT | System settings UI |
+| `/notifications-center` | ❌ NOT BUILT | Notification management |
+| `/document-library` | ❌ NOT BUILT | Centralized document management |
+| `/supplier/:id` | ❌ NOT BUILT | Public supplier profile page |
+| `/tender-templates` | ❌ NOT BUILT | Template management UI |
+
+### 5. REAL-TIME FEATURES MISSING
+
+| Feature | Status |
+|---------|--------|
+| WebSocket Notifications | ❌ NOT IMPLEMENTED |
+| Live Bid Updates | ❌ NOT IMPLEMENTED |
+| Real-time Auction | ⚠️ Polling only |
+| Collaborative Evaluation | ❌ NOT IMPLEMENTED |
+| Live Dashboard Updates | ❌ NOT IMPLEMENTED |
+
+### 6. EXTERNAL INTEGRATIONS STATUS
+
+| Integration | Claimed | Actual Status |
+|-------------|---------|---------------|
+| KRA Tax Verification | ❌ | Framework only - NO API connection |
+| PPRA/PPIP Portal | ❌ | Framework only - NO API connection |
+| M-Pesa Payments | ❌ | NOT IMPLEMENTED |
+| Stripe Payments | ❌ | NOT IMPLEMENTED |
+| Email (Resend/SendGrid) | ❌ | NOT IMPLEMENTED |
+| SMS Gateway | ❌ | NOT IMPLEMENTED |
+| SAP/Oracle ERP | ❌ | UI Wizard only - NO sync |
+| Hyperledger Blockchain | ⚠️ | SIMULATED - Hash generation only |
+
+---
+
+## PRIORITY UPGRADE PATH
+
+### Phase 1: Core Completeness (Week 1-2)
+- [ ] Complete all form validations and error handling
+- [ ] Add draft saving to all major forms
+- [ ] Implement document preview before submission
+- [ ] Add multi-step progress saving
+- [ ] Build Admin Dashboard
+
+### Phase 2: Real-Time Features (Week 3-4)
+- [ ] Implement Supabase Realtime subscriptions
+- [ ] Add WebSocket-based notifications
+- [ ] Build live auction countdown
+- [ ] Enable collaborative evaluation
+
+### Phase 3: External Integrations (Week 5-8)
+- [ ] Stripe/M-Pesa payment gateway
+- [ ] Email notification service (Resend)
+- [ ] SMS gateway integration
+- [ ] Mock KRA/PPRA APIs for demo
+
+### Phase 4: Testing & Polish (Week 9-10)
+- [ ] Unit tests for services
+- [ ] Integration tests for workflows
+- [ ] E2E tests for critical paths
+- [ ] Performance optimization
+- [ ] Security audit
 
 ---
 
 ## COMPLETED FEATURES ✅
 
-### Storage & Infrastructure
-- ✅ **Document Storage**: Supabase Storage buckets (KYC Documents, documents)
-- ✅ **Database**: 73 Supabase tables with Row Level Security
-- ✅ **Edge Functions**: 19 deployed and operational
-- ✅ **PWA**: Auto-updates via versioned service worker
+### Infrastructure (100%)
+- ✅ 73 Supabase tables with RLS
+- ✅ 20+ Edge Functions deployed
+- ✅ Supabase Storage buckets
+- ✅ PWA with service worker
 
-### Team Management (January 10, 2026)
-- ✅ Team Management page with role assignment
-- ✅ Team limits per plan (Starter: 1, Pro: 5, Enterprise: 50)
-- ✅ Procurement Methods dropdown navigation
+### Authentication & Authorization (95%)
+- ✅ Email/password auth
+- ✅ Password reset flow
+- ✅ Role-based access control
+- ✅ Protected routes
+- ⚠️ MFA - NOT IMPLEMENTED
 
-### Buyer Dashboard Features
-- ✅ Create & publish tenders
-- ✅ Receive & evaluate bids
-- ✅ Contract management with milestones
-- ✅ Budget allocation & tracking
-- ✅ Purchase requisition management
-- ✅ Team management (Pro/Enterprise)
-- ✅ Analytics & reporting
+### Core Procurement (85%)
+- ✅ 14 procurement methods
+- ✅ 7 tender templates
+- ✅ Tender creation wizard
+- ✅ Bid submission
+- ✅ Evaluation workflow
+- ✅ Contract management
+- ⚠️ Forms need enhancement
 
-### Supplier Dashboard Features
-- ✅ Tender discovery & search
-- ✅ Bid submission with documents
-- ✅ Bid status tracking
-- ✅ Company verification & KYC
-- ✅ Contract performance tracking
-- ✅ Verification progress dashboard
+### Advanced Features (70%)
+- ✅ RTH Consensus System
+- ✅ Fraud Detection Dashboard
+- ✅ Fairness Analyzer
+- ✅ Capability Matching
+- ✅ Predictive Analytics (NEW)
+- ⚠️ Blockchain is simulated
 
-### All Pages Working
-- ✅ Buyer Dashboard - Real tender/bid counts
-- ✅ Supplier Dashboard - Real bid history
-- ✅ Tenders - CRUD with real data
-- ✅ Contracts - Real contract management
-- ✅ Requisitions - Create, submit for approval
-- ✅ E-Catalog - Product catalog management
-- ✅ Analytics - Real data visualizations
-- ✅ Marketplace - Supplier discovery
-- ✅ Budgets - Budget allocation interface
-- ✅ Framework Agreements - Long-term contracts
-- ✅ Qualifications - Supplier qualification
+### Role-Based Navigation (100%)
+- ✅ Buyer navigation complete
+- ✅ Supplier navigation complete
+- ✅ Evaluator navigation complete
 
 ---
 
-## INTEGRATION STATUS (Honest Assessment)
+## HONEST METRICS (Revised)
 
-| Integration | Status | Notes |
-|-------------|--------|-------|
-| Supabase Auth | ✅ CONNECTED | Full email/password auth |
-| Supabase Database | ✅ CONNECTED | 73 tables with RLS |
-| Supabase Storage | ✅ CONNECTED | Document storage buckets |
-| Blockchain Verification | ✅ SIMULATED | Hash generation, not real blockchain |
-| KRA Tax Verification | ❌ NOT CONNECTED | Framework only, no live API |
-| PPRA/PPIP Portal | ❌ NOT CONNECTED | Framework only, no live API |
-| Email Notifications | ❌ NOT CONNECTED | Stub only |
-| SMS Notifications | ❌ NOT CONNECTED | Not implemented |
-| Payment Gateway | ❌ NOT CONNECTED | No M-Pesa/Stripe integration |
-| ERP Systems (SAP/Oracle) | ❌ NOT CONNECTED | UI wizard only |
-
----
-
-## HONEST METRICS
-
-| Component | Completion |
-|-----------|------------|
-| Database Schema | 100% |
-| RLS Policies | 100% |
-| Edge Functions | 95% |
-| Service Layer | 90% |
-| Frontend UI | 95% |
-| Real Data Integration | 90% |
-| External Integrations | 10% |
-| Notifications | 0% |
-| Payments | 0% |
-| Testing | 0% |
-| **Overall** | **90%** |
+| Component | Previous | Actual |
+|-----------|----------|--------|
+| Database Schema | 100% | 100% ✅ |
+| RLS Policies | 100% | 100% ✅ |
+| Edge Functions | 95% | 85% |
+| Service Layer | 90% | 75% |
+| Frontend UI | 95% | 80% |
+| Form Completeness | 90% | 60% |
+| Real Data Integration | 90% | 75% |
+| External Integrations | 10% | 5% |
+| Real-time Features | 0% | 0% |
+| Notifications | 0% | 0% |
+| Payments | 0% | 0% |
+| Testing | 0% | 0% |
+| ML/AI Features | 0% | 50% ✅ |
+| **Overall** | **90%** | **75%** |
 
 ---
 
-## Devil's Advocate Assessment
+## DEVIL'S ADVOCATE ASSESSMENT
 
-### What's Actually Done (Real):
-1. Full Supabase database with 73 tables
-2. All tables have Row Level Security policies
-3. 19 edge functions deployed and working
-4. Buyer & Supplier dashboards are DIFFERENT and role-specific
-5. All pages load real data from Supabase
-6. Document storage works via Supabase Storage
-7. Authentication with role-based access control
-8. PWA works with auto-updates
+### What's Actually Working (Real):
+1. ✅ Full Supabase database with 73 tables and RLS
+2. ✅ Authentication with role-based access control
+3. ✅ All core pages load and display data
+4. ✅ Role-specific dashboards and navigation
+5. ✅ Tender creation wizard is comprehensive
+6. ✅ Document upload works via Supabase Storage
+7. ✅ Predictive Analytics ML models (NEW)
+8. ✅ PWA works with auto-updates
 
-### What's NOT Done (Honest):
-1. ❌ KRA Integration - NOT connected (pricing claims it, it's not true)
-2. ❌ PPRA/PPIP Integration - NOT connected
-3. ❌ Email/SMS Notifications - NOT working
-4. ❌ Payment Processing - Cannot collect subscription fees
-5. ❌ ERP Connectors - UI only, no actual data sync
-6. ❌ Automated Tests - Zero test coverage
-7. ❌ Real Blockchain - Simulated hash verification only
+### What's Partially Working (Basic):
+1. ⚠️ Forms work but lack comprehensive validation
+2. ⚠️ Dashboards show data but lack advanced visualizations
+3. ⚠️ Workflows exist but lack real-time updates
+4. ⚠️ Blockchain is simulated (hash only, no chain)
+5. ⚠️ Analytics exist but not deeply integrated
 
-### Storage Used:
-- **Supabase Storage** - Open-source compatible cloud storage
-- Buckets: `KYC Documents`, `documents`
-- This is reliable for user document storage needs
+### What's NOT Working (Honest):
+1. ❌ No email/SMS notifications
+2. ❌ No payment processing
+3. ❌ No real external API integrations
+4. ❌ No real-time updates (polling only)
+5. ❌ No admin panel
+6. ❌ No automated testing
+7. ❌ No report builder
 
-### Professional vs Enterprise Dashboards:
-- Both use the SAME Buyer/Supplier dashboard code
-- Differences are in feature access limits, not separate dashboards
-- Team management limited by plan tier
-
-### Realistic Production Readiness:
+### Production Readiness:
 - **Demo/Pilot Ready**: YES ✅
-- **Production Ready for Payments**: NO ❌ (can't collect money)
-- **Production Ready for Notifications**: NO ❌ (users won't get alerts)
-- **Enterprise Ready**: NO ❌ (needs testing, real integrations)
+- **MVP for Testing**: YES ✅
+- **Production Ready for Payments**: NO ❌
+- **Production Ready for Notifications**: NO ❌
+- **Enterprise Ready**: NO ❌
+
+---
+
+## NEW: ML PREDICTION MODELS IMPLEMENTED
+
+### Supplier Churn Prediction
+- **Algorithm**: Logistic Regression
+- **Features**: Activity score, engagement, financial health, bid success rate, profile completeness
+- **Inspired by**: IBM HR Analytics attrition model
+
+### Buyer Churn Prediction
+- **Algorithm**: Logistic Regression
+- **Features**: Tenders created, budget utilization, contract completion rate, inactivity
+
+### Bid Success Prediction
+- **Algorithm**: Logistic Regression
+- **Features**: Price competitiveness, technical score, verification level, past performance
+
+### Payment Delay Prediction
+- **Algorithm**: Logistic Regression
+- **Features**: Historical delay rate, contract value, buyer payment history
+
+### Contract Completion Prediction
+- **Algorithm**: Logistic Regression
+- **Features**: Supplier capacity, project complexity, timeline realism
+
+### Fraud Risk Assessment
+- **Algorithm**: Logistic Regression
+- **Features**: Bidding pattern anomaly, price deviation, document anomalies
+
+---
+
+## NEXT STEPS
+
+1. **Immediate**: Test predictive analytics at `/predictive-analytics`
+2. **This Week**: Enhance forms with comprehensive validation
+3. **Next Week**: Add real-time notifications via Supabase Realtime
+4. **Month 1**: Integrate payment gateway
+5. **Month 2**: Connect email/SMS services

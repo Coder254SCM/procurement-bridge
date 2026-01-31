@@ -60,6 +60,7 @@ const Header = () => {
     { name: 'Procurement', href: '', dropdown: true },
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Analytics', href: '/analytics' },
+    { name: 'Predictions', href: '/predictive-analytics' },
     { name: 'Team', href: '/team' },
   ];
 

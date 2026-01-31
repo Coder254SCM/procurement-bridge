@@ -38,6 +38,7 @@ import DataProtection from '@/pages/DataProtection';
 import Appeals from '@/pages/Appeals';
 import FraudDetection from '@/pages/FraudDetection';
 import Team from '@/pages/Team';
+import PredictiveAnalytics from '@/pages/PredictiveAnalytics';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -174,6 +175,11 @@ function App() {
                 <Route path="/team" element={
                   <ProtectedRoute>
                     <Team />
+                  </ProtectedRoute>
+                } />
+                <Route path="/predictive-analytics" element={
+                  <ProtectedRoute>
+                    <PredictiveAnalytics />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />
