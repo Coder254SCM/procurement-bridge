@@ -39,6 +39,7 @@ import Appeals from '@/pages/Appeals';
 import FraudDetection from '@/pages/FraudDetection';
 import Team from '@/pages/Team';
 import PredictiveAnalytics from '@/pages/PredictiveAnalytics';
+import BlockchainExplorer from '@/pages/BlockchainExplorer';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -180,6 +181,11 @@ function App() {
                 <Route path="/predictive-analytics" element={
                   <ProtectedRoute>
                     <PredictiveAnalytics />
+                  </ProtectedRoute>
+                } />
+                <Route path="/blockchain" element={
+                  <ProtectedRoute>
+                    <BlockchainExplorer />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />

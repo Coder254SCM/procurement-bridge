@@ -61,6 +61,7 @@ const Header = () => {
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Analytics', href: '/analytics' },
     { name: 'Predictions', href: '/predictive-analytics' },
+    { name: 'Blockchain', href: '/blockchain' },
     { name: 'Team', href: '/team' },
   ];
 
