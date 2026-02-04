@@ -1632,6 +1632,93 @@ export type Database = {
           },
         ]
       }
+      ml_model_performance: {
+        Row: {
+          accuracy: number | null
+          auc_roc: number | null
+          confusion_matrix: Json | null
+          correct_predictions: number
+          created_at: string
+          evaluation_date: string
+          f1_score: number | null
+          feature_importance: Json | null
+          id: string
+          model_type: string
+          model_version: string
+          precision_score: number | null
+          recall_score: number | null
+          total_predictions: number
+        }
+        Insert: {
+          accuracy?: number | null
+          auc_roc?: number | null
+          confusion_matrix?: Json | null
+          correct_predictions?: number
+          created_at?: string
+          evaluation_date?: string
+          f1_score?: number | null
+          feature_importance?: Json | null
+          id?: string
+          model_type: string
+          model_version: string
+          precision_score?: number | null
+          recall_score?: number | null
+          total_predictions?: number
+        }
+        Update: {
+          accuracy?: number | null
+          auc_roc?: number | null
+          confusion_matrix?: Json | null
+          correct_predictions?: number
+          created_at?: string
+          evaluation_date?: string
+          f1_score?: number | null
+          feature_importance?: Json | null
+          id?: string
+          model_type?: string
+          model_version?: string
+          precision_score?: number | null
+          recall_score?: number | null
+          total_predictions?: number
+        }
+        Relationships: []
+      }
+      ml_training_data: {
+        Row: {
+          entity_id: string
+          entity_type: string
+          features: Json
+          id: string
+          label: boolean
+          model_type: string
+          recorded_at: string
+          training_batch_id: string | null
+          used_in_training: boolean | null
+        }
+        Insert: {
+          entity_id: string
+          entity_type: string
+          features: Json
+          id?: string
+          label: boolean
+          model_type: string
+          recorded_at?: string
+          training_batch_id?: string | null
+          used_in_training?: boolean | null
+        }
+        Update: {
+          entity_id?: string
+          entity_type?: string
+          features?: Json
+          id?: string
+          label?: boolean
+          model_type?: string
+          recorded_at?: string
+          training_batch_id?: string | null
+          used_in_training?: boolean | null
+        }
+        Relationships: []
+      }
       mobile_sessions: {
         Row: {
           app_version: string
@@ -1828,6 +1915,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      prediction_history: {
+        Row: {
+          actual_outcome: boolean | null
+          confidence: number
+          contributing_factors: Json
+          created_at: string
+          entity_id: string
+          entity_type: string
+          expires_at: string | null
+          id: string
+          model_version: string
+          outcome_recorded_at: string | null
+          prediction_type: string
+          probability: number
+          recommendations: string[] | null
+          risk_level: string
+        }
+        Insert: {
+          actual_outcome?: boolean | null
+          confidence: number
+          contributing_factors?: Json
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          expires_at?: string | null
+          id?: string
+          model_version?: string
+          outcome_recorded_at?: string | null
+          prediction_type: string
+          probability: number
+          recommendations?: string[] | null
+          risk_level: string
+        }
+        Update: {
+          actual_outcome?: boolean | null
+          confidence?: number
+          contributing_factors?: Json
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          expires_at?: string | null
+          id?: string
+          model_version?: string
+          outcome_recorded_at?: string | null
+          prediction_type?: string
+          probability?: number
+          recommendations?: string[] | null
+          risk_level?: string
+        }
+        Relationships: []
       }
       procurement_appeals: {
         Row: {
@@ -3530,6 +3668,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_blockchain_hash: { Args: { content: Json }; Returns: string }
       calculate_payment_delay_days: {
         Args: { completion_date: string; payment_date: string }
         Returns: number
@@ -3553,6 +3692,16 @@ export type Database = {
           user_id: string
         }
         Returns: boolean
+      }
+      verify_blockchain_integrity: {
+        Args: { entity_id_param: string; entity_type_param: string }
+        Returns: {
+          current_hash: string
+          is_valid: boolean
+          last_verified: string
+          stored_hash: string
+          verification_message: string
+        }[]
       }
     }
     Enums: {

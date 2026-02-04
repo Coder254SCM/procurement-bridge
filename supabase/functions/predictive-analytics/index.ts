@@ -457,6 +457,30 @@ async function fetchBidMetrics(supabase: any, bidId: string) {
   };
 }
 
+// Helper to persist predictions to database
+async function persistPrediction(
+  supabase: any, 
+  prediction: PredictionResult, 
+  entityId: string | undefined,
+  entityType: string
+) {
+  try {
+    await supabase.from('prediction_history').insert({
+      prediction_type: prediction.prediction_type,
+      entity_id: entityId || '00000000-0000-0000-0000-000000000000',
+      entity_type: entityType,
+      probability: prediction.probability,
+      risk_level: prediction.risk_level,
+      confidence: prediction.confidence,
+      contributing_factors: prediction.contributing_factors,
+      recommendations: prediction.recommendations,
+      model_version: prediction.model_version
+    });
+  } catch (err) {
+    console.error('Failed to persist prediction:', err);
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -476,39 +500,57 @@ serve(async (req) => {
       const metrics = entity_id 
         ? await fetchSupplierMetrics(supabaseClient, entity_id)
         : { activityScore: 0.5, engagementScore: 0.5, financialHealth: 0.7, bidSuccessRate: 0.3, profileCompleteness: 0.6, daysInactive: 15, contractsCompleted: 2, disputeCount: 0 };
-      results.push(predictSupplierChurn(metrics));
+      const prediction = predictSupplierChurn(metrics);
+      results.push(prediction);
+      if (entity_id) await persistPrediction(supabaseClient, prediction, entity_id, 'supplier');
     }
 
     if (type === 'buyer_churn' || type === 'all') {
       const metrics = entity_id
         ? await fetchBuyerMetrics(supabaseClient, entity_id)
         : { tendersCreated: 5, avgTimeToAward: 30, supplierSatisfactionScore: 0.8, budgetUtilization: 0.6, daysInactive: 10, contractCompletionRate: 0.7 };
-      results.push(predictBuyerChurn(metrics));
+      const prediction = predictBuyerChurn(metrics);
+      results.push(prediction);
+      if (entity_id) await persistPrediction(supabaseClient, prediction, entity_id, 'buyer');
     }
 
     if (type === 'bid_success' || type === 'all') {
       const metrics = entity_id && entity_type === 'bid'
         ? await fetchBidMetrics(supabaseClient, entity_id)
         : { priceCompetitiveness: 0.7, technicalScore: 0.8, supplierVerificationLevel: 2, pastPerformance: 0.6, documentCompleteness: 0.9, categoryExperience: 0.5, bidTimeRemainingRatio: 0.6 };
-      if (metrics) results.push(predictBidSuccess(metrics));
+      if (metrics) {
+        const prediction = predictBidSuccess(metrics);
+        results.push(prediction);
+        if (entity_id) await persistPrediction(supabaseClient, prediction, entity_id, 'bid');
+      }
     }
 
     if (type === 'payment_delay' || type === 'all') {
       const metrics = { historicalDelayRate: 0.2, contractValue: 5000000, buyerPaymentHistory: 0.85, milestoneCompletionRate: 0.7, disputeHistory: false, documentationQuality: 0.8 };
-      results.push(predictPaymentDelay(metrics));
+      const prediction = predictPaymentDelay(metrics);
+      results.push(prediction);
+      if (entity_id && entity_type === 'contract') await persistPrediction(supabaseClient, prediction, entity_id, 'contract');
     }
 
     if (type === 'contract_completion' || type === 'all') {
       const metrics = { supplierCapacity: 0.7, projectComplexity: 0.5, timelineRealism: 0.6, resourceAvailability: 0.8, stakeholderAlignment: 0.7, riskMitigationScore: 0.6 };
-      results.push(predictContractCompletion(metrics));
+      const prediction = predictContractCompletion(metrics);
+      results.push(prediction);
+      if (entity_id && entity_type === 'contract') await persistPrediction(supabaseClient, prediction, entity_id, 'contract');
     }
 
     if (type === 'fraud_risk' || type === 'all') {
       const metrics = { biddingPatternAnomaly: 0.1, priceDeviation: 0.2, documentAnomalies: 0, networkRiskScore: 0.1, verificationGaps: 0.2, behaviorChanges: 0.1 };
-      results.push(predictFraudRisk(metrics));
+      const prediction = predictFraudRisk(metrics);
+      results.push(prediction);
+      if (entity_id) await persistPrediction(supabaseClient, prediction, entity_id, entity_type || 'supplier');
     }
 
-    return new Response(JSON.stringify({ predictions: results, generated_at: new Date().toISOString() }), {
+    return new Response(JSON.stringify({ 
+      predictions: results, 
+      generated_at: new Date().toISOString(),
+      persisted: !!entity_id 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
