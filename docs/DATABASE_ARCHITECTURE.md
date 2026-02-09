@@ -1,8 +1,8 @@
 # Database Architecture - ProcureChain
 
 ## Overview
-**Total Tables**: 73  
-**Last Updated**: January 3, 2026
+**Total Tables**: 76  
+**Last Updated**: February 9, 2026
 
 ---
 
@@ -69,7 +69,7 @@
 
 | Table | Description |
 |-------|-------------|
-| `procurement_appeals` | Appeal submissions, PPARB escalation |
+| `procurement_appeals` | Appeal submissions |
 | `appeal_timeline` | Appeal event history |
 
 ---
@@ -142,6 +142,16 @@
 
 ---
 
+## ML/AI Infrastructure
+
+| Table | Description |
+|-------|-------------|
+| `prediction_history` | All ML predictions with outcomes |
+| `ml_model_performance` | Model accuracy tracking (precision, recall, F1) |
+| `ml_training_data` | Features for model retraining |
+
+---
+
 ## Audit & Security
 
 | Table | Description |
@@ -150,7 +160,7 @@
 | `api_access_logs` | API request logging |
 | `data_access_logs` | Data access tracking |
 | `rate_limit_tracking` | Rate limit enforcement |
-| `blockchain_transactions` | Immutable hash records |
+| `blockchain_transactions` | Immutable hash records (auto-triggered) |
 | `behavior_analysis` | AI fraud detection patterns |
 | `fraud_alerts` | Detected anomalies |
 
@@ -172,10 +182,10 @@
 |-------|-------------|
 | `data_retention_schedule` | Retention policies per data type |
 
-**Retention Periods (Kenya Law)**:
-- Procurement records: 7 years (PPRA 2015)
-- Audit logs: 10 years (Evidence Act)
-- User profiles: 7 years (DPA 2019)
+**Retention Periods**:
+- Procurement records: 7 years
+- Audit logs: 10 years
+- User profiles: 7 years
 - Blockchain hashes: Permanent (no PII)
 
 ---
@@ -198,6 +208,27 @@
 
 ---
 
+## Database Functions
+
+| Function | Purpose |
+|----------|---------|
+| `calculate_blockchain_hash()` | Generates deterministic content hashes |
+| `record_blockchain_transaction()` | Auto-records to blockchain_transactions |
+| `verify_blockchain_integrity()` | Validates entity against blockchain record |
+
+---
+
+## Database Triggers
+
+| Trigger | Table | Action |
+|---------|-------|--------|
+| `trg_tender_blockchain` | tenders | Records tender creation to blockchain |
+| `trg_bid_blockchain` | bids | Records bid submission to blockchain |
+| `trg_evaluation_blockchain` | evaluations | Records evaluation to blockchain |
+| `trg_contract_blockchain` | contracts | Records contract award to blockchain |
+
+---
+
 ## Row Level Security (RLS)
 
 All tables have comprehensive RLS policies:
@@ -210,7 +241,7 @@ All tables have comprehensive RLS policies:
 
 ---
 
-## Edge Functions (19)
+## Edge Functions (22)
 
 | Function | Purpose |
 |----------|---------|
@@ -218,6 +249,7 @@ All tables have comprehensive RLS policies:
 | `secure-bid-api` | Bid submission handling |
 | `secure-evaluation-api` | Evaluation processing |
 | `blockchain-verification` | Hash verification |
+| `advanced-blockchain-verification` | Extended verification |
 | `rth-consensus` | RTH voting mechanism |
 | `compliance-check` | Automated validation |
 | `catalog-management` | E-catalog operations |
@@ -229,10 +261,11 @@ All tables have comprehensive RLS policies:
 | `reverse-auction` | Real-time bidding |
 | `trial-status` | Trial period tracking |
 | `ai-pattern-detection` | Fraud detection |
+| `predictive-analytics` | ML predictions |
 | `procurement-intelligence` | Analytics |
-| `kenya-ppip-integration` | Government integration |
 | `vendor-blacklist-api` | Debarment management |
 | `chaincode-explorer` | Blockchain queries |
+| `fabric-gateway` | Hyperledger integration |
 
 ---
 
@@ -243,3 +276,24 @@ All tables have comprehensive RLS policies:
 - Date indexes for time queries
 - GIN indexes on JSONB columns
 - Blockchain hash indexes for verification
+- Entity type + ID indexes for ML predictions
+
+---
+
+## KPI Tables Summary
+
+| KPI Category | Primary Table | Status |
+|--------------|---------------|--------|
+| Tender Metrics | tenders | ✅ Active |
+| Bid Analytics | bids | ✅ Active |
+| Evaluation Scores | evaluations | ✅ Active |
+| Contract Performance | contract_milestones | ✅ Active |
+| Payment Tracking | payment_schedules | ✅ Active |
+| Budget Utilization | budget_allocations | ✅ Active |
+| Supplier Performance | supplier_performance_history | ✅ Active |
+| Fraud Detection | fraud_alerts, behavior_analysis | ✅ Active |
+| ML Predictions | prediction_history | ✅ Active |
+| Model Accuracy | ml_model_performance | ✅ Active |
+| Blockchain Integrity | blockchain_transactions | ✅ Active |
+| Audit Trail | audit_logs | ✅ Active |
+| API Usage | api_access_logs | ✅ Active |
