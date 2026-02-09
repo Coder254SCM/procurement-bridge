@@ -138,7 +138,7 @@ const TendersList = () => {
     <div className="w-full">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
         <h1 className="text-3xl font-semibold">Tenders</h1>
-        <Button className="ml-auto" onClick={() => navigate('/create-tender')}>
+        <Button className="ml-auto" onClick={() => navigate('/tenders/create')}>
           <Plus className="w-4 h-4 mr-2" />
           Post New Tender
         </Button>
@@ -265,7 +265,7 @@ const TendersList = () => {
                       : "Try adjusting your search or filters"
                     }
                   </p>
-                  <Button onClick={() => navigate('/create-tender')}>
+                  <Button onClick={() => navigate('/tenders/create')}>
                     <Plus className="w-4 h-4 mr-2" />
                     Create First Tender
                   </Button>
@@ -287,7 +287,7 @@ const TendersList = () => {
                 <p className="text-muted-foreground mb-4">
                   {user ? "You haven't created any tenders yet" : "Sign in to create and manage your tenders"}
                 </p>
-                <Button onClick={() => user ? navigate('/create-tender') : navigate('/auth')}>
+                <Button onClick={() => user ? navigate('/tenders/create') : navigate('/auth')}>
                   {user ? 'Create Your First Tender' : 'Sign In'}
                 </Button>
               </div>

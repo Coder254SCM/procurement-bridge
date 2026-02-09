@@ -118,6 +118,12 @@ function App() {
                     <CreateTender />
                   </ProtectedRoute>
                 } />
+                {/* Legacy route redirect */}
+                <Route path="/create-tender" element={
+                  <ProtectedRoute>
+                    <CreateTender />
+                  </ProtectedRoute>
+                } />
                 <Route path="/evaluations" element={
                   <ProtectedRoute>
                     <Evaluations />
