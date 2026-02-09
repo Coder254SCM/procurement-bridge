@@ -192,7 +192,7 @@ const BuyerDashboard = () => {
     <div className="container py-8 px-4 md:px-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-3xl font-semibold">Buyer Dashboard</h1>
-        <Button className="flex items-center gap-2" onClick={() => navigate('/create-tender')}>
+        <Button className="flex items-center gap-2" onClick={() => navigate('/tenders/create')}>
           <Plus size={16} />
           <span>New Tender</span>
         </Button>
@@ -271,7 +271,7 @@ const BuyerDashboard = () => {
               <AlertTitle>No tenders found</AlertTitle>
               <AlertDescription>
                 You don't have any {activeTab} tenders. 
-                <Button variant="link" className="p-0 ml-1 h-auto" onClick={() => navigate('/create-tender')}>
+                <Button variant="link" className="p-0 ml-1 h-auto" onClick={() => navigate('/tenders/create')}>
                   Create your first tender
                 </Button>
               </AlertDescription>
@@ -303,7 +303,7 @@ const BuyerDashboard = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         {tender.status.toLowerCase() === 'draft' && (
-                          <Button variant="outline" size="sm" onClick={() => navigate(`/create-tender?edit=${tender.id}`)}>
+                          <Button variant="outline" size="sm" onClick={() => navigate(`/tenders/create?edit=${tender.id}`)}>
                             <PenTool size={14} className="mr-1" />
                             Edit
                           </Button>
