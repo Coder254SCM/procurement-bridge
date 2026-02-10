@@ -22,7 +22,7 @@ import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const Header = () => {
   const { user, signOut } = useAuth();
-  const { isBuyer, isSupplier, isEvaluator, primaryRole, loading: rolesLoading } = useUserRole();
+  const { isBuyer, isSupplier, isEvaluator, isAdmin, primaryRole, loading: rolesLoading } = useUserRole();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -83,7 +83,19 @@ const Header = () => {
     { name: 'Security', href: '/security' },
   ];
 
+  const getAdminNavigation = () => [
+    { name: 'Dashboard', href: '/admin-dashboard' },
+    { name: 'Tenders', href: '/tenders' },
+    { name: 'Contracts', href: '/contracts' },
+    { name: 'Fraud Detection', href: '/fraud-detection' },
+    { name: 'Analytics', href: '/analytics' },
+    { name: 'Blockchain', href: '/blockchain' },
+    { name: 'Security', href: '/security' },
+    { name: 'Team', href: '/team' },
+  ];
+
   const getNavigation = (): Array<{ name: string; href: string; dropdown?: boolean; supplierDropdown?: boolean }> => {
+    if (isAdmin) return getAdminNavigation();
     if (isBuyer) return getBuyerNavigation();
     if (isSupplier) return getSupplierNavigation();
     if (isEvaluator) return getEvaluatorNavigation();

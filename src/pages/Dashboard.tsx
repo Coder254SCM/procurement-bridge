@@ -30,7 +30,9 @@ const Dashboard = () => {
         const roles = rolesData?.map(r => r.role) || [];
 
         // Redirect based on primary role
-        if (roles.includes('buyer')) {
+        if (roles.includes('admin')) {
+          navigate('/admin-dashboard', { replace: true });
+        } else if (roles.includes('buyer')) {
           navigate('/buyer-dashboard', { replace: true });
         } else if (roles.includes('supplier')) {
           navigate('/supplier-dashboard', { replace: true });
