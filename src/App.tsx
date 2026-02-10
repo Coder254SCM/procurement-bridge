@@ -40,6 +40,7 @@ import FraudDetection from '@/pages/FraudDetection';
 import Team from '@/pages/Team';
 import PredictiveAnalytics from '@/pages/PredictiveAnalytics';
 import BlockchainExplorer from '@/pages/BlockchainExplorer';
+import AdminDashboard from '@/pages/AdminDashboard';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -95,6 +96,11 @@ function App() {
                 <Route path="/evaluator-dashboard" element={
                   <ProtectedRoute>
                     <EvaluatorDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin-dashboard" element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 } />
                 <Route path="/profile" element={
