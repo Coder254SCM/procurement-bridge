@@ -2068,6 +2068,205 @@ export type Database = {
           },
         ]
       }
+      procurement_plan_items: {
+        Row: {
+          actual_expenditure: number | null
+          agpo_category: string | null
+          budget_line_item: string | null
+          category: string
+          contract_id: string | null
+          created_at: string
+          currency: string
+          delivery_schedule: string | null
+          estimated_contract_value: number
+          funding_source: string | null
+          id: string
+          is_agpo_reserved: boolean
+          item_description: string
+          item_number: number
+          min_responsive_suppliers: number
+          notes: string | null
+          plan_id: string
+          planned_end_date: string | null
+          planned_start_date: string | null
+          procurement_method: string
+          quantity: number
+          splitting_flag: boolean
+          splitting_reason: string | null
+          status: string
+          tender_id: string | null
+          unit_cost: number
+          unit_of_measure: string
+          updated_at: string
+        }
+        Insert: {
+          actual_expenditure?: number | null
+          agpo_category?: string | null
+          budget_line_item?: string | null
+          category: string
+          contract_id?: string | null
+          created_at?: string
+          currency?: string
+          delivery_schedule?: string | null
+          estimated_contract_value?: number
+          funding_source?: string | null
+          id?: string
+          is_agpo_reserved?: boolean
+          item_description: string
+          item_number: number
+          min_responsive_suppliers?: number
+          notes?: string | null
+          plan_id: string
+          planned_end_date?: string | null
+          planned_start_date?: string | null
+          procurement_method?: string
+          quantity?: number
+          splitting_flag?: boolean
+          splitting_reason?: string | null
+          status?: string
+          tender_id?: string | null
+          unit_cost?: number
+          unit_of_measure?: string
+          updated_at?: string
+        }
+        Update: {
+          actual_expenditure?: number | null
+          agpo_category?: string | null
+          budget_line_item?: string | null
+          category?: string
+          contract_id?: string | null
+          created_at?: string
+          currency?: string
+          delivery_schedule?: string | null
+          estimated_contract_value?: number
+          funding_source?: string | null
+          id?: string
+          is_agpo_reserved?: boolean
+          item_description?: string
+          item_number?: number
+          min_responsive_suppliers?: number
+          notes?: string | null
+          plan_id?: string
+          planned_end_date?: string | null
+          planned_start_date?: string | null
+          procurement_method?: string
+          quantity?: number
+          splitting_flag?: boolean
+          splitting_reason?: string | null
+          status?: string
+          tender_id?: string | null
+          unit_cost?: number
+          unit_of_measure?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procurement_plan_items_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "procurement_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      procurement_plans: {
+        Row: {
+          agpo_reserved_amount: number
+          agpo_reserved_percentage: number
+          approval_date: string | null
+          approval_remarks: string | null
+          approved_by: string | null
+          budget_allocation_id: string | null
+          budget_currency: string
+          created_at: string
+          created_by: string
+          department: string
+          financial_year: string
+          id: string
+          multi_year_end: string | null
+          multi_year_start: string | null
+          notes: string | null
+          organization_id: string | null
+          plan_name: string
+          plan_reference: string
+          plan_type: string
+          ppra_submission_date: string | null
+          ppra_submission_reference: string | null
+          status: string
+          total_budget_allocation: number
+          total_planned_expenditure: number
+          treasury_submission_date: string | null
+          treasury_submission_reference: string | null
+          updated_at: string
+        }
+        Insert: {
+          agpo_reserved_amount?: number
+          agpo_reserved_percentage?: number
+          approval_date?: string | null
+          approval_remarks?: string | null
+          approved_by?: string | null
+          budget_allocation_id?: string | null
+          budget_currency?: string
+          created_at?: string
+          created_by: string
+          department: string
+          financial_year: string
+          id?: string
+          multi_year_end?: string | null
+          multi_year_start?: string | null
+          notes?: string | null
+          organization_id?: string | null
+          plan_name: string
+          plan_reference: string
+          plan_type?: string
+          ppra_submission_date?: string | null
+          ppra_submission_reference?: string | null
+          status?: string
+          total_budget_allocation?: number
+          total_planned_expenditure?: number
+          treasury_submission_date?: string | null
+          treasury_submission_reference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agpo_reserved_amount?: number
+          agpo_reserved_percentage?: number
+          approval_date?: string | null
+          approval_remarks?: string | null
+          approved_by?: string | null
+          budget_allocation_id?: string | null
+          budget_currency?: string
+          created_at?: string
+          created_by?: string
+          department?: string
+          financial_year?: string
+          id?: string
+          multi_year_end?: string | null
+          multi_year_start?: string | null
+          notes?: string | null
+          organization_id?: string | null
+          plan_name?: string
+          plan_reference?: string
+          plan_type?: string
+          ppra_submission_date?: string | null
+          ppra_submission_reference?: string | null
+          status?: string
+          total_budget_allocation?: number
+          total_planned_expenditure?: number
+          treasury_submission_date?: string | null
+          treasury_submission_reference?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procurement_plans_budget_allocation_id_fkey"
+            columns: ["budget_allocation_id"]
+            isOneToOne: false
+            referencedRelation: "budget_allocations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_categories: {
         Row: {
           active: boolean | null
