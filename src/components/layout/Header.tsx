@@ -55,6 +55,7 @@ const Header = () => {
   // Role-based navigation - Complete based on PRD
   const getBuyerNavigation = () => [
     { name: 'Dashboard', href: '/buyer-dashboard' },
+    { name: 'Procurement Plans', href: '/procurement-plans' },
     { name: 'Catalog', href: '/catalog' },
     { name: 'Requisitions', href: '/requisitions' },
     { name: 'Procurement', href: '', dropdown: true },
@@ -85,6 +86,7 @@ const Header = () => {
 
   const getAdminNavigation = () => [
     { name: 'Dashboard', href: '/admin-dashboard' },
+    { name: 'Procurement Plans', href: '/procurement-plans' },
     { name: 'Tenders', href: '/tenders' },
     { name: 'Contracts', href: '/contracts' },
     { name: 'Fraud Detection', href: '/fraud-detection' },

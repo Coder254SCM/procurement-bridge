@@ -41,6 +41,7 @@ import Team from '@/pages/Team';
 import PredictiveAnalytics from '@/pages/PredictiveAnalytics';
 import BlockchainExplorer from '@/pages/BlockchainExplorer';
 import AdminDashboard from '@/pages/AdminDashboard';
+import ProcurementPlans from '@/pages/ProcurementPlans';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -198,6 +199,11 @@ function App() {
                 <Route path="/blockchain" element={
                   <ProtectedRoute>
                     <BlockchainExplorer />
+                  </ProtectedRoute>
+                } />
+                <Route path="/procurement-plans" element={
+                  <ProtectedRoute>
+                    <ProcurementPlans />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />
