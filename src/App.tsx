@@ -13,6 +13,7 @@ import Verification from '@/pages/Verification';
 import VerificationGuide from '@/pages/VerificationGuide';
 import Marketplace from '@/pages/Marketplace';
 import TenderDetail from '@/pages/TenderDetail';
+import TenderBids from '@/pages/TenderBids';
 import Tenders from '@/pages/Tenders';
 import Analytics from '@/pages/Analytics';
 import Auth from '@/pages/Auth';
@@ -155,6 +156,11 @@ function App() {
                 <Route path="/documentation" element={<Documentation />} />
                 <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/tender/:id" element={<TenderDetail />} />
+                <Route path="/tender/:id/bids" element={
+                  <ProtectedRoute>
+                    <TenderBids />
+                  </ProtectedRoute>
+                } />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/budgets" element={
                   <ProtectedRoute>

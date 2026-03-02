@@ -301,11 +301,17 @@ const BuyerDashboard = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                         {tender.status.toLowerCase() === 'draft' && (
                           <Button variant="outline" size="sm" onClick={() => navigate(`/tenders/create?edit=${tender.id}`)}>
                             <PenTool size={14} className="mr-1" />
                             Edit
+                          </Button>
+                        )}
+                        {tender.bids_count > 0 && (
+                          <Button variant="default" size="sm" onClick={() => navigate(`/tender/${tender.id}/bids`)}>
+                            <ClipboardCheck size={14} className="mr-1" />
+                            View Bids ({tender.bids_count})
                           </Button>
                         )}
                         <Button variant="outline" size="sm" onClick={() => navigate(`/tender/${tender.id}`)}>
