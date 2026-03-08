@@ -214,6 +214,16 @@ function App() {
                     <ProcurementPlans />
                   </ProtectedRoute>
                 } />
+                <Route path="/tender/:id/bid" element={
+                  <ProtectedRoute>
+                    <BidSubmission />
+                  </ProtectedRoute>
+                } />
+                <Route path="/contract/:id" element={
+                  <ProtectedRoute>
+                    <ContractDetail />
+                  </ProtectedRoute>
+                } />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>

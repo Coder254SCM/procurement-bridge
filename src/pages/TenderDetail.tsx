@@ -183,7 +183,7 @@ const TenderDetail = () => {
           )}
 
           {!isBuyer && tender.status === 'published' && daysLeft > 0 && (
-            <Button onClick={() => navigate(user ? `/tenders` : '/auth')}>Apply for Tender</Button>
+            <Button onClick={() => navigate(user ? `/tender/${tender.id}/bid` : '/auth')}>Apply for Tender</Button>
           )}
         </div>
       </div>
