@@ -59,6 +59,7 @@ const Header = () => {
     { name: 'Catalog', href: '/catalog' },
     { name: 'Requisitions', href: '/requisitions' },
     { name: 'Procurement', href: '', dropdown: true },
+    { name: 'Auctions', href: '/auctions' },
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Analytics', href: '/analytics' },
     { name: 'Predictions', href: '/predictive-analytics' },

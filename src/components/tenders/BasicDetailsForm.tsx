@@ -29,15 +29,19 @@ interface BasicDetailsFormProps {
 // Procurement method options (including auctions)
 const procurementMethodOptions = [
   { value: ProcurementMethod.OPEN_TENDER, label: "Open Tender" },
+  { value: ProcurementMethod.RESTRICTED_TENDER, label: "Restricted Tender" },
   { value: ProcurementMethod.REQUEST_FOR_PROPOSAL, label: "Request for Proposal (RFP)" },
   { value: ProcurementMethod.REQUEST_FOR_QUOTATION, label: "Request for Quotation (RFQ)" },
   { value: ProcurementMethod.DIRECT_PROCUREMENT, label: "Direct Procurement" },
   { value: ProcurementMethod.FRAMEWORK_AGREEMENT, label: "Framework Agreement" },
   { value: ProcurementMethod.TWO_STAGE_TENDERING, label: "Two-Stage Tendering" },
   { value: ProcurementMethod.DESIGN_COMPETITION, label: "Design Competition" },
+  { value: ProcurementMethod.DESIGN_CONTEST, label: "Design Contest" },
   { value: ProcurementMethod.ELECTRONIC_REVERSE_AUCTION, label: "Electronic Reverse Auction" },
   { value: ProcurementMethod.FORWARD_AUCTION, label: "Forward Auction" },
   { value: ProcurementMethod.DUTCH_AUCTION, label: "Dutch Auction" },
+  { value: ProcurementMethod.COMPETITIVE_DIALOGUE, label: "Competitive Dialogue" },
+  { value: ProcurementMethod.INNOVATION_PARTNERSHIP, label: "Innovation Partnership" },
 ];
 
 const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templateContent }: BasicDetailsFormProps) => {
