@@ -320,7 +320,7 @@ const Contracts: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => navigate(`/contract/${contract.id}`)}>
                   View Details
                 </Button>
               </CardContent>
