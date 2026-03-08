@@ -283,9 +283,9 @@ const Contracts: React.FC = () => {
                   >
                     Activate Contract
                   </Button>
-                  <Button size="sm" variant="outline">
-                    Edit Contract
-                  </Button>
+                   <Button size="sm" variant="outline" onClick={() => navigate(`/contract/${contract.id}`)}>
+                     Edit Contract
+                   </Button>
                 </div>
               </CardContent>
             </Card>
