@@ -1279,7 +1279,7 @@ export type Database = {
           id: string
           started_at: string | null
           success_count: number | null
-          sync_duration: unknown
+          sync_duration: string | null
           sync_type: string
         }
         Insert: {
@@ -1292,7 +1292,7 @@ export type Database = {
           id?: string
           started_at?: string | null
           success_count?: number | null
-          sync_duration?: unknown
+          sync_duration?: string | null
           sync_type: string
         }
         Update: {
@@ -1305,7 +1305,7 @@ export type Database = {
           id?: string
           started_at?: string | null
           success_count?: number | null
-          sync_duration?: unknown
+          sync_duration?: string | null
           sync_type?: string
         }
         Relationships: [
@@ -1592,7 +1592,7 @@ export type Database = {
           file_path: string | null
           file_size: number | null
           generated_by: string
-          generation_time: unknown
+          generation_time: string | null
           id: string
           parameters_used: Json | null
           status: string | null
@@ -1604,7 +1604,7 @@ export type Database = {
           file_path?: string | null
           file_size?: number | null
           generated_by: string
-          generation_time?: unknown
+          generation_time?: string | null
           id?: string
           parameters_used?: Json | null
           status?: string | null
@@ -1616,7 +1616,7 @@ export type Database = {
           file_path?: string | null
           file_size?: number | null
           generated_by?: string
-          generation_time?: unknown
+          generation_time?: string | null
           id?: string
           parameters_used?: Json | null
           status?: string | null
