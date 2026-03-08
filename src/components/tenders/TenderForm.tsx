@@ -33,6 +33,7 @@ import BasicDetailsForm from './BasicDetailsForm';
 import DocumentsUploadForm from './DocumentsUploadForm';
 import EvaluationCriteriaForm from './EvaluationCriteriaForm';
 import FinalReviewForm from './FinalReviewForm';
+import AuctionSettingsForm from './AuctionSettingsForm';
 
 // Define form schema with Zod
 const formSchema = z.object({
@@ -57,6 +58,12 @@ const formSchema = z.object({
   procurement_method: z.string().optional(),
   required_documents: z.array(z.string()).optional(),
   supply_chain_reviewer: z.string().optional(),
+  // Auction fields
+  auction_reserve_price: z.string().optional(),
+  auction_min_decrement: z.string().optional(),
+  auction_duration_hours: z.string().optional(),
+  auction_extension_minutes: z.string().optional(),
+  auction_interval_seconds: z.string().optional(),
 });
 
 // Industry/Category options
