@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 const Contracts: React.FC = () => {
+  const navigate = useNavigate();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
@@ -244,9 +246,9 @@ const Contracts: React.FC = () => {
                         Mark Complete
                       </Button>
                     )}
-                    <Button size="sm" variant="outline">
-                      View Details
-                    </Button>
+                     <Button size="sm" variant="outline" onClick={() => navigate(`/contract/${contract.id}`)}>
+                       View Details
+                     </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -281,9 +283,9 @@ const Contracts: React.FC = () => {
                   >
                     Activate Contract
                   </Button>
-                  <Button size="sm" variant="outline">
-                    Edit Contract
-                  </Button>
+                   <Button size="sm" variant="outline" onClick={() => navigate(`/contract/${contract.id}`)}>
+                     Edit Contract
+                   </Button>
                 </div>
               </CardContent>
             </Card>
@@ -318,7 +320,7 @@ const Contracts: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => navigate(`/contract/${contract.id}`)}>
                   View Details
                 </Button>
               </CardContent>

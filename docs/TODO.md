@@ -1,7 +1,7 @@
 # TODO: Development Roadmap
 
-## System Status: 80% COMPLETE
-**Updated**: March 2, 2026
+## System Status: 85% COMPLETE
+**Updated**: March 8, 2026
 
 ---
 
@@ -77,17 +77,20 @@
 - ✅ Protected routes
 - ⚠️ MFA - config needed
 
-### Core Procurement (92%)
+### Core Procurement (95%)
 - ✅ 14 procurement methods
 - ✅ 7 tender templates
 - ✅ 4-step tender wizard
-- ✅ Bid submission
+- ✅ Bid submission (full wizard with document upload)
 - ✅ Evaluation workflow
-- ✅ Contract management
-- ✅ Contract award flow (buyer → bids → award)
+- ✅ Contract management + detail page
+- ✅ Contract award flow (buyer → bids → award → contract detail)
 - ✅ Tender detail with real Supabase data
+- ✅ Document uploads to Supabase Storage
 - ✅ Routing fixed (Feb 9)
 - ✅ Procurement Plans module (PPADA S.53)
+- ✅ Supplier bid submission form (/tender/:id/bid)
+- ✅ Contract detail/signing page (/contract/:id)
 
 ### Advanced Features (85%)
 - ✅ RTH Consensus System
@@ -123,14 +126,14 @@
 | Database Schema | 100% |
 | RLS Policies | 100% |
 | Edge Functions | 100% |
-| Service Layer | 80% |
-| Frontend UI | 90% |
-| Form Completeness | 75% |
+| Service Layer | 85% |
+| Frontend UI | 95% |
+| Form Completeness | 90% |
 | External Integrations | 5% |
 | Notifications | 0% |
 | Payments | 5% |
 | Testing | 0% |
-| **OVERALL** | **78%** |
+| **OVERALL** | **85%** |
 
 ---
 

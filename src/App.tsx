@@ -43,6 +43,8 @@ import PredictiveAnalytics from '@/pages/PredictiveAnalytics';
 import BlockchainExplorer from '@/pages/BlockchainExplorer';
 import AdminDashboard from '@/pages/AdminDashboard';
 import ProcurementPlans from '@/pages/ProcurementPlans';
+import BidSubmission from '@/pages/BidSubmission';
+import ContractDetail from '@/pages/ContractDetail';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -210,6 +212,16 @@ function App() {
                 <Route path="/procurement-plans" element={
                   <ProtectedRoute>
                     <ProcurementPlans />
+                  </ProtectedRoute>
+                } />
+                <Route path="/tender/:id/bid" element={
+                  <ProtectedRoute>
+                    <BidSubmission />
+                  </ProtectedRoute>
+                } />
+                <Route path="/contract/:id" element={
+                  <ProtectedRoute>
+                    <ContractDetail />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />

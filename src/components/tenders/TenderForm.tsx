@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { DocumentUploadService } from '@/services/DocumentUploadService';
 import { fabricClient } from '@/integrations/blockchain/fabric-client';
 import { TenderTemplateType, ProcurementMethod, UserRole } from '@/types/enums';
 import { EvaluationCriteria, RequiredDocument } from '@/types/database.types';
@@ -345,7 +346,28 @@ const TenderForm = ({ userId }: TenderFormProps) => {
         }
       }
       
-      // TODO: Handle document uploads to Supabase storage
+        // Upload documents to Supabase storage
+        if (data && data.id && (documents.length > 0 || contractDocuments.length > 0)) {
+          try {
+            const uploadResult = await DocumentUploadService.uploadTenderDocuments(
+              data.id, userId, documents, contractDocuments
+            );
+            
+            // Update tender with document paths
+            await supabase
+              .from('tenders')
+              .update({
+                documents: {
+                  supporting: uploadResult.supporting,
+                  contract: uploadResult.contract,
+                }
+              })
+              .eq('id', data.id);
+          } catch (uploadError) {
+            console.error('Document upload error:', uploadError);
+            // Don't fail the tender creation for upload issues
+          }
+        }
       
       // Navigate to tender view or dashboard
       navigate('/dashboard');
