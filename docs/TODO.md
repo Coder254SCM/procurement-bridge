@@ -77,17 +77,20 @@
 - ✅ Protected routes
 - ⚠️ MFA - config needed
 
-### Core Procurement (92%)
+### Core Procurement (95%)
 - ✅ 14 procurement methods
 - ✅ 7 tender templates
 - ✅ 4-step tender wizard
-- ✅ Bid submission
+- ✅ Bid submission (full wizard with document upload)
 - ✅ Evaluation workflow
-- ✅ Contract management
-- ✅ Contract award flow (buyer → bids → award)
+- ✅ Contract management + detail page
+- ✅ Contract award flow (buyer → bids → award → contract detail)
 - ✅ Tender detail with real Supabase data
+- ✅ Document uploads to Supabase Storage
 - ✅ Routing fixed (Feb 9)
 - ✅ Procurement Plans module (PPADA S.53)
+- ✅ Supplier bid submission form (/tender/:id/bid)
+- ✅ Contract detail/signing page (/contract/:id)
 
 ### Advanced Features (85%)
 - ✅ RTH Consensus System
