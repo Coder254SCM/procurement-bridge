@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ArrowLeft, Loader2, FileText, Calendar, DollarSign, User,
   CheckCircle, Clock, AlertTriangle, ShieldCheck, Download,
-  Milestone, TrendingUp
+  Check, TrendingUp
 } from 'lucide-react';
 
 interface ContractData {
