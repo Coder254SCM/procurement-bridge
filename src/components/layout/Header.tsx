@@ -39,7 +39,7 @@ const Header = () => {
     { name: 'Request for Proposal', href: '/tenders?method=request_for_proposal', icon: PenTool },
     { name: 'Request for Quotation', href: '/tenders?method=request_for_quotation', icon: ShoppingCart },
     { name: 'Framework Agreement', href: '/framework-agreements', icon: Award },
-    { name: 'Reverse Auction', href: '/tenders?method=reverse_auction', icon: Gavel },
+    { name: 'Reverse Auction', href: '/auctions', icon: Gavel },
   ];
 
   // Supplier dropdown items
@@ -59,6 +59,7 @@ const Header = () => {
     { name: 'Catalog', href: '/catalog' },
     { name: 'Requisitions', href: '/requisitions' },
     { name: 'Procurement', href: '', dropdown: true },
+    { name: 'Auctions', href: '/auctions' },
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Analytics', href: '/analytics' },
     { name: 'Predictions', href: '/predictive-analytics' },
