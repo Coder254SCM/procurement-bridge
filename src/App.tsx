@@ -45,6 +45,8 @@ import AdminDashboard from '@/pages/AdminDashboard';
 import ProcurementPlans from '@/pages/ProcurementPlans';
 import BidSubmission from '@/pages/BidSubmission';
 import ContractDetail from '@/pages/ContractDetail';
+import AuctionManagement from '@/pages/AuctionManagement';
+import AuctionRoom from '@/pages/AuctionRoom';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
