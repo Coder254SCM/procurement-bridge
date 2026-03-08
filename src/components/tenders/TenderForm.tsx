@@ -34,6 +34,7 @@ import DocumentsUploadForm from './DocumentsUploadForm';
 import EvaluationCriteriaForm from './EvaluationCriteriaForm';
 import FinalReviewForm from './FinalReviewForm';
 import AuctionSettingsForm from './AuctionSettingsForm';
+import ProcurementMethodSettings from './ProcurementMethodSettings';
 
 // Define form schema with Zod
 const formSchema = z.object({
@@ -416,6 +417,10 @@ const TenderForm = ({ userId }: TenderFormProps) => {
                 categoryOptions={categoryOptions} 
                 supplyChainReviewers={supplyChainReviewers} 
                 templateContent={templateContent} 
+              />
+              <ProcurementMethodSettings
+                form={form}
+                procurementMethod={form.watch('procurement_method') || ''}
               />
               <AuctionSettingsForm 
                 form={form}
