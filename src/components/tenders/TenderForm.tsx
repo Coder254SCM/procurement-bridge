@@ -418,6 +418,10 @@ const TenderForm = ({ userId }: TenderFormProps) => {
                 supplyChainReviewers={supplyChainReviewers} 
                 templateContent={templateContent} 
               />
+              <ProcurementMethodSettings
+                form={form}
+                procurementMethod={form.watch('procurement_method') || ''}
+              />
               <AuctionSettingsForm 
                 form={form}
                 procurementMethod={form.watch('procurement_method') || ''}
