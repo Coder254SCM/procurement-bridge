@@ -246,9 +246,9 @@ const Contracts: React.FC = () => {
                         Mark Complete
                       </Button>
                     )}
-                    <Button size="sm" variant="outline">
-                      View Details
-                    </Button>
+                     <Button size="sm" variant="outline" onClick={() => navigate(`/contract/${contract.id}`)}>
+                       View Details
+                     </Button>
                   </div>
                 </CardContent>
               </Card>
