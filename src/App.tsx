@@ -226,6 +226,16 @@ function App() {
                     <ContractDetail />
                   </ProtectedRoute>
                 } />
+                <Route path="/auctions" element={
+                  <ProtectedRoute>
+                    <AuctionManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/auction/:auctionId" element={
+                  <ProtectedRoute>
+                    <AuctionRoom />
+                  </ProtectedRoute>
+                } />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>

@@ -400,9 +400,9 @@ const TenderForm = ({ userId }: TenderFormProps) => {
         <div className="mb-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="details">Basic Details</TabsTrigger>
+              <TabsTrigger value="details">Details & Settings</TabsTrigger>
               <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
+              <TabsTrigger value="evaluation">Evaluation Weights</TabsTrigger>
               <TabsTrigger value="review">Review & Submit</TabsTrigger>
             </TabsList>
             
