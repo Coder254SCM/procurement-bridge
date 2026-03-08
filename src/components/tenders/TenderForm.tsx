@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { DocumentUploadService } from '@/services/DocumentUploadService';
 import { fabricClient } from '@/integrations/blockchain/fabric-client';
 import { TenderTemplateType, ProcurementMethod, UserRole } from '@/types/enums';
 import { EvaluationCriteria, RequiredDocument } from '@/types/database.types';
