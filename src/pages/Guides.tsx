@@ -623,7 +623,7 @@ const Guides = () => {
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h4 className="font-semibold mb-2">This is Enterprise Software</h4>
                   <p className="text-sm text-muted-foreground mb-3">
-                    The Kenya e-GP Platform is a complete enterprise system delivered as a Software-as-a-Service (SaaS) solution, 
+                    The ProcureChain Platform is a complete enterprise system delivered as a Software-as-a-Service (SaaS) solution, 
                     not a simple download. It includes backend infrastructure, databases, blockchain networks, and integrations.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
