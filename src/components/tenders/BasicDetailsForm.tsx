@@ -497,7 +497,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>Recommended for compliance with PPADA oversight requirements.</FormDescription>
+                  <FormDescription>Recommended for procurement compliance oversight.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

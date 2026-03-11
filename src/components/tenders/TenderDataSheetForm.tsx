@@ -235,7 +235,7 @@ const TenderDataSheetForm = ({ form }: TenderDataSheetFormProps) => {
                     <FormControl>
                       <Input type="number" placeholder="e.g. 100000" {...field} />
                     </FormControl>
-                    <FormDescription>1-2% of tender value per PPADA S.78</FormDescription>
+                    <FormDescription>1-2% of tender value</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

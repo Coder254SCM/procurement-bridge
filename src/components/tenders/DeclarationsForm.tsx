@@ -133,7 +133,7 @@ const DeclarationsForm = ({ declarations, onDeclarationsChange, conflicts, onCon
             </div>
             <div>
               <CardTitle>Conflict of Interest Disclosure</CardTitle>
-              <CardDescription>Declare any potential conflicts per PPADA S.57</CardDescription>
+              <CardDescription>Declare any potential conflicts of interest</CardDescription>
             </div>
           </div>
         </CardHeader>

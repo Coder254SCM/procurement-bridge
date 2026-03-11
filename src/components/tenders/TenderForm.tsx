@@ -201,7 +201,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
         setEvaluationCriteria({ technical: 40, financial: 25, experience: 15, compliance: 5, delivery: 5, innovation: 5, support: 5 });
         break;
       default:
-        setTemplateContent('Standard tender template compliant with PPADA 2015 and Regulations 2020.');
+        setTemplateContent('Standard tender template compliant with applicable procurement regulations.');
         setEvaluationCriteria(defaultEvaluationCriteria);
     }
   };

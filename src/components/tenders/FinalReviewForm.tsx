@@ -170,7 +170,7 @@ const FinalReviewForm = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="p-3 bg-secondary/20 rounded-md">
               <h3 className="text-sm font-medium">Procurement Standard</h3>
-              <p className="text-sm text-muted-foreground">PPADA 2015 & PPADA Regulations 2020</p>
+              <p className="text-sm text-muted-foreground">Applicable procurement laws & regulations</p>
             </div>
             <div className="p-3 bg-secondary/20 rounded-md">
               <h3 className="text-sm font-medium">Anti-corruption Measures</h3>
