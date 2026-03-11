@@ -193,7 +193,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
     form.setValue('template_type', templateType);
     switch (templateType) {
       case TenderTemplateType.CONSTRUCTION:
-        setTemplateContent('Standard construction tender template following Kenya PPADA and NCA standards...');
+        setTemplateContent('Standard construction tender template following NCA standards...');
         setEvaluationCriteria({ technical: 35, financial: 25, experience: 20, compliance: 10, delivery: 10, quality: 0 });
         break;
       case TenderTemplateType.IT_SERVICES:
