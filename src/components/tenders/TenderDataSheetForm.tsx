@@ -181,7 +181,7 @@ const TenderDataSheetForm = ({ form }: TenderDataSheetFormProps) => {
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Determines how winning bid is selected per PPADA S.86
+                    Determines how the winning bid is selected
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
