@@ -72,7 +72,7 @@ const DeclarationsForm = ({ declarations, onDeclarationsChange, conflicts, onCon
       <Alert className="border-amber-200 bg-amber-50 text-amber-800">
         <Info className="h-4 w-4" />
         <AlertDescription>
-          The following declarations are standard per the Public Procurement & Asset Disposal Act 2015 (PPADA). All required declarations must be confirmed.
+          The following statutory declarations are required. All mandatory declarations must be confirmed before submission.
         </AlertDescription>
       </Alert>
 
