@@ -274,7 +274,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Reservation / Preference (AGPO)</CardTitle>
           <CardDescription>
-            Access to Government Procurement Opportunities for Youth, Women, and PWDs per PPADA S.157
+            Access to Government Procurement Opportunities for Youth, Women, and PWDs
           </CardDescription>
         </CardHeader>
         <CardContent>
