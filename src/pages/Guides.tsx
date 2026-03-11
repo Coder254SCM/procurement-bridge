@@ -96,7 +96,7 @@ const Guides = () => {
                   <div className="text-sm">
                     <strong>1. Visit Platform:</strong>
                     <code className="block bg-gray-100 p-2 mt-1 rounded text-xs">
-                      https://egp.co.ke
+                      https://procurechain.app
                     </code>
                   </div>
                   <div className="text-sm">
