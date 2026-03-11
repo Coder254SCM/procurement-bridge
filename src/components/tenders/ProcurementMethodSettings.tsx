@@ -35,10 +35,10 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Open Tender Configuration</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.91</Badge>
+              <Badge variant="outline" className="text-xs">Default Method</Badge>
             </div>
             <CardDescription>
-              Open competitive tendering — the default and preferred method under Kenya's PPADA 2015
+              Open competitive tendering — the default and preferred procurement method
             </CardDescription>
           </div>
         </div>
@@ -48,8 +48,8 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <BookOpen className="h-4 w-4" />
           <AlertTitle>Legal Framework</AlertTitle>
           <AlertDescription>
-            Under PPADA 2015 Section 91, open tendering must be used unless justification exists for alternative methods. 
-            Tenders must be advertised for at least <strong>14 days</strong> (national) or <strong>21 days</strong> (international) in at least two newspapers of national circulation, the PPIP portal, and the procuring entity's website.
+            Open tendering must be used unless justification exists for alternative methods. 
+            Tenders must be advertised for at least <strong>14 days</strong> (national) or <strong>21 days</strong> (international) in newspapers of national circulation and the procuring entity's website.
           </AlertDescription>
         </Alert>
 
@@ -67,7 +67,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   <Input type="number" min="14" placeholder="14" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Minimum 14 days (national) or 21 days (international) per PPADA S.92
+                  Minimum 14 days (national) or 21 days (international)
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -91,7 +91,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  International tenders require longer advertising per PPRA Regulations
+                  International tenders require longer advertising periods
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -106,7 +106,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">Bid Security Required</FormLabel>
                   <FormDescription>
-                    Typically 1-2% of tender value (PPADA S.57)
+                    Typically 1-2% of tender value
                   </FormDescription>
                 </div>
                 <FormControl>
@@ -123,7 +123,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
-                  Bid Security Amount (KES)
+                  Bid Security Amount
                 </FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="e.g., 100000" {...field} />
@@ -183,7 +183,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="grid md:grid-cols-2 gap-2">
             {[
               'Advertisement in 2+ national newspapers',
-              'Posted on PPIP portal (tenders.go.ke)',
+              'Posted on procurement portal',
               'Posted on entity website',
               'Standard Tender Document (STD) used',
               'Tender opening committee formed (min 3 members)',
@@ -212,10 +212,10 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Restricted Tender Configuration</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.96</Badge>
+              <Badge variant="outline" className="text-xs">Restricted Use</Badge>
             </div>
             <CardDescription>
-              Limited to pre-qualified or registered suppliers — requires PPRA justification
+              Limited to pre-qualified or registered suppliers — requires justification
             </CardDescription>
           </div>
         </div>
@@ -227,7 +227,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <AlertDescription>
             Restricted tendering may only be used when: (a) goods/services are available from a limited number of suppliers; 
             (b) time/cost of evaluating many tenders is disproportionate; or (c) a pre-qualification has been conducted. 
-            PPRA approval is required per Section 96(2).
+            Regulatory approval may be required.
           </AlertDescription>
         </Alert>
 
@@ -243,13 +243,13 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                 </FormLabel>
                 <FormControl>
                   <Textarea 
-                    placeholder="Provide detailed legal justification for using restricted tendering. Reference the specific grounds under PPADA S.96 that apply..." 
+                    placeholder="Provide detailed legal justification for using restricted tendering. Reference the specific grounds that apply..." 
                     className="min-h-[120px]"
                     {...field} 
                   />
                 </FormControl>
                 <FormDescription>
-                  This justification will be recorded in the audit trail and may be reviewed by PPRA
+                  This justification will be recorded in the audit trail and may be reviewed by the regulator
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -292,7 +292,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   <Input type="number" min="5" placeholder="5" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Minimum 5 suppliers must be invited per PPADA S.96(3)
+                  Minimum 5 suppliers must be invited
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -304,12 +304,12 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
             name="method_ppra_approval_ref"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>PPRA Approval Reference</FormLabel>
+                <FormLabel>Regulatory Approval Reference</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., PPRA/RES/2026/0001" {...field} />
+                  <Input placeholder="e.g., APPROVAL/RES/2026/0001" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Reference number from PPRA approval for restricted tendering
+                  Reference number from regulatory approval for restricted tendering
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -351,7 +351,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   />
                 </FormControl>
                 <FormDescription>
-                  These suppliers will receive direct invitations. Must include at least 5 per PPADA.
+                  These suppliers will receive direct invitations. Must include at least 5.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -372,7 +372,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Request for Proposal (RFP) Settings</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.97</Badge>
+              <Badge variant="outline" className="text-xs">Two-Envelope</Badge>
             </div>
             <CardDescription>
               Two-envelope system for complex procurements requiring innovative solutions
@@ -387,7 +387,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <AlertDescription>
             RFPs use a two-envelope system: <strong>Technical proposals</strong> are opened and evaluated first. 
             Only proposals meeting the minimum technical score proceed to <strong>financial evaluation</strong>. 
-            This prevents price from biasing technical assessment (PPADA S.97(4)).
+            This prevents price from biasing technical assessment.
           </AlertDescription>
         </Alert>
 
@@ -530,7 +530,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Request for Quotation (RFQ) Settings</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.100</Badge>
+              <Badge variant="outline" className="text-xs">Simplified Method</Badge>
             </div>
             <CardDescription>
               Simplified procurement for readily available goods/services below prescribed thresholds
@@ -544,8 +544,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <AlertTitle>Low-Value Procurement</AlertTitle>
           <AlertDescription>
             RFQ may be used for procurement of goods/services that are readily available and where the estimated value does not 
-            exceed KES 4,000,000 for national and KES 6,000,000 for international procurement (PPADA S.100). 
-            Minimum <strong>3 quotations</strong> must be obtained from different suppliers.
+            exceed prescribed thresholds. Minimum <strong>3 quotations</strong> must be obtained from different suppliers.
           </AlertDescription>
         </Alert>
 
@@ -563,7 +562,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   <Input type="number" min="3" placeholder="3" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Minimum 3 quotations required by law (PPADA S.100(3))
+                  Minimum 3 quotations required by law
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -707,10 +706,10 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Direct Procurement Settings</CardTitle>
-              <Badge variant="destructive" className="text-xs">PPADA S.103 — Restricted Use</Badge>
+              <Badge variant="destructive" className="text-xs">Restricted Use</Badge>
             </div>
             <CardDescription>
-              Single-source procurement — only permitted under strict legal grounds with PPRA approval
+              Single-source procurement — only permitted under strict legal grounds with regulatory approval
             </CardDescription>
           </div>
         </div>
@@ -720,9 +719,9 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>⚠️ Highest Risk Procurement Method</AlertTitle>
           <AlertDescription>
-            Direct procurement bypasses competition. Under PPADA S.103, it is only permitted when: (a) there is only one supplier;
+            Direct procurement bypasses competition. It is only permitted when: (a) there is only one supplier;
             (b) urgent need caused by unforeseen events; (c) additional deliveries from original supplier for standardization;
-            (d) purchase from another public entity. <strong>All direct procurements are subject to PPRA audit.</strong>
+            (d) purchase from another public entity. <strong>All direct procurements are subject to regulatory audit.</strong>
           </AlertDescription>
         </Alert>
 
@@ -738,13 +737,13 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                 </FormLabel>
                 <FormControl>
                   <Textarea 
-                    placeholder="Provide comprehensive legal justification with specific reference to PPADA S.103 grounds. Include:&#10;- Why competitive methods cannot be used&#10;- Market research conducted&#10;- Value for money assessment&#10;- Risk of not proceeding with direct procurement"
+                    placeholder="Provide comprehensive legal justification. Include:&#10;- Why competitive methods cannot be used&#10;- Market research conducted&#10;- Value for money assessment&#10;- Risk of not proceeding with direct procurement"
                     className="min-h-[150px] border-red-200"
                     {...field} 
                   />
                 </FormControl>
                 <FormDescription>
-                  This justification is legally binding and will be submitted to PPRA for review
+                  This justification is legally binding and will be submitted for regulatory review
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -794,9 +793,9 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
             name="method_direct_supplier_reg"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Supplier Registration / PIN</FormLabel>
+                <FormLabel>Supplier Registration / Tax PIN</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., KRA PIN, Company Reg No." {...field} />
+                  <Input placeholder="e.g., Tax PIN, Company Reg No." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -808,12 +807,12 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
             name="method_direct_ppra_approval"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>PPRA Approval Reference</FormLabel>
+                <FormLabel>Regulatory Approval Reference</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., PPRA/DP/2026/0001" {...field} />
+                  <Input placeholder="e.g., REG/DP/2026/0001" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Accounting Officer must seek PPRA approval before proceeding
+                  Accounting Officer must seek regulatory approval before proceeding
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -852,7 +851,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Framework Agreement Settings</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.71</Badge>
+              <Badge variant="outline" className="text-xs">Long-Term</Badge>
             </div>
             <CardDescription>
               Long-term agreement with pre-qualified suppliers for recurring procurement needs
@@ -866,7 +865,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <AlertTitle>Framework Agreement Structure</AlertTitle>
           <AlertDescription>
             Framework agreements establish terms for future call-off orders without commitment to purchase specific quantities. 
-            Maximum duration is <strong>3 years</strong> per PPADA S.71(6). Can be single-supplier or multi-supplier (min 3).
+            Maximum duration is <strong>3 years</strong>. Can be single-supplier or multi-supplier (min 3).
           </AlertDescription>
         </Alert>
 
@@ -904,7 +903,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   <Input type="number" min="1" max="3" placeholder="3" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Maximum 3 years per PPADA S.71(6)
+                  Maximum 3 years
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -918,7 +917,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
-                  Maximum Framework Value (KES)
+                  Maximum Framework Value
                 </FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="e.g., 50000000" {...field} />
@@ -1020,7 +1019,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Two-Stage Tendering Settings</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.98</Badge>
+              <Badge variant="outline" className="text-xs">Multi-Phase</Badge>
             </div>
             <CardDescription>
               Stage 1: Technical proposals without prices → Stage 2: Priced bids from qualified bidders
@@ -1035,7 +1034,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <AlertDescription>
             Used when the procuring entity cannot fully define technical requirements. <strong>Stage 1:</strong> Unpriced technical proposals 
             are invited, discussed, and used to finalize specifications. <strong>Stage 2:</strong> Finalized specifications are issued 
-            and priced bids are invited from all Stage 1 participants. Per PPADA S.98.
+            and priced bids are invited from all Stage 1 participants.
           </AlertDescription>
         </Alert>
 
@@ -1142,7 +1141,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Design Competition / Contest Settings</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.99</Badge>
+              <Badge variant="outline" className="text-xs">Jury-Based</Badge>
             </div>
             <CardDescription>
               Competition to select architectural, engineering, or creative designs through a jury panel
@@ -1157,7 +1156,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <AlertDescription>
             Design competitions require <strong>anonymized submissions</strong> evaluated by an independent jury panel. 
             The jury must have relevant professional qualifications. Winners may be awarded the design contract directly 
-            or invited to negotiate (PPADA S.99).
+            or invited to negotiate.
           </AlertDescription>
         </Alert>
 
@@ -1189,7 +1188,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
-                  Prize Money / Honorarium (KES)
+                  Prize Money / Honorarium
                 </FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="e.g., 500000" {...field} />
@@ -1289,7 +1288,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
               <FormLabel>Design Brief</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Provide the detailed design brief including:&#10;- Project context and objectives&#10;- Functional requirements&#10;- Site conditions (for architectural)&#10;- Aesthetic preferences or constraints&#10;- Budget parameters for implementation&#10;- Sustainability requirements&#10;- Accessibility standards"
+                  placeholder="Provide the design brief including:&#10;&#10;- Project context and objectives&#10;- Site/space constraints&#10;- Functional requirements&#10;- Aesthetic guidelines&#10;- Budget parameters&#10;- Sustainability requirements&#10;- Submission format (drawings, models, digital)"
                   className="min-h-[150px]"
                   {...field} 
                 />
@@ -1312,7 +1311,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Competitive Dialogue Settings</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.102</Badge>
+              <Badge variant="outline" className="text-xs">Complex Procurement</Badge>
             </div>
             <CardDescription>
               Multi-round dialogue with pre-selected participants to develop solutions for complex procurement
@@ -1328,7 +1327,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
             Used for exceptionally complex contracts where open/restricted procedures cannot identify solutions. 
             The process involves: (1) <strong>Pre-selection</strong> of at least 3 participants; (2) <strong>Dialogue rounds</strong> to develop 
             solutions; (3) <strong>Final tender</strong> submission based on identified solutions. Each dialogue round must maintain 
-            equal treatment and confidentiality of solutions (PPADA S.102).
+            equal treatment and confidentiality of solutions.
           </AlertDescription>
         </Alert>
 
@@ -1363,7 +1362,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   <Input type="number" min="3" placeholder="3" {...field} />
                 </FormControl>
                 <FormDescription>
-                  At least 3 participants required per PPADA S.102(3)
+                  At least 3 participants required
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -1423,7 +1422,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
                   />
                 </FormControl>
                 <FormDescription>
-                  Required justification for using competitive dialogue per PPADA S.102(1)
+                  Required justification for using competitive dialogue
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -1462,7 +1461,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <CardTitle>Innovation Partnership Settings</CardTitle>
-              <Badge variant="outline" className="text-xs">PPADA S.102A</Badge>
+              <Badge variant="outline" className="text-xs">R&D + Procurement</Badge>
             </div>
             <CardDescription>
               Long-term partnership for developing innovative products/services not yet available on the market
@@ -1531,7 +1530,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
-                  R&D Phase Budget (KES)
+                  R&D Phase Budget
                 </FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="e.g., 10000000" {...field} />
@@ -1551,7 +1550,7 @@ const ProcurementMethodSettings: React.FC<ProcurementMethodSettingsProps> = ({ f
               <FormItem>
                 <FormLabel className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
-                  Commercial Phase Budget (KES)
+                  Commercial Phase Budget
                 </FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="e.g., 50000000" {...field} />

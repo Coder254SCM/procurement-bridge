@@ -3479,6 +3479,135 @@ export type Database = {
           },
         ]
       }
+      tender_conflict_disclosures: {
+        Row: {
+          created_at: string | null
+          details: string | null
+          id: string
+          response: string | null
+          statement: string
+          tender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          response?: string | null
+          statement: string
+          tender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          response?: string | null
+          statement?: string
+          tender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_conflict_disclosures_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_data_sheets: {
+        Row: {
+          alternative_tenders: string | null
+          award_criteria: string | null
+          bid_security_amount: number | null
+          bid_security_required: string | null
+          bid_security_validity: number | null
+          created_at: string | null
+          foreign_currency_allowed: string | null
+          id: string
+          lot_count: number | null
+          number_of_lots: string | null
+          special_conditions: string | null
+          tender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          alternative_tenders?: string | null
+          award_criteria?: string | null
+          bid_security_amount?: number | null
+          bid_security_required?: string | null
+          bid_security_validity?: number | null
+          created_at?: string | null
+          foreign_currency_allowed?: string | null
+          id?: string
+          lot_count?: number | null
+          number_of_lots?: string | null
+          special_conditions?: string | null
+          tender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          alternative_tenders?: string | null
+          award_criteria?: string | null
+          bid_security_amount?: number | null
+          bid_security_required?: string | null
+          bid_security_validity?: number | null
+          created_at?: string | null
+          foreign_currency_allowed?: string | null
+          id?: string
+          lot_count?: number | null
+          number_of_lots?: string | null
+          special_conditions?: string | null
+          tender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_data_sheets_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: true
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_declarations: {
+        Row: {
+          created_at: string | null
+          declaration_id: string
+          declaration_text: string
+          id: string
+          is_checked: boolean | null
+          is_required: boolean | null
+          tender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          declaration_id: string
+          declaration_text: string
+          id?: string
+          is_checked?: boolean | null
+          is_required?: boolean | null
+          tender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          declaration_id?: string
+          declaration_text?: string
+          id?: string
+          is_checked?: boolean | null
+          is_required?: boolean | null
+          tender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_declarations_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tender_fairness_metrics: {
         Row: {
           budget_realism: number
@@ -3529,6 +3658,150 @@ export type Database = {
           },
         ]
       }
+      tender_method_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          setting_key: string
+          setting_value: string | null
+          tender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          setting_key: string
+          setting_value?: string | null
+          tender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: string | null
+          tender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_method_settings_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_price_items: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          item_number: number
+          line_total: number | null
+          quantity: number
+          tender_id: string
+          unit: string | null
+          unit_price: number
+          vat_applicable: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          item_number?: number
+          line_total?: number | null
+          quantity?: number
+          tender_id: string
+          unit?: string | null
+          unit_price?: number
+          vat_applicable?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          item_number?: number
+          line_total?: number | null
+          quantity?: number
+          tender_id?: string
+          unit?: string | null
+          unit_price?: number
+          vat_applicable?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_price_items_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_procuring_entities: {
+        Row: {
+          contact_person_designation: string | null
+          contact_person_email: string | null
+          contact_person_name: string | null
+          created_at: string | null
+          id: string
+          organisation_name: string | null
+          physical_address: string | null
+          physical_submission_address: string | null
+          po_box: string | null
+          procurement_email: string | null
+          submission_method: string | null
+          telephone: string | null
+          tender_id: string
+          town: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          contact_person_designation?: string | null
+          contact_person_email?: string | null
+          contact_person_name?: string | null
+          created_at?: string | null
+          id?: string
+          organisation_name?: string | null
+          physical_address?: string | null
+          physical_submission_address?: string | null
+          po_box?: string | null
+          procurement_email?: string | null
+          submission_method?: string | null
+          telephone?: string | null
+          tender_id: string
+          town?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          contact_person_designation?: string | null
+          contact_person_email?: string | null
+          contact_person_name?: string | null
+          created_at?: string | null
+          id?: string
+          organisation_name?: string | null
+          physical_address?: string | null
+          physical_submission_address?: string | null
+          po_box?: string | null
+          procurement_email?: string | null
+          submission_method?: string | null
+          telephone?: string | null
+          tender_id?: string
+          town?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_procuring_entities_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: true
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tender_reviews: {
         Row: {
           created_at: string
@@ -3562,6 +3835,53 @@ export type Database = {
             foreignKeyName: "tender_reviews_tender_id_fkey"
             columns: ["tender_id"]
             isOneToOne: true
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_schedule_items: {
+        Row: {
+          created_at: string | null
+          delivery_location: string | null
+          delivery_timeline: string | null
+          description: string
+          id: string
+          item_number: number
+          quantity: number
+          tender_id: string
+          unit_of_issue: string | null
+          unspsc_code: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          delivery_location?: string | null
+          delivery_timeline?: string | null
+          description: string
+          id?: string
+          item_number?: number
+          quantity?: number
+          tender_id: string
+          unit_of_issue?: string | null
+          unspsc_code?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          delivery_location?: string | null
+          delivery_timeline?: string | null
+          description?: string
+          id?: string
+          item_number?: number
+          quantity?: number
+          tender_id?: string
+          unit_of_issue?: string | null
+          unspsc_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_schedule_items_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
             referencedRelation: "tenders"
             referencedColumns: ["id"]
           },
@@ -3614,8 +3934,53 @@ export type Database = {
           },
         ]
       }
+      tender_technical_specs: {
+        Row: {
+          compliance_type: string | null
+          created_at: string | null
+          description: string
+          evaluation_method: string | null
+          id: string
+          max_score: number | null
+          required_standard: string | null
+          spec_number: number
+          tender_id: string
+        }
+        Insert: {
+          compliance_type?: string | null
+          created_at?: string | null
+          description: string
+          evaluation_method?: string | null
+          id?: string
+          max_score?: number | null
+          required_standard?: string | null
+          spec_number?: number
+          tender_id: string
+        }
+        Update: {
+          compliance_type?: string | null
+          created_at?: string | null
+          description?: string
+          evaluation_method?: string | null
+          id?: string
+          max_score?: number | null
+          required_standard?: string | null
+          spec_number?: number
+          tender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_technical_specs_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenders: {
         Row: {
+          agpo_reservation: string | null
           blockchain_hash: string | null
           budget_amount: number | null
           budget_currency: string | null
@@ -3627,20 +3992,29 @@ export type Database = {
           created_at: string | null
           description: string
           documents: Json | null
+          earliest_delivery_date: string | null
           evaluation_criteria: Json | null
+          financial_year: string | null
           id: string
+          issue_date: string | null
+          latest_delivery_date: string | null
           location_details: Json | null
+          opening_date: string | null
+          procurement_category: string | null
           procurement_method: string | null
           region: string | null
           required_documents: string[] | null
           status: string | null
           submission_deadline: string
           supply_chain_reviewer_id: string | null
+          tender_number: string | null
           title: string
           updated_at: string | null
           uploaded_documents: Json | null
+          validity_period: number | null
         }
         Insert: {
+          agpo_reservation?: string | null
           blockchain_hash?: string | null
           budget_amount?: number | null
           budget_currency?: string | null
@@ -3652,20 +4026,29 @@ export type Database = {
           created_at?: string | null
           description: string
           documents?: Json | null
+          earliest_delivery_date?: string | null
           evaluation_criteria?: Json | null
+          financial_year?: string | null
           id?: string
+          issue_date?: string | null
+          latest_delivery_date?: string | null
           location_details?: Json | null
+          opening_date?: string | null
+          procurement_category?: string | null
           procurement_method?: string | null
           region?: string | null
           required_documents?: string[] | null
           status?: string | null
           submission_deadline: string
           supply_chain_reviewer_id?: string | null
+          tender_number?: string | null
           title: string
           updated_at?: string | null
           uploaded_documents?: Json | null
+          validity_period?: number | null
         }
         Update: {
+          agpo_reservation?: string | null
           blockchain_hash?: string | null
           budget_amount?: number | null
           budget_currency?: string | null
@@ -3677,18 +4060,26 @@ export type Database = {
           created_at?: string | null
           description?: string
           documents?: Json | null
+          earliest_delivery_date?: string | null
           evaluation_criteria?: Json | null
+          financial_year?: string | null
           id?: string
+          issue_date?: string | null
+          latest_delivery_date?: string | null
           location_details?: Json | null
+          opening_date?: string | null
+          procurement_category?: string | null
           procurement_method?: string | null
           region?: string | null
           required_documents?: string[] | null
           status?: string | null
           submission_deadline?: string
           supply_chain_reviewer_id?: string | null
+          tender_number?: string | null
           title?: string
           updated_at?: string | null
           uploaded_documents?: Json | null
+          validity_period?: number | null
         }
         Relationships: []
       }

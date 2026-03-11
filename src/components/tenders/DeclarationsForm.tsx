@@ -24,12 +24,12 @@ export interface ConflictOfInterest {
 
 const defaultDeclarations: Declaration[] = [
   { id: 'no_reservations', text: '(A) No Reservations – We have examined the tender document fully and have no reservations.', checked: false, required: true },
-  { id: 'eligibility', text: '(B) Eligibility – We are eligible to participate in public procurement per PPADA 2015.', checked: false, required: true },
+  { id: 'eligibility', text: '(B) Eligibility – We are eligible to participate in public procurement as per applicable laws.', checked: false, required: true },
   { id: 'conformity', text: '(C) Conformity – We offer to supply in conformity with the tendering document.', checked: false, required: true },
-  { id: 'ethical_conduct', text: '(D) Code of Ethical Conduct – We commit to abide by the PPRA Code of Ethics for procurement.', checked: false, required: true },
+  { id: 'ethical_conduct', text: '(D) Code of Ethical Conduct – We commit to abide by the Code of Ethics for procurement.', checked: false, required: true },
   { id: 'price_validity', text: '(E) Price Validity – Our prices are fixed and firm for the entire validity period.', checked: false, required: true },
   { id: 'one_quotation', text: '(F) One Quotation Per Tenderer – We are not submitting any other quotation for this tender.', checked: false, required: true },
-  { id: 'suspension', text: '(G) Suspension & Debarment – We are not subject to any debarment by PPRA or any authority.', checked: false, required: true },
+  { id: 'suspension', text: '(G) Suspension & Debarment – We are not subject to any debarment by any regulatory authority.', checked: false, required: true },
   { id: 'fraud_corruption', text: '(H) Fraud & Corruption – No person acting for us will engage in any corrupt, fraudulent, coercive, or collusive practice.', checked: false, required: true },
   { id: 'anti_competitive', text: '(I) Anti-Competitive Practices – Our tender is genuine and non-collusive per the Competition Act 2010.', checked: false, required: true },
   { id: 'beneficial_ownership', text: '(J) Beneficial Ownership – We commit to provide beneficial ownership information if awarded.', checked: false, required: true },
@@ -72,7 +72,7 @@ const DeclarationsForm = ({ declarations, onDeclarationsChange, conflicts, onCon
       <Alert className="border-amber-200 bg-amber-50 text-amber-800">
         <Info className="h-4 w-4" />
         <AlertDescription>
-          The following declarations are standard per the Public Procurement & Asset Disposal Act 2015 (PPADA). All required declarations must be confirmed.
+          The following statutory declarations are required. All mandatory declarations must be confirmed before submission.
         </AlertDescription>
       </Alert>
 
@@ -133,7 +133,7 @@ const DeclarationsForm = ({ declarations, onDeclarationsChange, conflicts, onCon
             </div>
             <div>
               <CardTitle>Conflict of Interest Disclosure</CardTitle>
-              <CardDescription>Declare any potential conflicts per PPADA S.57</CardDescription>
+              <CardDescription>Declare any potential conflicts of interest</CardDescription>
             </div>
           </div>
         </CardHeader>

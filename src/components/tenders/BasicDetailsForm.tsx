@@ -137,7 +137,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>Per Kenya Public Procurement and Asset Disposal Act (PPADA) 2015</FormDescription>
+                  <FormDescription>Select the applicable procurement method</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -274,7 +274,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Reservation / Preference (AGPO)</CardTitle>
           <CardDescription>
-            Access to Government Procurement Opportunities for Youth, Women, and PWDs per PPADA S.157
+            Access to Government Procurement Opportunities for Youth, Women, and PWDs
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -461,7 +461,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
                   <FormControl>
                     <Input type="number" min="1" placeholder="91" {...field} />
                   </FormControl>
-                  <FormDescription>Default 91 days per PPADA</FormDescription>
+                  <FormDescription>Default 91 days</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -497,7 +497,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>Recommended for compliance with PPADA oversight requirements.</FormDescription>
+                  <FormDescription>Recommended for procurement compliance oversight.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

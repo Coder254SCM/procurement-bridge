@@ -181,7 +181,7 @@ const TenderDataSheetForm = ({ form }: TenderDataSheetFormProps) => {
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Determines how winning bid is selected per PPADA S.86
+                    Determines how the winning bid is selected
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -235,7 +235,7 @@ const TenderDataSheetForm = ({ form }: TenderDataSheetFormProps) => {
                     <FormControl>
                       <Input type="number" placeholder="e.g. 100000" {...field} />
                     </FormControl>
-                    <FormDescription>1-2% of tender value per PPADA S.78</FormDescription>
+                    <FormDescription>1-2% of tender value</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

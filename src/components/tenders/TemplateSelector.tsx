@@ -22,43 +22,43 @@ const templateOptions: TemplateOption[] = [
   { 
     value: TenderTemplateType.STANDARD, 
     label: "Standard Procurement", 
-    standard: "PPADA 2015",
+    standard: "Standard Template",
     description: "Basic tender template"
   },
   { 
     value: TenderTemplateType.CONSTRUCTION, 
     label: "Construction Projects", 
-    standard: "NCA & PPADA",
+    standard: "NCA Compliant",
     description: "For construction projects"
   },
   { 
     value: TenderTemplateType.IT_SERVICES, 
     label: "IT Services & Systems", 
-    standard: "ICTA & PPADA",
+    standard: "ICT Standard",
     description: "For IT services procurement"
   },
   { 
     value: TenderTemplateType.CONSULTING, 
     label: "Consulting Services", 
-    standard: "PPADA Reg. 2020",
+    standard: "Consulting Standard",
     description: "For consulting services"
   },
   { 
     value: TenderTemplateType.SUPPLIES, 
     label: "Goods & Supplies", 
-    standard: "PPADA Standard",
+    standard: "Supplies Standard",
     description: "For goods and supplies"
   },
   { 
     value: TenderTemplateType.MEDICAL, 
     label: "Medical & Healthcare", 
-    standard: "MoH & PPADA",
+    standard: "Healthcare Standard",
     description: "For medical equipment & services"
   },
   { 
     value: TenderTemplateType.CUSTOM, 
     label: "Custom Template", 
-    standard: "PPADA Compliant",
+    standard: "Custom",
     description: "Create your own template"
   },
 ];

@@ -193,7 +193,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
     form.setValue('template_type', templateType);
     switch (templateType) {
       case TenderTemplateType.CONSTRUCTION:
-        setTemplateContent('Standard construction tender template following Kenya PPADA and NCA standards...');
+        setTemplateContent('Standard construction tender template following NCA standards...');
         setEvaluationCriteria({ technical: 35, financial: 25, experience: 20, compliance: 10, delivery: 10, quality: 0 });
         break;
       case TenderTemplateType.IT_SERVICES:
@@ -201,7 +201,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
         setEvaluationCriteria({ technical: 40, financial: 25, experience: 15, compliance: 5, delivery: 5, innovation: 5, support: 5 });
         break;
       default:
-        setTemplateContent('Standard tender template compliant with PPADA 2015 and Regulations 2020.');
+        setTemplateContent('Standard tender template compliant with applicable procurement regulations.');
         setEvaluationCriteria(defaultEvaluationCriteria);
     }
   };
