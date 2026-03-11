@@ -137,7 +137,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>Per Kenya Public Procurement and Asset Disposal Act (PPADA) 2015</FormDescription>
+                  <FormDescription>Select the applicable procurement method</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
