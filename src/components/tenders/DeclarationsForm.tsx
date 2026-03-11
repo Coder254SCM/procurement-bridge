@@ -29,7 +29,7 @@ const defaultDeclarations: Declaration[] = [
   { id: 'ethical_conduct', text: '(D) Code of Ethical Conduct – We commit to abide by the Code of Ethics for procurement.', checked: false, required: true },
   { id: 'price_validity', text: '(E) Price Validity – Our prices are fixed and firm for the entire validity period.', checked: false, required: true },
   { id: 'one_quotation', text: '(F) One Quotation Per Tenderer – We are not submitting any other quotation for this tender.', checked: false, required: true },
-  { id: 'suspension', text: '(G) Suspension & Debarment – We are not subject to any debarment by PPRA or any authority.', checked: false, required: true },
+  { id: 'suspension', text: '(G) Suspension & Debarment – We are not subject to any debarment by any regulatory authority.', checked: false, required: true },
   { id: 'fraud_corruption', text: '(H) Fraud & Corruption – No person acting for us will engage in any corrupt, fraudulent, coercive, or collusive practice.', checked: false, required: true },
   { id: 'anti_competitive', text: '(I) Anti-Competitive Practices – Our tender is genuine and non-collusive per the Competition Act 2010.', checked: false, required: true },
   { id: 'beneficial_ownership', text: '(J) Beneficial Ownership – We commit to provide beneficial ownership information if awarded.', checked: false, required: true },
