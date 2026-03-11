@@ -26,7 +26,7 @@ const defaultDeclarations: Declaration[] = [
   { id: 'no_reservations', text: '(A) No Reservations – We have examined the tender document fully and have no reservations.', checked: false, required: true },
   { id: 'eligibility', text: '(B) Eligibility – We are eligible to participate in public procurement as per applicable laws.', checked: false, required: true },
   { id: 'conformity', text: '(C) Conformity – We offer to supply in conformity with the tendering document.', checked: false, required: true },
-  { id: 'ethical_conduct', text: '(D) Code of Ethical Conduct – We commit to abide by the PPRA Code of Ethics for procurement.', checked: false, required: true },
+  { id: 'ethical_conduct', text: '(D) Code of Ethical Conduct – We commit to abide by the Code of Ethics for procurement.', checked: false, required: true },
   { id: 'price_validity', text: '(E) Price Validity – Our prices are fixed and firm for the entire validity period.', checked: false, required: true },
   { id: 'one_quotation', text: '(F) One Quotation Per Tenderer – We are not submitting any other quotation for this tender.', checked: false, required: true },
   { id: 'suspension', text: '(G) Suspension & Debarment – We are not subject to any debarment by PPRA or any authority.', checked: false, required: true },
