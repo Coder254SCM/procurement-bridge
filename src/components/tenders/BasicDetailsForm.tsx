@@ -461,7 +461,7 @@ const BasicDetailsForm = ({ form, categoryOptions, supplyChainReviewers, templat
                   <FormControl>
                     <Input type="number" min="1" placeholder="91" {...field} />
                   </FormControl>
-                  <FormDescription>Default 91 days per PPADA</FormDescription>
+                  <FormDescription>Default 91 days</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
