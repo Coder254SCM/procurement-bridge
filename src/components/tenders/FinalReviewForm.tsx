@@ -161,8 +161,8 @@ const FinalReviewForm = ({
               <FileCheck className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <CardTitle>Kenya Procurement Law Compliance</CardTitle>
-              <CardDescription>This tender follows PPADA 2015 and Regulations 2020</CardDescription>
+              <CardTitle>Procurement Compliance</CardTitle>
+              <CardDescription>This tender follows applicable procurement regulations</CardDescription>
             </div>
           </div>
         </CardHeader>
