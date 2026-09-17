@@ -172,15 +172,8 @@ const BidSubmission = () => {
 
       if (error) throw error;
 
-      // Move uploaded files to correct bid folder
-      if (data && uploadedDocs.length > 0) {
-        // Files are already uploaded, just update the bid with correct paths
-        const correctedPaths = uploadedDocs.map(p => p.replace('/pending/', `/${data.id}/`));
-        await supabase
-          .from('bids')
-          .update({ uploaded_documents: correctedPaths })
-          .eq('id', data.id);
-      }
+
+
 
       toast({ title: 'Bid Submitted!', description: 'Your bid has been submitted and recorded on the blockchain.' });
       navigate(`/tender/${tender.id}`);
