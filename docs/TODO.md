@@ -91,6 +91,10 @@
 - ✅ Procurement Plans module (PPADA S.53)
 - ✅ Supplier bid submission form (/tender/:id/bid)
 - ✅ Contract detail/signing page (/contract/:id)
+- ✅ Attachment audit (Sep 17): bid file paths no longer rewritten to non-existent folders; upload failures now surface to the user; filenames sanitized
+- ✅ Storage access rules tightened: tender/bid uploads scoped to the signed-in user's own folder; bid attachments readable only by the uploading supplier, the tender owner, and admins
+- ✅ Sign-up now assigns the account type chosen at registration (was always "supplier"); duplicate profile/role creation is safe
+- ✅ Sign-up no longer redirects to dashboard when email confirmation is pending — shows a confirm-your-email screen
 
 ### Advanced Features (85%)
 - ✅ RTH Consensus System
