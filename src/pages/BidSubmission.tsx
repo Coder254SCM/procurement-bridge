@@ -107,18 +107,19 @@ const BidSubmission = () => {
     setDocuments(prev => prev.filter((_, i) => i !== index));
   };
 
-  const uploadDocuments = async (bidId: string): Promise<string[]> => {
+  const uploadDocuments = async (folderId: string): Promise<string[]> => {
     const uploadedPaths: string[] = [];
     for (const file of documents) {
-      const filePath = `${user!.id}/${bidId}/${Date.now()}_${file.name}`;
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const filePath = `${user!.id}/${folderId}/${Date.now()}_${safeName}`;
       const { error } = await supabase.storage
         .from('bid-documents')
         .upload(filePath, file);
-      if (!error) {
-        uploadedPaths.push(filePath);
-      } else {
+      if (error) {
         console.error('Upload error:', error);
+        throw new Error(`Could not upload ${file.name}: ${error.message}`);
       }
+      uploadedPaths.push(filePath);
     }
     return uploadedPaths;
   };
@@ -140,11 +141,12 @@ const BidSubmission = () => {
     try {
       setSubmitting(true);
 
-      // Upload documents first
+      // Upload documents first into a stable folder for this submission
       let uploadedDocs: string[] = [];
+      const submissionFolder = crypto.randomUUID();
       if (documents.length > 0) {
         setUploading(true);
-        uploadedDocs = await uploadDocuments('pending');
+        uploadedDocs = await uploadDocuments(submissionFolder);
         setUploading(false);
       }
 
@@ -170,15 +172,8 @@ const BidSubmission = () => {
 
       if (error) throw error;
 
-      // Move uploaded files to correct bid folder
-      if (data && uploadedDocs.length > 0) {
-        // Files are already uploaded, just update the bid with correct paths
-        const correctedPaths = uploadedDocs.map(p => p.replace('/pending/', `/${data.id}/`));
-        await supabase
-          .from('bids')
-          .update({ uploaded_documents: correctedPaths })
-          .eq('id', data.id);
-      }
+
+
 
       toast({ title: 'Bid Submitted!', description: 'Your bid has been submitted and recorded on the blockchain.' });
       navigate(`/tender/${tender.id}`);
