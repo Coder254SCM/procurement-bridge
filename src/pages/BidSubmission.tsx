@@ -141,11 +141,12 @@ const BidSubmission = () => {
     try {
       setSubmitting(true);
 
-      // Upload documents first
+      // Upload documents first into a stable folder for this submission
       let uploadedDocs: string[] = [];
+      const submissionFolder = crypto.randomUUID();
       if (documents.length > 0) {
         setUploading(true);
-        uploadedDocs = await uploadDocuments('pending');
+        uploadedDocs = await uploadDocuments(submissionFolder);
         setUploading(false);
       }
 
