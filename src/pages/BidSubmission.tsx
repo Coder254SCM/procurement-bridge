@@ -115,11 +115,11 @@ const BidSubmission = () => {
       const { error } = await supabase.storage
         .from('bid-documents')
         .upload(filePath, file);
-      if (!error) {
-        uploadedPaths.push(filePath);
-      } else {
+      if (error) {
         console.error('Upload error:', error);
+        throw new Error(`Could not upload ${file.name}: ${error.message}`);
       }
+      uploadedPaths.push(filePath);
     }
     return uploadedPaths;
   };
