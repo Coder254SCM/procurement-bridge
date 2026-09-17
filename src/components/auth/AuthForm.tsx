@@ -109,12 +109,19 @@ const AuthForm = () => {
           title: "Sign up failed",
           description: error.message || "Please check your information and try again",
         });
-      } else {
+      } else if (data?.session) {
         toast({
           title: "Account created",
-          description: "Please check your email to confirm your account",
+          description: "Welcome to ProcureChain!",
         });
         navigate('/dashboard');
+      } else {
+        setMagicLinkEmail(signupEmail);
+        setMagicLinkSent(true);
+        toast({
+          title: "Account created",
+          description: "Please check your email to confirm your account before signing in.",
+        });
       }
     } catch (error) {
       toast({
