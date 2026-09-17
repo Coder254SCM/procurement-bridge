@@ -107,10 +107,11 @@ const BidSubmission = () => {
     setDocuments(prev => prev.filter((_, i) => i !== index));
   };
 
-  const uploadDocuments = async (bidId: string): Promise<string[]> => {
+  const uploadDocuments = async (folderId: string): Promise<string[]> => {
     const uploadedPaths: string[] = [];
     for (const file of documents) {
-      const filePath = `${user!.id}/${bidId}/${Date.now()}_${file.name}`;
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const filePath = `${user!.id}/${folderId}/${Date.now()}_${safeName}`;
       const { error } = await supabase.storage
         .from('bid-documents')
         .upload(filePath, file);
