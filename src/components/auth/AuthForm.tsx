@@ -185,12 +185,12 @@ const AuthForm = () => {
           </div>
           <CardTitle className="text-2xl font-semibold">Check your email</CardTitle>
           <CardDescription>
-            We've sent a magic link to <strong>{magicLinkEmail}</strong>
+            We've sent a secure link to <strong>{magicLinkEmail}</strong>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-center text-sm text-muted-foreground">
-            <p>Click the link in your email to sign in instantly.</p>
+            <p>Click the link in your email to continue.</p>
             <p className="mt-2">Didn't receive the email? Check your spam folder.</p>
           </div>
           
