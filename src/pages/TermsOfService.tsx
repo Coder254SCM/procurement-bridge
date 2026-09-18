@@ -1,8 +1,9 @@
 import React from 'react';
 
 const TermsOfService = () => {
-  const lastUpdated = "October 1, 2025";
-  const effectiveDate = "October 1, 2025";
+  const lastUpdated = "September 18, 2026";
+  const effectiveDate = "September 18, 2026";
+  const version = "1.1";
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
@@ -145,18 +146,18 @@ const TermsOfService = () => {
 
         <h2 className="mt-8 text-2xl font-semibold">4. User Roles and Responsibilities</h2>
         
-        <h3 className="mt-4 text-xl font-semibold">4.1 Government Buyers</h3>
-        <p>Buyer users represent government entities or authorized procurement organizations. Buyers are responsible for:</p>
+        <h3 className="mt-4 text-xl font-semibold">4.1 Buyer Organizations</h3>
+        <p>Buyer users represent businesses and other organizations that run procurement on the Platform. Buyers are responsible for:</p>
         <ul>
           <li>Creating accurate, complete, and compliant tender specifications</li>
-          <li>Ensuring compliance with Public Procurement and Asset Disposal Act 2015</li>
+          <li>Ensuring compliance with applicable procurement laws, regulations, and internal policies</li>
           <li>Conducting fair, transparent, and non-discriminatory evaluation processes</li>
           <li>Maintaining proper documentation throughout the procurement lifecycle</li>
-          <li>Responding to supplier clarifications within prescribed timelines</li>
+          <li>Responding to supplier clarifications within stated timelines</li>
           <li>Ensuring tender budgets are approved and funds are available</li>
-          <li>Awarding contracts based on merit and evaluation criteria</li>
+          <li>Awarding contracts based on merit and published evaluation criteria</li>
           <li>Managing contracts and monitoring supplier performance</li>
-          <li>Reporting procurement activities to PPRA as required</li>
+          <li>Reporting procurement activities to any regulator or governing body that applies to them</li>
         </ul>
 
         <h3 className="mt-4 text-xl font-semibold">4.2 Suppliers</h3>
@@ -224,6 +225,47 @@ const TermsOfService = () => {
           <li>Legal action for damages and injunctive relief</li>
           <li>Loss of awarded contracts and performance securities</li>
         </ul>
+
+        <h3 className="mt-4 text-xl font-semibold">5.3 Automated Access, Scraping, and System Integrity</h3>
+        <p>In addition to the above, you specifically agree that you will NOT:</p>
+        <ul>
+          <li>Use any deep link, page scraper, robot, web spider, crawler, or other automatic or manual device, program, or methodology to access, acquire, copy, or monitor any part of the Platform or its content, or to circumvent its navigational structure or presentation</li>
+          <li>Obtain or attempt to obtain any materials, documents, or information through means not purposely made available through the Platform</li>
+          <li>Probe, scan, or test the vulnerability of the Platform or any connected network, or breach its security or authentication measures, including by password mining</li>
+          <li>Reverse look-up, trace, or seek to trace any other user or visitor, or any account you do not own, or exploit the Platform in any way intended to reveal information other than your own</li>
+          <li>Take any action that imposes an unreasonable or disproportionately large load on the Platform or its infrastructure</li>
+          <li>Use any device, software, or routine to interfere with the proper working of the Platform, with any transaction being conducted on it, or with any other person's use of it</li>
+          <li>Forge headers or manipulate identifiers to disguise the origin of any message sent to us or through the Platform, or pretend that you are, or represent, another individual or entity without authorization</li>
+          <li>Copy, sell, lease, rent, sub-license, or grant any rights in any part of the Platform</li>
+          <li>Alter, deface, or remove any logo, trademark, notice, or attribution appearing in Platform documents or graphics, except where a document expressly permits editing</li>
+          <li>Post or transmit any content that is obscene, defamatory, otherwise unlawful, technically harmful, or for which you do not hold the necessary licenses</li>
+        </ul>
+        <p>We reserve the right to bar any such activity, throttle or block offending traffic, and disclose personal data to law enforcement where a breach of this section has occurred.</p>
+
+        <h3 className="mt-4 text-xl font-semibold">5.4 Eligibility to Use the Platform</h3>
+        <p>You may not use the Platform, and may not accept these Terms, if you are not of legal age to form a binding contract, or if you are barred from using services of this kind under the laws applicable to you, your country of residence, or the country from which you access the Platform.</p>
+
+        <h3 className="mt-4 text-xl font-semibold">5.5 Availability and Planned Maintenance</h3>
+        <p>We will use all reasonable endeavours to keep the Platform available 24 hours a day, 7 days a week, but we are not liable if the Platform is unavailable for any period. We may temporarily suspend all or part of the Platform for maintenance, repair, upgrades, or security reasons, and will give advance notice where practicable.</p>
+
+        <h3 className="mt-4 text-xl font-semibold">5.6 Changes to the Platform</h3>
+        <p>We may make improvements and changes to the Platform, its content, and the services provided through it. Where changes are not material to your subscription, we may make them without prior notice. Your continued use of the Platform after a change constitutes acceptance of it.</p>
+
+        <h3 className="mt-4 text-xl font-semibold">5.7 Links to Third-Party Sites</h3>
+        <p>The Platform may contain links to sites operated by other organizations, over whose content and technical operation we have no control. Such links are provided for convenience only and do not imply responsibility for, endorsement of, or approval of the information they contain. All warranties relating to the accuracy, availability, reliability, or content of linked material are excluded. If you follow a link you do so entirely at your own risk and become subject to the privacy policy of that site. The appearance of any company's or trader's name on the Platform is not a recommendation of its products or services.</p>
+
+        <h3 className="mt-4 text-xl font-semibold">5.8 Linking to the Platform</h3>
+        <p>You may create a link to the Platform provided that our pages load into the user's entire window and are not loaded into frames, inline frames, or any other wrapper on your own site, and provided the link does not suggest any affiliation, sponsorship, or endorsement that does not exist.</p>
+
+        <h3 className="mt-4 text-xl font-semibold">5.9 Additional Terms and Order of Precedence</h3>
+        <p>
+          Your agreement with us consists of these Terms together with any Additional Terms that apply to you — including
+          role-specific terms for Buyer Organizations and Suppliers, your subscription order form or enterprise agreement,
+          any Data Processing Addendum, and any notices published within a specific feature. Additional Terms are made
+          available to you within, or through your use of, the relevant part of the Platform. Where an Additional Term
+          conflicts with these Terms, the Additional Term takes precedence for that feature or subscription only; in all
+          other respects these Terms continue to apply.
+        </p>
 
         <h2 className="mt-8 text-2xl font-semibold">6. Intellectual Property Rights</h2>
         
@@ -619,8 +661,10 @@ const TermsOfService = () => {
         <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded">
           <p className="font-semibold text-blue-800">Version History & Changes</p>
           <p className="text-sm text-blue-700 mt-2">
-            This is Version 1.0 of our Terms of Service, effective {effectiveDate}. We maintain a version history 
-            of material changes. To view previous versions or change logs, visit procurechain.co.ke/legal/terms-history
+            This is Version {version} of our Terms of Service, effective {effectiveDate}. Version {version} added the
+            acceptable-use rules on automated access and system integrity, eligibility, availability and maintenance,
+            third-party and inbound links, and the order of precedence for Additional Terms. We maintain a version
+            history of material changes.
           </p>
         </div>
       </div>
