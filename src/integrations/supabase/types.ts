@@ -289,6 +289,7 @@ export type Database = {
       audit_logs: {
         Row: {
           action: string
+          business_id: string | null
           compliance_flags: Json | null
           created_at: string | null
           entity_id: string | null
@@ -302,6 +303,7 @@ export type Database = {
         }
         Insert: {
           action: string
+          business_id?: string | null
           compliance_flags?: Json | null
           created_at?: string | null
           entity_id?: string | null
@@ -315,6 +317,7 @@ export type Database = {
         }
         Update: {
           action?: string
+          business_id?: string | null
           compliance_flags?: Json | null
           created_at?: string | null
           entity_id?: string | null
@@ -326,7 +329,15 @@ export type Database = {
           user_agent?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       behavior_analysis: {
         Row: {
@@ -365,6 +376,7 @@ export type Database = {
         Row: {
           bid_amount: number
           blockchain_hash: string | null
+          business_id: string | null
           created_at: string | null
           documents: Json | null
           id: string
@@ -378,6 +390,7 @@ export type Database = {
         Insert: {
           bid_amount: number
           blockchain_hash?: string | null
+          business_id?: string | null
           created_at?: string | null
           documents?: Json | null
           id?: string
@@ -391,6 +404,7 @@ export type Database = {
         Update: {
           bid_amount?: number
           blockchain_hash?: string | null
+          business_id?: string | null
           created_at?: string | null
           documents?: Json | null
           id?: string
@@ -402,6 +416,13 @@ export type Database = {
           uploaded_documents?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bids_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bids_tender_id_fkey"
             columns: ["tender_id"]
@@ -449,6 +470,7 @@ export type Database = {
           available_amount: number | null
           budget_code: string
           budget_name: string
+          business_id: string | null
           category_id: string | null
           committed_amount: number | null
           created_at: string | null
@@ -465,6 +487,7 @@ export type Database = {
           available_amount?: number | null
           budget_code: string
           budget_name: string
+          business_id?: string | null
           category_id?: string | null
           committed_amount?: number | null
           created_at?: string | null
@@ -481,6 +504,7 @@ export type Database = {
           available_amount?: number | null
           budget_code?: string
           budget_name?: string
+          business_id?: string | null
           category_id?: string | null
           committed_amount?: number | null
           created_at?: string | null
@@ -495,10 +519,173 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "budget_allocations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "budget_allocations_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          business_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          role: Database["public"]["Enums"]["business_member_role"]
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          business_id: string
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["business_member_role"]
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          business_id?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["business_member_role"]
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_invitations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_members: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          invited_by: string | null
+          joined_at: string
+          role: Database["public"]["Enums"]["business_member_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          role?: Database["public"]["Enums"]["business_member_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          role?: Database["public"]["Enums"]["business_member_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_members_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          billing_email: string | null
+          country: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          industry: string | null
+          legal_name: string | null
+          logo_url: string | null
+          name: string
+          organization_size: string | null
+          plan_id: string | null
+          registration_number: string | null
+          status: string
+          tax_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_email?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          industry?: string | null
+          legal_name?: string | null
+          logo_url?: string | null
+          name: string
+          organization_size?: string | null
+          plan_id?: string | null
+          registration_number?: string | null
+          status?: string
+          tax_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_email?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          industry?: string | null
+          legal_name?: string | null
+          logo_url?: string | null
+          name?: string
+          organization_size?: string | null
+          plan_id?: string | null
+          registration_number?: string | null
+          status?: string
+          tax_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -547,6 +734,7 @@ export type Database = {
       catalog_items: {
         Row: {
           base_price: number | null
+          business_id: string | null
           category_id: string
           created_at: string | null
           currency: string | null
@@ -563,6 +751,7 @@ export type Database = {
         }
         Insert: {
           base_price?: number | null
+          business_id?: string | null
           category_id: string
           created_at?: string | null
           currency?: string | null
@@ -579,6 +768,7 @@ export type Database = {
         }
         Update: {
           base_price?: number | null
+          business_id?: string | null
           category_id?: string
           created_at?: string | null
           currency?: string | null
@@ -594,6 +784,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "catalog_items_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "catalog_items_category_id_fkey"
             columns: ["category_id"]
@@ -846,6 +1043,7 @@ export type Database = {
       contracts: {
         Row: {
           blockchain_hash: string | null
+          business_id: string | null
           buyer_id: string
           contract_currency: string | null
           contract_value: number
@@ -864,6 +1062,7 @@ export type Database = {
         }
         Insert: {
           blockchain_hash?: string | null
+          business_id?: string | null
           buyer_id: string
           contract_currency?: string | null
           contract_value: number
@@ -882,6 +1081,7 @@ export type Database = {
         }
         Update: {
           blockchain_hash?: string | null
+          business_id?: string | null
           buyer_id?: string
           contract_currency?: string | null
           contract_value?: number
@@ -899,6 +1099,13 @@ export type Database = {
           winning_bid_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "contracts_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "contracts_tender_id_fkey"
             columns: ["tender_id"]
@@ -1475,6 +1682,7 @@ export type Database = {
       framework_agreements: {
         Row: {
           agreement_number: string
+          business_id: string | null
           buyer_organization: string
           category_id: string
           created_at: string | null
@@ -1493,6 +1701,7 @@ export type Database = {
         }
         Insert: {
           agreement_number: string
+          business_id?: string | null
           buyer_organization: string
           category_id: string
           created_at?: string | null
@@ -1511,6 +1720,7 @@ export type Database = {
         }
         Update: {
           agreement_number?: string
+          business_id?: string | null
           buyer_organization?: string
           category_id?: string
           created_at?: string | null
@@ -1528,6 +1738,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "framework_agreements_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "framework_agreements_category_id_fkey"
             columns: ["category_id"]
@@ -2178,6 +2395,7 @@ export type Database = {
           approved_by: string | null
           budget_allocation_id: string | null
           budget_currency: string
+          business_id: string | null
           created_at: string
           created_by: string
           department: string
@@ -2207,6 +2425,7 @@ export type Database = {
           approved_by?: string | null
           budget_allocation_id?: string | null
           budget_currency?: string
+          business_id?: string | null
           created_at?: string
           created_by: string
           department: string
@@ -2236,6 +2455,7 @@ export type Database = {
           approved_by?: string | null
           budget_allocation_id?: string | null
           budget_currency?: string
+          business_id?: string | null
           created_at?: string
           created_by?: string
           department?: string
@@ -2263,6 +2483,13 @@ export type Database = {
             columns: ["budget_allocation_id"]
             isOneToOne: false
             referencedRelation: "budget_allocations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "procurement_plans_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -2386,6 +2613,7 @@ export type Database = {
           approval_workflow: Json | null
           approvers: Json | null
           budget_code: string | null
+          business_id: string | null
           created_at: string | null
           currency: string | null
           department: string
@@ -2406,6 +2634,7 @@ export type Database = {
           approval_workflow?: Json | null
           approvers?: Json | null
           budget_code?: string | null
+          business_id?: string | null
           created_at?: string | null
           currency?: string | null
           department: string
@@ -2426,6 +2655,7 @@ export type Database = {
           approval_workflow?: Json | null
           approvers?: Json | null
           budget_code?: string | null
+          business_id?: string | null
           created_at?: string | null
           currency?: string | null
           department?: string
@@ -2441,7 +2671,15 @@ export type Database = {
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "purchase_requisitions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_notifications: {
         Row: {
@@ -3984,6 +4222,7 @@ export type Database = {
           blockchain_hash: string | null
           budget_amount: number | null
           budget_currency: string | null
+          business_id: string | null
           buyer_id: string
           category: string
           category_code: string | null
@@ -4018,6 +4257,7 @@ export type Database = {
           blockchain_hash?: string | null
           budget_amount?: number | null
           budget_currency?: string | null
+          business_id?: string | null
           buyer_id: string
           category: string
           category_code?: string | null
@@ -4052,6 +4292,7 @@ export type Database = {
           blockchain_hash?: string | null
           budget_amount?: number | null
           budget_currency?: string | null
+          business_id?: string | null
           buyer_id?: string
           category?: string
           category_code?: string | null
@@ -4081,7 +4322,15 @@ export type Database = {
           uploaded_documents?: Json | null
           validity_period?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tenders_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       translations: {
         Row: {
@@ -4136,11 +4385,13 @@ export type Database = {
       }
       user_subscriptions: {
         Row: {
+          business_id: string | null
           created_at: string
           current_period_end: string | null
           current_period_start: string | null
           id: string
           plan_id: string
+          seats: number
           status: string
           stripe_subscription_id: string | null
           trial_end: string | null
@@ -4148,11 +4399,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          business_id?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
           plan_id: string
+          seats?: number
           status?: string
           stripe_subscription_id?: string | null
           trial_end?: string | null
@@ -4160,11 +4413,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          business_id?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
           plan_id?: string
+          seats?: number
           status?: string
           stripe_subscription_id?: string | null
           trial_end?: string | null
@@ -4172,6 +4427,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_subscriptions_plan_id_fkey"
             columns: ["plan_id"]
@@ -4263,6 +4525,7 @@ export type Database = {
         Args: { completion_date: string; payment_date: string }
         Returns: number
       }
+      can_manage_business: { Args: { _business_id: string }; Returns: boolean }
       check_trial_eligibility: {
         Args: { trial_type_param: string; user_id_param: string }
         Returns: boolean
@@ -4276,6 +4539,13 @@ export type Database = {
           trial_available: boolean
         }[]
       }
+      has_business_role: {
+        Args: {
+          _business_id: string
+          _role: Database["public"]["Enums"]["business_member_role"]
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           required_role: Database["public"]["Enums"]["user_role"]
@@ -4283,6 +4553,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_business_member: { Args: { _business_id: string }; Returns: boolean }
+      my_business_ids: { Args: never; Returns: string[] }
       verify_blockchain_integrity: {
         Args: { entity_id_param: string; entity_type_param: string }
         Returns: {
@@ -4295,6 +4567,7 @@ export type Database = {
       }
     }
     Enums: {
+      business_member_role: "owner" | "admin" | "member"
       user_role:
         | "buyer"
         | "supplier"
@@ -4439,6 +4712,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      business_member_role: ["owner", "admin", "member"],
       user_role: [
         "buyer",
         "supplier",
