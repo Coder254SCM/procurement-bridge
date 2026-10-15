@@ -1,7 +1,20 @@
 # TODO: Development Roadmap
 
-## System Status: 90% COMPLETE (was 89% before the Sep 17 attachment/sign-up audit)
-**Updated**: March 10, 2026
+## System Status: 91% COMPLETE (was 90% before the Sep 18 businesses/terms update)
+**Updated**: September 18, 2026
+
+### Sep 18, 2026 — Businesses (tenants) + Terms v1.1
+- [x] Terms of Service v1.1: scraping/bots, security probing, impersonation, excessive load, eligibility, availability/maintenance, platform changes, third-party links, no framing, Additional Terms precedence; "Government Buyers" → "Buyer Organizations"
+- [x] businesses, business_members (owner/admin/member), business_invitations tables with RLS + last-owner protection
+- [x] Every existing user backfilled into their own business; existing tenders/bids/contracts/plans/requisitions/catalog items attached
+- [x] Business switcher in header, /business page (details + people), real email-bound invite links (/invite/:token)
+- [x] New tenders stamped with current business
+- [ ] Stamp business on bids, contracts, plans, requisitions, budgets, catalog, frameworks at creation
+- [ ] Tighten listing pages to filter by current business (currently additive policies only)
+- [ ] Automatic invite emails (links are copied manually for now)
+- [ ] Billing per business (seats column exists; payment wiring pending)
+- [ ] Cloudflare R2 storage — BLOCKED: needs R2 account ID + access keys
+
 
 ---
 
