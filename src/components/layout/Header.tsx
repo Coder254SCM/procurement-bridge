@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import BusinessSwitcher from '@/components/business/BusinessSwitcher';
-import { Building2 } from 'lucide-react';
 
 const Header = () => {
   const { user, signOut } = useAuth();
