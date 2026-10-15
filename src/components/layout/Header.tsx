@@ -19,6 +19,8 @@ import {
   Shield, AlertTriangle, Users, Scale, Building2, BadgeCheck, Briefcase
 } from 'lucide-react';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
+import BusinessSwitcher from '@/components/business/BusinessSwitcher';
+import { Building2 } from 'lucide-react';
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -227,6 +229,7 @@ const Header = () => {
           <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
             {user ? (
               <>
+                <BusinessSwitcher />
                 <NotificationCenter />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -252,6 +255,12 @@ const Header = () => {
                       <Link to="/profile" className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
                         Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/business" className="flex items-center">
+                        <Building2 className="mr-2 h-4 w-4" />
+                        Business &amp; team
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
