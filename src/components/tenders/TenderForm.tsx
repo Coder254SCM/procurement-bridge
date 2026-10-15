@@ -269,6 +269,7 @@ const TenderForm = ({ userId }: TenderFormProps) => {
           budget_currency: values.budget_currency,
           submission_deadline: values.submission_deadline.toISOString(),
           buyer_id: userId,
+          business_id: localStorage.getItem('procurechain.currentBusinessId') || null,
           status: 'draft',
           template_type: values.template_type,
           procurement_method: values.procurement_method,

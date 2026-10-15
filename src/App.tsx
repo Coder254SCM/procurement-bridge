@@ -47,9 +47,12 @@ import BidSubmission from '@/pages/BidSubmission';
 import ContractDetail from '@/pages/ContractDetail';
 import AuctionManagement from '@/pages/AuctionManagement';
 import AuctionRoom from '@/pages/AuctionRoom';
+import BusinessSettings from '@/pages/BusinessSettings';
+import AcceptInvitation from '@/pages/AcceptInvitation';
 import Layout from '@/components/layout/Layout';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { BusinessProvider } from '@/contexts/BusinessContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import PWAInstallPrompt from '@/components/pwa/PWAInstallPrompt';
@@ -66,6 +69,7 @@ function App() {
         <PWAInstallPrompt />
         <BrowserRouter>
           <AuthProvider>
+            <BusinessProvider>
             <Layout>
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -236,9 +240,16 @@ function App() {
                     <AuctionRoom />
                   </ProtectedRoute>
                 } />
+                <Route path="/business" element={
+                  <ProtectedRoute>
+                    <BusinessSettings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/invite/:token" element={<AcceptInvitation />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
+            </BusinessProvider>
             <Toaster />
           </AuthProvider>
         </BrowserRouter>
