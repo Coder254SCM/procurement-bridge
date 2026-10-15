@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,381 +10,280 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBusiness } from '@/contexts/BusinessContext';
 import { supabase } from '@/integrations/supabase/client';
-import { UserPlus, Mail, Shield, Trash2, Crown, Users, Loader2, AlertTriangle } from 'lucide-react';
+import BusinessService, { BusinessInvitation, BusinessMemberRow, BusinessRole } from '@/services/BusinessService';
+import { UserPlus, Mail, Trash2, Crown, Users, Loader2, AlertTriangle, Copy, XCircle } from 'lucide-react';
 
-interface TeamMember {
-  id: string;
-  user_id: string;
-  email: string;
-  full_name: string;
-  role: string;
-  status: 'active' | 'pending' | 'inactive';
-  invited_at: string;
-  joined_at: string | null;
-}
+const roleOptions: { value: BusinessRole; label: string; description: string }[] = [
+  { value: 'owner', label: 'Owner', description: 'Full control, including billing and deleting the business' },
+  { value: 'admin', label: 'Admin', description: 'Manage details, people and all records' },
+  { value: 'member', label: 'Member', description: 'Work on tenders, bids and contracts' },
+];
 
-interface TeamInvite {
-  email: string;
-  role: string;
-}
+const teamLimits: Record<string, number> = { Starter: 1, Professional: 5, Pro: 5, Enterprise: 50 };
 
 const TeamManagement: React.FC = () => {
   const { user } = useAuth();
+  const { currentBusinessId, canManage, currentRole } = useBusiness();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [members, setMembers] = useState<BusinessMemberRow[]>([]);
+  const [invitations, setInvitations] = useState<BusinessInvitation[]>([]);
+  const [planName, setPlanName] = useState('Starter');
+  const [seats, setSeats] = useState<number | null>(null);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [inviteData, setInviteData] = useState<TeamInvite>({ email: '', role: 'viewer' });
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<BusinessRole>('member');
   const [sending, setSending] = useState(false);
-  const [subscription, setSubscription] = useState<string | null>(null);
 
-  const teamRoles = [
-    { value: 'admin', label: 'Admin', description: 'Full access to all features' },
-    { value: 'manager', label: 'Manager', description: 'Can manage tenders and team' },
-    { value: 'evaluator', label: 'Evaluator', description: 'Can evaluate bids' },
-    { value: 'viewer', label: 'Viewer', description: 'Read-only access' },
-  ];
-
-  const teamLimits: Record<string, number> = {
-    'Starter': 1,
-    'Professional': 5,
-    'Enterprise': 50,
-    'Government': 999,
-  };
-
-  useEffect(() => {
-    fetchTeamData();
-  }, [user]);
-
-  const fetchTeamData = async () => {
-    if (!user) return;
+  const load = useCallback(async () => {
+    if (!currentBusinessId) { setLoading(false); return; }
+    setLoading(true);
     try {
-      setLoading(true);
-      
-      // Fetch user's subscription
-      const { data: subData } = await supabase
+      const [memberRows, inviteRows] = await Promise.all([
+        BusinessService.listMembers(currentBusinessId),
+        canManage ? BusinessService.listInvitations(currentBusinessId) : Promise.resolve([]),
+      ]);
+      setMembers(memberRows);
+      setInvitations(inviteRows.filter((i) => i.status === 'pending'));
+
+      const { data: sub } = await supabase
         .from('user_subscriptions')
-        .select('subscription_plans(name)')
-        .eq('user_id', user.id)
+        .select('seats, subscription_plans(name)')
+        .eq('business_id', currentBusinessId)
         .eq('status', 'active')
-        .single();
-      
-      const planName = (subData?.subscription_plans as any)?.name || 'Starter';
-      setSubscription(planName);
-
-      // Fetch team members from profiles joined with user_roles
-      const { data: rolesData } = await supabase
-        .from('user_roles')
-        .select('user_id, role, created_at')
-        .order('created_at', { ascending: true });
-
-      // Get profiles for team members
-      const userIds = rolesData?.map(r => r.user_id) || [];
-      if (userIds.length > 0) {
-        const { data: profilesData } = await supabase
-          .from('profiles')
-          .select('id, full_name')
-          .in('id', userIds);
-
-        // Combine data
-        const members: TeamMember[] = (rolesData || []).map(role => {
-          const profile = profilesData?.find(p => p.id === role.user_id);
-          return {
-            id: role.user_id,
-            user_id: role.user_id,
-            email: '', // Email would need auth.users access
-            full_name: profile?.full_name || 'Team Member',
-            role: role.role,
-            status: 'active' as const,
-            invited_at: role.created_at,
-            joined_at: role.created_at,
-          };
-        });
-        setTeamMembers(members);
-      }
-    } catch (error) {
-      console.error('Error fetching team:', error);
+        .maybeSingle();
+      setPlanName((sub?.subscription_plans as any)?.name || 'Starter');
+      setSeats(sub?.seats ?? null);
+    } catch (error: any) {
+      toast({ title: 'Could not load team', description: error.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentBusinessId, canManage, toast]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const limit = seats ?? teamLimits[planName] ?? 1;
+  const used = members.length + invitations.length;
+  const canAdd = canManage && used < limit;
+
+  const inviteLink = (token: string) => `${window.location.origin}/invite/${token}`;
 
   const handleInvite = async () => {
-    if (!inviteData.email) {
-      toast({ title: 'Error', description: 'Please enter an email address', variant: 'destructive' });
+    if (!currentBusinessId || !user) return;
+    const email = inviteEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast({ title: 'Invalid email', description: 'Enter a valid email address.', variant: 'destructive' });
       return;
     }
-
-    const limit = teamLimits[subscription || 'Starter'];
-    if (teamMembers.length >= limit) {
-      toast({
-        title: 'Team limit reached',
-        description: `Your ${subscription} plan allows up to ${limit} team members. Upgrade to add more.`,
-        variant: 'destructive',
-      });
+    if (inviteRole === 'owner' && currentRole !== 'owner') {
+      toast({ title: 'Not allowed', description: 'Only owners can invite another owner.', variant: 'destructive' });
       return;
     }
-
     setSending(true);
     try {
-      // In production, this would send an invite email and create a pending team member
-      toast({
-        title: 'Invitation sent',
-        description: `An invitation has been sent to ${inviteData.email}`,
-      });
+      const invitation = await BusinessService.inviteMember(currentBusinessId, user.id, email, inviteRole);
+      await navigator.clipboard?.writeText(inviteLink(invitation.token)).catch(() => undefined);
+      toast({ title: 'Invitation created', description: 'The invite link is copied. Send it to your colleague.' });
       setInviteOpen(false);
-      setInviteData({ email: '', role: 'viewer' });
+      setInviteEmail('');
+      setInviteRole('member');
+      load();
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: 'Could not invite', description: error.message, variant: 'destructive' });
     } finally {
       setSending(false);
     }
   };
 
-  const handleRemoveMember = async (memberId: string) => {
-    if (memberId === user?.id) {
-      toast({ title: 'Error', description: 'You cannot remove yourself', variant: 'destructive' });
-      return;
-    }
-
+  const changeRole = async (member: BusinessMemberRow, role: BusinessRole) => {
     try {
-      await supabase.from('user_roles').delete().eq('user_id', memberId);
-      setTeamMembers(prev => prev.filter(m => m.id !== memberId));
-      toast({ title: 'Member removed', description: 'Team member has been removed' });
+      await BusinessService.updateMemberRole(member.id, role);
+      load();
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: 'Could not change role', description: error.message, variant: 'destructive' });
     }
   };
 
-  const getRoleBadgeColor = (role: string) => {
-    const colors: Record<string, string> = {
-      admin: 'bg-purple-100 text-purple-800',
-      manager: 'bg-blue-100 text-blue-800',
-      evaluator: 'bg-green-100 text-green-800',
-      viewer: 'bg-gray-100 text-gray-800',
-      buyer: 'bg-indigo-100 text-indigo-800',
-      supplier: 'bg-orange-100 text-orange-800',
-    };
-    return colors[role] || 'bg-gray-100 text-gray-800';
+  const removeMember = async (member: BusinessMemberRow) => {
+    try {
+      await BusinessService.removeMember(member.id);
+      load();
+      toast({ title: 'Removed', description: `${member.full_name || 'Member'} no longer has access.` });
+    } catch (error: any) {
+      toast({ title: 'Could not remove', description: error.message, variant: 'destructive' });
+    }
   };
 
-  const limit = teamLimits[subscription || 'Starter'];
-  const canAddMembers = teamMembers.length < limit;
+  const revoke = async (invitation: BusinessInvitation) => {
+    try {
+      await BusinessService.revokeInvitation(invitation.id);
+      load();
+    } catch (error: any) {
+      toast({ title: 'Could not cancel invite', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  if (!currentBusinessId) {
+    return (
+      <Alert>
+        <AlertTitle>No business selected</AlertTitle>
+        <AlertDescription>Create or join a business to manage a team.</AlertDescription>
+      </Alert>
+    );
+  }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Team Management</h2>
-          <p className="text-muted-foreground">
-            Manage your organization's team members and their roles
-          </p>
+          <h2 className="text-2xl font-bold">Team</h2>
+          <p className="text-muted-foreground">People who can work inside this business</p>
         </div>
-        
-        <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-          <DialogTrigger asChild>
-            <Button disabled={!canAddMembers}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              Invite Member
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Invite Team Member</DialogTitle>
-              <DialogDescription>
-                Send an invitation to join your organization
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="colleague@company.com"
-                  value={inviteData.email}
-                  onChange={(e) => setInviteData(prev => ({ ...prev, email: e.target.value }))}
-                />
+        {canManage && (
+          <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+            <DialogTrigger asChild>
+              <Button disabled={!canAdd}><UserPlus className="mr-2 h-4 w-4" />Invite member</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Invite a team member</DialogTitle>
+                <DialogDescription>They must sign in with this email address to accept. Links expire after 14 days.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label htmlFor="invite-email">Email address</Label>
+                  <Input id="invite-email" type="email" placeholder="colleague@company.com" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Role</Label>
+                  <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as BusinessRole)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {roleOptions.filter((r) => r.value !== 'owner' || currentRole === 'owner').map((r) => (
+                        <SelectItem key={r.value} value={r.value}>{r.label} — {r.description}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select
-                  value={inviteData.role}
-                  onValueChange={(value) => setInviteData(prev => ({ ...prev, role: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {teamRoles.map((role) => (
-                      <SelectItem key={role.value} value={role.value}>
-                        <div>
-                          <span className="font-medium">{role.label}</span>
-                          <span className="text-muted-foreground ml-2 text-xs">
-                            — {role.description}
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setInviteOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleInvite} disabled={sending}>
-                {sending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Mail className="h-4 w-4 mr-2" />}
-                Send Invitation
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setInviteOpen(false)}>Cancel</Button>
+                <Button onClick={handleInvite} disabled={sending}>
+                  {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+                  Create invite
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
-      {/* Team Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Team Members</CardTitle>
-          </CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Seats used</CardTitle></CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">{teamMembers.length}</div>
-              <Users className="h-5 w-5 text-primary" />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {limit - teamMembers.length} seats remaining
-            </p>
+            <div className="flex items-center justify-between"><div className="text-2xl font-bold">{used} / {limit}</div><Users className="h-5 w-5 text-primary" /></div>
+            <p className="mt-1 text-xs text-muted-foreground">Includes pending invites</p>
           </CardContent>
         </Card>
-        
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Current Plan</CardTitle>
-          </CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Plan</CardTitle></CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">{subscription || 'Starter'}</div>
-              <Crown className="h-5 w-5 text-yellow-500" />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Up to {limit} team members
-            </p>
+            <div className="flex items-center justify-between"><div className="text-2xl font-bold">{planName}</div><Crown className="h-5 w-5 text-primary" /></div>
           </CardContent>
         </Card>
-        
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Active Roles</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">
-                {new Set(teamMembers.map(m => m.role)).size}
-              </div>
-              <Shield className="h-5 w-5 text-green-500" />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Unique roles assigned
-            </p>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Your role</CardTitle></CardHeader>
+          <CardContent><div className="text-2xl font-bold capitalize">{currentRole}</div></CardContent>
         </Card>
       </div>
 
-      {!canAddMembers && (
+      {canManage && used >= limit && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Team limit reached</AlertTitle>
+          <AlertTitle>All seats in use</AlertTitle>
           <AlertDescription>
-            Your {subscription} plan allows up to {limit} team members. 
-            <Button variant="link" className="p-0 h-auto ml-1" asChild>
-              <a href="/pricing">Upgrade your plan</a>
-            </Button>
+            Your {planName} plan includes {limit} seat{limit === 1 ? '' : 's'}.
+            <Button variant="link" className="ml-1 h-auto p-0" asChild><a href="/pricing">Upgrade</a></Button>
           </AlertDescription>
         </Alert>
       )}
 
-      {/* Team Members List */}
       <Card>
         <CardHeader>
-          <CardTitle>Team Members</CardTitle>
-          <CardDescription>
-            {teamMembers.length === 0 
-              ? 'No team members yet. Invite your first team member to get started.'
-              : `${teamMembers.length} member${teamMembers.length !== 1 ? 's' : ''} in your organization`
-            }
-          </CardDescription>
+          <CardTitle>Members</CardTitle>
+          <CardDescription>{members.length} member{members.length === 1 ? '' : 's'}</CardDescription>
         </CardHeader>
-        <CardContent>
-          {teamMembers.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium">No team members</p>
-              <p className="text-sm">Invite colleagues to collaborate on tenders</p>
-              <Button className="mt-4" onClick={() => setInviteOpen(true)}>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Invite First Member
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {teamMembers.map((member) => (
-                <div
-                  key={member.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback>
-                        {member.full_name?.charAt(0)?.toUpperCase() || 'T'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{member.full_name || 'Team Member'}</span>
-                        {member.user_id === user?.id && (
-                          <Badge variant="secondary" className="text-xs">You</Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Joined {new Date(member.joined_at || member.invited_at).toLocaleDateString()}
-                      </p>
-                    </div>
+        <CardContent className="space-y-3">
+          {members.map((member) => (
+            <div key={member.id} className="flex items-center justify-between rounded-lg border p-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10"><AvatarFallback>{(member.full_name || 'M').charAt(0).toUpperCase()}</AvatarFallback></Avatar>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{member.full_name || 'Team member'}</span>
+                    {member.user_id === user?.id && <Badge variant="secondary">You</Badge>}
                   </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <Badge className={getRoleBadgeColor(member.role)}>
-                      {member.role}
-                    </Badge>
-                    
-                    {member.user_id !== user?.id && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => handleRemoveMember(member.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
+                  <p className="text-sm text-muted-foreground">Joined {new Date(member.joined_at).toLocaleDateString()}</p>
                 </div>
-              ))}
+              </div>
+              <div className="flex items-center gap-2">
+                {canManage && member.user_id !== user?.id ? (
+                  <Select value={member.role} onValueChange={(v) => changeRole(member, v as BusinessRole)}>
+                    <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {roleOptions.filter((r) => r.value !== 'owner' || currentRole === 'owner').map((r) => (
+                        <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Badge variant="outline" className="capitalize">{member.role}</Badge>
+                )}
+                {canManage && member.user_id !== user?.id && (
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => removeMember(member)} aria-label="Remove member">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
-          )}
+          ))}
         </CardContent>
       </Card>
+
+      {canManage && invitations.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pending invitations</CardTitle>
+            <CardDescription>Copy a link to send it again, or cancel it.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {invitations.map((inv) => (
+              <div key={inv.id} className="flex items-center justify-between rounded-lg border p-4">
+                <div>
+                  <p className="font-medium">{inv.email}</p>
+                  <p className="text-sm text-muted-foreground capitalize">{inv.role} · expires {new Date(inv.expires_at).toLocaleDateString()}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => { navigator.clipboard?.writeText(inviteLink(inv.token)); toast({ title: 'Link copied' }); }}>
+                    <Copy className="mr-1 h-4 w-4" />Copy link
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => revoke(inv)}>
+                    <XCircle className="mr-1 h-4 w-4" />Cancel
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
