@@ -69,6 +69,7 @@ function App() {
         <PWAInstallPrompt />
         <BrowserRouter>
           <AuthProvider>
+            <BusinessProvider>
             <Layout>
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -239,9 +240,16 @@ function App() {
                     <AuctionRoom />
                   </ProtectedRoute>
                 } />
+                <Route path="/business" element={
+                  <ProtectedRoute>
+                    <BusinessSettings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/invite/:token" element={<AcceptInvitation />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
+            </BusinessProvider>
             <Toaster />
           </AuthProvider>
         </BrowserRouter>
